@@ -50,7 +50,7 @@ jobs:
         run: |
           mkdir -p dist
           cd src/plugin
-          zip -r ../../dist/python4cpm.zip ./*
+          zip -r ../../dist/python4cpm.zip ./* ../python4cpm/python4cpm.py
 
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
