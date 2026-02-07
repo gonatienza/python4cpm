@@ -1,0 +1,18 @@
+<Device Name="Application">
+  <Policies>
+    <Policy ID="Python4CPM" PlatformBaseID="Python4CPM" PlatformBaseType="Python4CPM" PlatformBaseProtocol="python" AutoChangeOnAdd="No" AutoVerifyOnAdd="No">
+      <Properties>
+        <Required>
+          <Property Name="Username" />
+          <Property Name="Address" />
+        </Required>
+        <Optional />
+      </Properties>
+      <LinkedPasswords>
+        <Link Name="LogonAccount" PropertyIndex="1" />
+        <Link Name="ReconcileAccount" PropertyIndex="3" />
+      </LinkedPasswords>
+      <TicketingSystem EnterTicketingInfo="No" ValidateTicketNumber="No" />
+    </Policy>
+  </Policies>
+</Device>

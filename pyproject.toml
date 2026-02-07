@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python4cpm"
+version = "1.0.0"
+description = "Python for CPM"
+authors = [
+  { name = "Gonzalo Atienza Rela", email = "gonatienza@gmail.com" }
+]
+dependencies = []
+requires-python = ">=3.8"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "S"]
