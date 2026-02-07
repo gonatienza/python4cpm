@@ -36,7 +36,7 @@ jobs:
         run: git push origin latest
 
 
-  release-latest:
+  update-latest-release:
     runs-on: ubuntu-latest
 
     permissions:
