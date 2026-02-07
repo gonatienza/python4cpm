@@ -49,7 +49,8 @@ jobs:
       - name: Create ZIP
         run: |
           mkdir -p dist
-          zip -r dist/python4cpm.zip src/plugin/*
+          cd src/plugin
+          zip -r ../../dist/python4cpm.zip ./*
 
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
