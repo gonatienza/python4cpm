@@ -162,5 +162,5 @@ desktop.ini
 ._*
 
 # Dev
-tests/
+src/plugin/tests
 scripts/
