@@ -10,8 +10,8 @@ class Args:
         "action",
         "address",
         "username",
-        "reconcile_username",
         "logon_username",
+        "reconcile_username",
         "logging"
     )
 
