@@ -50,16 +50,16 @@ def change():
 
 
 if __name__ == "__main__":
-    action = P4CPM.args.action
-    if action == P4CPM.ACTION_VERIFY:
+    action = p4cpm.args.action
+    if action == p4cpm.ACTION_VERIFY:
         pass
-    elif action == P4CPM.ACTION_CHANGE:
+    elif action == p4cpm.ACTION_CHANGE:
         change()
-    elif action == P4CPM.ACTION_PRERECONCILE:
+    elif action == p4cpm.ACTION_PRERECONCILE:
         pass
-    elif action == P4CPM.ACTION_RECONCILE:
+    elif action == p4cpm.ACTION_RECONCILE:
         pass
     else:
-        P4CPM.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
+        p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
         p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
 ```
