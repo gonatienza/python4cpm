@@ -24,12 +24,36 @@ class Args:
         logon_username: str,
         logging: str
     ) -> None:
-        self.action = action
-        self.address = address
-        self.username = username
-        self.reconcile_username = reconcile_username
-        self.logon_username = logon_username
-        self.logging = logging
+        self._action = action
+        self._address = address
+        self._username = username
+        self._reconcile_username = reconcile_username
+        self._logon_username = logon_username
+        self._logging = logging
+
+    @property
+    def action(self) -> str:
+        return self._action
+
+    @property
+    def address(self) -> str:
+        return self._address
+
+    @property
+    def username(self) -> str:
+        return self._username
+
+    @property
+    def reconcile_username(self) -> str:
+        return self._reconcile_username
+
+    @property
+    def logon_username(self) -> str:
+        return self._logon_username
+
+    @property
+    def logging(self) -> str:
+        return self._logging
 
 
 class Secrets:
@@ -47,10 +71,26 @@ class Secrets:
         logon_password: str,
         reconcile_password: str
     ) -> None:
-        self.password = password
-        self.new_password = new_password
-        self.logon_password = logon_password
-        self.reconcile_password = reconcile_password
+        self._password = password
+        self._new_password = new_password
+        self._logon_password = logon_password
+        self._reconcile_password = reconcile_password
+
+    @property
+    def password(self) -> str:
+        return self._password
+
+    @property
+    def new_password(self) -> str:
+        return self._new_password
+
+    @property
+    def logon_password(self) -> str:
+        return self._logon_password
+
+    @property
+    def reconcile_password(self) -> str:
+        return self._reconcile_password
 
 
 class Python4CPM:

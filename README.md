@@ -24,13 +24,13 @@ from python4cpm import Python4CPM
 
 p4cpm = Python4CPM("MyApp")
 
-# These are the attributes you can use from the object:
+# These are the usable properties from the object:
 p4cpm.args.action # action requested from CPM
 p4cpm.args.address # address from the account address field
 p4cpm.args.username # username from the account username field
 p4cpm.args.reconcile_username # reconcile username from the linked reconcile account
 p4cpm.args.logon_username # logon username from the linked logon account
-p4cpm.args.logging # used to carry the platform settings around logging
+p4cpm.args.logging # used to carry the platform logging settings for python
 p4cpm.secrets.password # password received from the vault
 p4cpm.secrets.new_password # new password in case of a rotation
 p4cpm.secrets.logon_password # linked logon account password
