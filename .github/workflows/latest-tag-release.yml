@@ -1,4 +1,4 @@
-name: Update 'latest' Tag
+name: Update 'latest' Tag/Release
 
 on:
   push:
@@ -34,3 +34,43 @@ jobs:
 
       - name: Push 'latest' tag
         run: git push origin latest
+
+
+  release-latest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create ZIP
+        run: |
+          mkdir -p dist
+          zip -r dist/python4cpm.zip src/python4cpm README.md LICENSE
+
+      - name: Install GitHub CLI
+        run: sudo apt-get update && sudo apt-get install -y gh
+
+      - name: Authenticate GitHub CLI
+        run: gh auth setup-git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete existing release
+        run: |
+          if gh release view latest &>/dev/null; then
+            echo "Deleting existing 'latest' release..."
+            gh release delete latest -y
+          else
+            echo "No existing 'latest' release found."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create new release
+        run: |
+          gh release create latest dist/python4cpm.zip \
+            --title "Latest Release" \
+            --notes "Automatically generated ZIP for main branch update."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
