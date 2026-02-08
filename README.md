@@ -92,7 +92,8 @@ When doing verify, change or reconcile from Privilege Cloud/PVWA:
 
 ### Dev Helper:
 
-Install this module anywhere with:
+TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.  For dev purposes, `TPCHelper` simplifies the creation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts:
+This is only available if you install this module (in a dev workstation) with:
 
 ```bash
 pip install git+https://github.com/gonatienza/python4cpm
@@ -102,21 +103,28 @@ or
 pip install https://github.com/gonatienza/python4cpm/archive/refs/tags/latest.tar.gz
 ```
 
-TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.  For testing purposes,  `TPCHelper` simplifies the creation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts:
 
 ```python
-from python4cpm import TPCHelper
+from python4cpm import TPCHelper, Python4CPM
+from getpass import getpass
+
+password = getpass("password")
+logon_password = getpass("logon_password")
+reconcile_password = getpass("reconcile_password")
+new_password = getpass("new_password")
 
 p4cpm = TPCHelper.run(
-    action="logon",
+    action=p4cpm.ACTION_LOGON,
     address="myapp.corp.local",
     username="jdoe",
     logon_username="ldoe",
     reconcile_username="rdoe",
     logging="yes",
-    password="mypass",
-    logon_password="mylogonpass",
-    reconcile_password="myreconcilepass",
-    new_password="mynewpass"
+    password=password,
+    logon_password=logon_password,
+    reconcile_password=reconcile_password,
+    new_password=new_password
 )
+
+p4cpm.close_success()
 ```
