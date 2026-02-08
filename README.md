@@ -67,3 +67,4 @@ if __name__ == "__main__":
         p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
         p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
 ```
+(*) a more realistic example can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/credmanagement.py).
