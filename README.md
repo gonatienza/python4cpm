@@ -120,11 +120,11 @@ new_password = getpass("new_password: ")
 
 p4cpm = TPCHelper.run(
     action=Python4CPM.ACTION_LOGON, # use actions from p4cpm.ACTION_*
-    address="myapp.corp.local", # populate the address from your account properties
-    username="jdoe", # populate the username from your account properties
-    logon_username="ldoe", # populate the logon account username from your linked logon account
-    reconcile_username="rdoe", # ppopulate the reconcile account username from your linked logon account
-    logging="yes", # populate the PythonLogging parameter from the platform: "yes" or "no"
+    address="myapp.corp.local", # populate with the address from your account properties
+    username="jdoe", # populate with the username from your account properties
+    logon_username="ldoe", # populate with the logon account username from your linked logon account
+    reconcile_username="rdoe", # ppopulate with the reconcile account username from your linked logon account
+    logging="yes", # populate with the PythonLogging parameter from the platform: "yes" or "no"
     password=password,
     logon_password=logon_password,
     reconcile_password=reconcile_password,
