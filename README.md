@@ -51,7 +51,7 @@ p4cpm.log_error("this is an info message") # logs info into Logs/ThirdParty/Pyth
 
 # Rotation example
 def change():
-    # use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
+    # Use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
     # and p4cpm.secrets.new_password.get() for your logic in a rotation
     result = True
     if result is True:
