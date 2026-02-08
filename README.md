@@ -38,15 +38,16 @@ p4cpm.secrets.new_password.get() # get str from new password in case of a rotati
 p4cpm.secrets.logon_password.get() # get str from linked logon account password
 p4cpm.secrets.reconcile_password.get() # get str from linked reconcile account password
 
-# These are the other methods from the object to keep in mind:
+# Logging methods -> Will only log if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging is set to yes (default)
 p4cpm.log_error("something went wrong") # logs error into Logs/ThirdParty/Python4CPM/MyApp.log
 p4cpm.log_warning("this is a warning") # logs warning into Logs/ThirdParty/Python4CPM/MyApp.log
 p4cpm.log_error("this is an info message") # logs info into Logs/ThirdParty/Python4CPM/MyApp.log
 
-# Terminate signals -> ALWAYS use one of the following three signals to terminate the script.
+# Terminate signals -> ALWAYS use one of the following three signals to terminate the script
 ## p4cpm.close_success() # terminate with success state
 ## p4cpm.close_fail() # terminate with recoverable failed state
 ## p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
+# If no signal is call, CPM will not know the action was successful and display an error
 
 
 # Rotation example
@@ -55,10 +56,10 @@ def change():
     # and p4cpm.secrets.new_password.get() for your logic in a rotation
     result = True
     if result is True:
-        p4cpm.log_info("rotation successful") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
+        p4cpm.log_info("rotation successful") # logs info message into Logs/ThirdParty/Python4CPM/MyApp.log
         p4cpm.close_success() # terminate with success state
     else:
-        p4cpm.log_error("something went wrong") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
+        p4cpm.log_error("something went wrong") # logs into message Logs/ThirdParty/Python4CPM/MyApp.log
         p4cpm.close_fail() # terminate with recoverable failed state
 
 
