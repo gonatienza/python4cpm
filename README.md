@@ -112,10 +112,10 @@ from getpass import getpass
 
 # Get secrets for your password, logon account password, reconcile account password and new password
 # You can use an empty string if it does not apply
-password = getpass("password: ")
-logon_password = getpass("logon_password: ")
-reconcile_password = getpass("reconcile_password: ")
-new_password = getpass("new_password: ")
+password = getpass("password: ") # password from account
+logon_password = getpass("logon_password: ") # password from linked logon account
+reconcile_password = getpass("reconcile_password: ") # password from linked reconcile account
+new_password = getpass("new_password: ") # new password for the rotation
 
 p4cpm = TPCHelper.run(
     action=Python4CPM.ACTION_LOGON, # use actions from p4cpm.ACTION_*
