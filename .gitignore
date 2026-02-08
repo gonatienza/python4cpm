@@ -162,5 +162,4 @@ desktop.ini
 ._*
 
 # Dev
-src/plugin/tests
-scripts/
+Logs/
