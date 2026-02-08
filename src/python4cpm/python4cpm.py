@@ -56,6 +56,17 @@ class Args:
         return self._logging
 
 
+class Secret:
+    def __init__(self, value: str) -> None:
+        self._secret = value
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}('***')"
+
+    def get(self) -> str:
+        return self._secret
+
+
 class Secrets:
     SECRETS = (
         "password",
@@ -71,10 +82,10 @@ class Secrets:
         reconcile_password: str,
         new_password: str
     ) -> None:
-        self._password = password
-        self._logon_password = logon_password
-        self._reconcile_password = reconcile_password
-        self._new_password = new_password
+        self._password = Secret(password)
+        self._logon_password = Secret(logon_password)
+        self._reconcile_password = Secret(reconcile_password)
+        self._new_password = Secret(new_password)
 
     @property
     def password(self) -> str:

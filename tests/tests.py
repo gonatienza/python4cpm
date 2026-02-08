@@ -1,4 +1,4 @@
-from python4cpm import Python4CPM, Secrets, Args
+from python4cpm import Python4CPM, Secrets, Args, TPCHelper
 from configparser import ConfigParser
 import json
 import pytest
@@ -86,10 +86,11 @@ def test_main(action, logging, monkeypatch):
     assert p4cpm.args.username == INPUTS["username"] # noqa: S101
     assert p4cpm.args.logon_username == INPUTS["logon_username"] # noqa: S101
     assert p4cpm.args.reconcile_username == INPUTS["reconcile_username"] # noqa: S101
-    assert p4cpm.secrets.password == INPUTS["password"] # noqa: S101
-    assert p4cpm.secrets.logon_password == INPUTS["logon_password"] # noqa: S101
-    assert p4cpm.secrets.reconcile_password == INPUTS["reconcile_password"] # noqa: S101
-    assert p4cpm.secrets.new_password == inputs[3] # noqa: S101
+    assert p4cpm.args.logging == logging # noqa: S101
+    assert p4cpm.secrets.password.get() == INPUTS["password"] # noqa: S101
+    assert p4cpm.secrets.logon_password.get() == INPUTS["logon_password"] # noqa: S101
+    assert p4cpm.secrets.reconcile_password.get() == INPUTS["reconcile_password"] # noqa: S101
+    assert p4cpm.secrets.new_password.get() == inputs[3] # noqa: S101
 
 
 def prompt_interact(prompt):
@@ -121,3 +122,30 @@ def test_input_prompts(close, monkeypatch, capsys):
         prompts = INPUT_PROMPTS + FAILED_UNRECOVERABLE_PROMPTS
     out = capsys.readouterr().out.splitlines()
     assert out == prompts # noqa: S101
+
+
+def test_tpc_helper():
+    action = "reconcile"
+    logging = "yes"
+    p4cpm = TPCHelper.run(
+        action=action,
+        address=INPUTS["address"],
+        username=INPUTS["username"],
+        logon_username=INPUTS["logon_username"],
+        reconcile_username=INPUTS["reconcile_username"],
+        logging=logging,
+        password=INPUTS["password"],
+        logon_password=INPUTS["logon_password"],
+        reconcile_password=INPUTS["reconcile_password"],
+        new_password=INPUTS["new_password"]
+    )
+    assert p4cpm.args.action == action # noqa: S101
+    assert p4cpm.args.address == INPUTS["address"] # noqa: S101
+    assert p4cpm.args.username == INPUTS["username"] # noqa: S101
+    assert p4cpm.args.logon_username == INPUTS["logon_username"] # noqa: S101
+    assert p4cpm.args.reconcile_username == INPUTS["reconcile_username"] # noqa: S101
+    assert p4cpm.args.logging == logging # noqa: S101
+    assert p4cpm.secrets.password.get() == INPUTS["password"] # noqa: S101
+    assert p4cpm.secrets.logon_password.get() == INPUTS["logon_password"] # noqa: S101
+    assert p4cpm.secrets.reconcile_password.get() == INPUTS["reconcile_password"] # noqa: S101
+    assert p4cpm.secrets.new_password.get() == INPUTS["new_password"] # noqa: S101
