@@ -5,7 +5,6 @@ import json
 from python4cpm import Python4CPM
 
 
-ROOT_URL_FORMAT = "https://{}:8443"
 TOKEN_URL_FORMAT = "https://{}:8443/token"
 VERIFY_URL_FORMAT = "https://{}:8443/verify"
 CHANGE_URL_FORMAT = "https://{}:8443/change"
