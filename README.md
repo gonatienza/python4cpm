@@ -16,8 +16,6 @@ pip install https://github.com/gonatienza/python4cpm/archive/refs/tags/latest.ta
 
 ### Examples:
 
-Listing safes:
-
 ```python
 from python4cpm import Python4CPM
 
