@@ -9,10 +9,10 @@ This platform allows you to duplicate it multiple times, simply changing its set
 1. Install Python in CPM.  **IMPORTANT:** *Python must be installed for all users when running the install wizard*.
 2. Run in CPM (from powershell or cmd) `py -m venv c:\venv` to create a venv.
 3. Download the latest platform [zip file](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm.zip).
-4. Import the platform zip file into Privilege Cloud/PVWA (Administration -> Platform Management -> Import platform).
+4. Import the platform zip file into Privilege Cloud/PVWA `(Administration -> Platform Management -> Import platform)`.
 5. Craft your python script and place it within the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
-6. Duplicate the imported platform in Privilege Cloud/PVWA (Administration -> Platform Management -> Application -> Python for CPM) and name it after your application (e.g., My App).
-7. Edit the duplicated platform and specify the path of your placed script in the bin folder of CPM, under Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value (e.g., `bin\myapp.py`).
+6. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
+7. Edit the duplicated platform and specify the path of your placed script in the bin folder of CPM, under `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value` (e.g., `bin\myapp.py`).
 8. For new applications repeat steps from 5 to 7.
 
 
