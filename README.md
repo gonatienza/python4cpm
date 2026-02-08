@@ -48,6 +48,7 @@ p4cpm.log_error("this is an info message") # logs info into Logs/ThirdParty/Pyth
 ## p4cpm.close_fail() # terminate with recoverable failed state
 ## p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
 
+
 # Rotation example
 def change():
     # use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
