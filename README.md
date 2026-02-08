@@ -6,7 +6,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 
 ## Installation
 
-1. Install Python in CPM.  **IMPORTANT** -> Python must be installed for all users when running the install wizard.
+1. Install Python in CPM.  **IMPORTANT:** *Python must be installed for all users when running the install wizard*.
 2. Run in CPM (from powershell or cmd) `py -m venv c:\venv` to create a venv.
 3. Download the latest platform [zip file](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm.zip).
 4. Import the platform zip file into Privilege Cloud/PVWA (Administration -> Platform Management -> Import platform).
