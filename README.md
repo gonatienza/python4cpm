@@ -81,7 +81,7 @@ if __name__ == "__main__":
 ```
 (*) a more realistic example can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/credmanagement.py).
 
-When doing verify, change or reconcile from Privilege Cloud:
+When doing verify, change or reconcile from Privilege Cloud/PVWA:
 1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `p4cpm.ACTION_VERIFY`.
 2. Change -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `p4cpm.ACTION_LOGON` and once as `p4cpm.ACTION_CHANGE`.
 3. Reconcile -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `p4cpm.ACTION_PRERECONCILE` and once as `p4cpm.ACTION_RECONCILE`.
