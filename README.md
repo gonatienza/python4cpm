@@ -47,7 +47,7 @@ p4cpm.log_error("this is an info message") # logs info into Logs/ThirdParty/Pyth
 ## p4cpm.close_success() # terminate with success state
 ## p4cpm.close_fail() # terminate with recoverable failed state
 ## p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
-# If no signal is call, CPM will not know the action was successful and display an error
+# If no signal is call, CPM will not know if the action was successful and display an error
 
 
 # Rotation example
