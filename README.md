@@ -49,13 +49,15 @@ def change():
 
 if __name__ == "__main__":
     action = p4cpm.args.action
-    if action == p4cpm.ACTION_VERIFY:
+    if action == p4cpm.ACTION_VERIFY: # attribute holds the verify action value
         pass
-    elif action == p4cpm.ACTION_CHANGE:
+    elif action == p4cpm.ACTION_LOGON: # attribute holds the logon action value
+        pass
+    elif action == p4cpm.ACTION_CHANGE: # attribute holds the password change action value
         change()
-    elif action == p4cpm.ACTION_PRERECONCILE:
+    elif action == p4cpm.ACTION_PRERECONCILE: # attribute holds the pre-reconcile action value
         pass
-    elif action == p4cpm.ACTION_RECONCILE:
+    elif action == p4cpm.ACTION_RECONCILE: # attribute holds the reconcile action value
         pass
     else:
         p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
