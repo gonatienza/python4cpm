@@ -24,7 +24,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 from python4cpm import Python4CPM
 
 
-p4cpm = Python4CPM("MyApp") # this initiates the object and grabs all arguments and secrets shared from TPC
+p4cpm = Python4CPM("MyApp") # this initiates the object and grabs all arguments and secrets shared by TPC
 
 # These are the usable properties from the object:
 p4cpm.args.action # action requested from CPM
@@ -68,3 +68,36 @@ if __name__ == "__main__":
         p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
 ```
 (*) a more realistic example can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/credmanagement.py).
+
+
+### Dev Helper:
+
+Install this module anywhere with:
+
+```bash
+pip install git+https://github.com/gonatienza/python4cpm
+```
+or
+```bash
+pip install https://github.com/gonatienza/python4cpm/archive/refs/tags/latest.tar.gz
+```
+
+TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.  For testing purposes,  `TPCHelper` simplifies the creation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts:
+
+```python
+from python4cpm import TPCHelper
+
+helper = TPCHelper(
+    action="logon",
+    address="myapp.corp.local",
+    username="jdoe",
+    logon_username="ldoe",
+    reconcile_username="rdoe",
+    logging="yes",
+    password="mypass",
+    logon_password="mylogonpass",
+    reconcile_password="myreconcilepass",
+    new_password="mynewpass"
+)
+p4cpm = helper.run()
+```

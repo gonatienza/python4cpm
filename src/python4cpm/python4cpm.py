@@ -106,9 +106,10 @@ class Python4CPM:
         ACTION_PRERECONCILE,
         ACTION_RECONCILE,
     )
-    _FILE_ROOT_DIR = os.path.dirname(__file__)
-    _CPM_ROOT_DIR = os.path.dirname(_FILE_ROOT_DIR)
-    _LOGS_DIR = os.path.join(_CPM_ROOT_DIR, "Logs", "ThirdParty", "Python4CPM")
+    LOGS_DIR = os.path.join("Logs", "ThirdParty", "Python4CPM")
+    _CPM_ROOT_DIR = "C:\\Program Files (x86)\\CyberArk\\Password Manager"
+    if os.path.exists(_CPM_ROOT_DIR):
+        LOGS_DIR = os.path.join(_CPM_ROOT_DIR, LOGS_DIR)
     SUCCESS_PROMPT = "SUCCESS"
     FAILED_RECOVERABLE_PROMPT = "FAILED_RECOVERABLE"
     FAILED_UNRECOVERABLE_PROMPT = "FAILED_UNRECOVERABLE"
@@ -188,8 +189,8 @@ class Python4CPM:
 
     def _get_logger(self, name: str) -> logging.Logger:
         if self._args.logging and self._args.logging.lower() == "yes":
-            os.makedirs(self._LOGS_DIR, exist_ok=True)
-            logs_file = os.path.join(self._LOGS_DIR, f"{name}.log")
+            os.makedirs(self.LOGS_DIR, exist_ok=True)
+            logs_file = os.path.join(self.LOGS_DIR, f"{name}.log")
             logger = logging.getLogger(name)
             logger.setLevel(logging.INFO)
             handler = RotatingFileHandler(
