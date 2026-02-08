@@ -191,8 +191,8 @@ class Python4CPM:
             )
 
     def _log_args(self) -> None:
-        for key, value in self._args.__dict__.items():
-            common_message = f"Python4CPM._log_args: {key} ->"
+        for key, value in vars(self._args).items():
+            common_message = f"Python4CPM._log_args: {key.strip('_')} ->"
             if value:
                 self.log_info(f"{common_message} {value}")
             else:
