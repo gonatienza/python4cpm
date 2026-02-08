@@ -109,6 +109,9 @@ def main():
         if action == P4CPM.ACTION_VERIFY:
             verify()
             P4CPM.close_success()
+        elif action == P4CPM.ACTION_LOGON:
+            pass
+            P4CPM.close_success()
         elif action == P4CPM.ACTION_CHANGE:
             change()
             P4CPM.close_success()

@@ -37,6 +37,15 @@ INPUTS_CHANGE_RECONCILE = [
     INPUTS[Secrets.SECRETS[2]],
     INPUTS[Secrets.SECRETS[3]]
 ]
+ACTIONS_WITH_NEW_PASSWORD = (
+    Python4CPM.ACTION_CHANGE,
+    Python4CPM.ACTION_RECONCILE
+)
+ACTIONS_WITHOUT_NEW_PASSWORD = (
+    Python4CPM.ACTION_VERIFY,
+    Python4CPM.ACTION_LOGON,
+    Python4CPM.ACTION_PRERECONCILE
+)
 
 
 @pytest.mark.parametrize("action,logging", PARAMS)
@@ -44,13 +53,13 @@ def test_python4cpm(action, logging, monkeypatch):
     args = ARGS + [f"--action={action}", f"--logging={logging}"]
     monkeypatch.setattr(sys, "argv", args)
     print(f"arguments -> {sys.argv}")
-    if action in (Python4CPM.ACTION_VERIFY, Python4CPM.ACTION_PRERECONCILE):
+    if action in ACTIONS_WITHOUT_NEW_PASSWORD:
         inputs = iter(INPUTS_VERIFY_PRERECONCILE)
         print(f"inputs -> {INPUTS_VERIFY_PRERECONCILE}")
         monkeypatch.setattr("builtins.input", lambda _: next(inputs))
         p4cpm = Python4CPM("PyTest")
         assert p4cpm.secrets.new_password == ""
-    elif action in (Python4CPM.ACTION_CHANGE, Python4CPM.ACTION_RECONCILE):
+    elif action in ACTIONS_WITH_NEW_PASSWORD:
         inputs = iter(INPUTS_CHANGE_RECONCILE)
         print(f"inputs -> {INPUTS_CHANGE_RECONCILE}")
         monkeypatch.setattr("builtins.input", lambda _: next(inputs))
