@@ -94,12 +94,14 @@ class Secrets:
 
 
 class Python4CPM:
-    ACTION_VERIFY = "logon"
+    ACTION_VERIFY = "verifypass"
+    ACTION_LOGON = "logon"
     ACTION_CHANGE = "changepass"
     ACTION_PRERECONCILE = "prereconcilepass"
     ACTION_RECONCILE = "reconcilepass"
     _VALID_ACTIONS = (
         ACTION_VERIFY,
+        ACTION_LOGON,
         ACTION_CHANGE,
         ACTION_PRERECONCILE,
         ACTION_RECONCILE,
