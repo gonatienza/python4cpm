@@ -78,6 +78,7 @@ if __name__ == "__main__":
     else:
         p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
         p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
+
 ```
 (*) a more realistic example can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/credmanagement.py).
 
@@ -90,9 +91,10 @@ When doing verify, change or reconcile from Privilege Cloud/PVWA:
 6. If a reconcile account is not linked, `p4cpm.args.reconcile_username` and `p4cpm.secrets.reconcile_password.get()` will return an empty string.
 
 
-### Dev Helper:
+## Dev Helper:
 
-TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.  For dev purposes, `TPCHelper` simplifies the creation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts:
+TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.
+For dev purposes, `TPCHelper` simplifies the creation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts.
 This is only available if you install this module (in a dev workstation) with:
 
 ```bash
@@ -103,28 +105,40 @@ or
 pip install https://github.com/gonatienza/python4cpm/archive/refs/tags/latest.tar.gz
 ```
 
+### Example:
 
 ```python
 from python4cpm import TPCHelper, Python4CPM
 from getpass import getpass
 
-password = getpass("password")
-logon_password = getpass("logon_password")
-reconcile_password = getpass("reconcile_password")
-new_password = getpass("new_password")
+# Get secrets for your password, logon account password, reconcile account password and new password
+# You can use an empty string if it does not apply
+password = getpass("password: ")
+logon_password = getpass("logon_password: ")
+reconcile_password = getpass("reconcile_password: ")
+new_password = getpass("new_password: ")
 
 p4cpm = TPCHelper.run(
-    action=p4cpm.ACTION_LOGON,
-    address="myapp.corp.local",
-    username="jdoe",
-    logon_username="ldoe",
-    reconcile_username="rdoe",
-    logging="yes",
+    action=Python4CPM.ACTION_LOGON, # use actions from p4cpm.ACTION_*
+    address="myapp.corp.local", # populate the address from your account properties
+    username="jdoe", # populate the username from your account properties
+    logon_username="ldoe", # populate the logon account username from your linked logon account
+    reconcile_username="rdoe", # ppopulate the reconcile account username from your linked logon account
+    logging="yes", # populate the PythonLogging parameter from the platform: "yes" or "no"
     password=password,
     logon_password=logon_password,
     reconcile_password=reconcile_password,
     new_password=new_password
 )
 
+# Use the p4cpm object during dev to build your script logic
+assert password == p4cpm.secrets.password.get()
+p4cpm.log_info("success!")
 p4cpm.close_success()
+
+# Remember for your final script:
+# changing the definition of p4cpm from TPCHelper.run() to Python4CPM("MyApp")
+# remove any secrets prompting
+# remove the TPCHelper import
+
 ```
