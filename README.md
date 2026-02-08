@@ -79,6 +79,8 @@ if __name__ == "__main__":
         p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
         p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
 ```
+(*) a more realistic example can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/credmanagement.py).
+
 When doing verify, change or reconcile from Privilege Cloud:
 1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `p4cpm.ACTION_VERIFY`.
 2. Change -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `p4cpm.ACTION_LOGON` and once as `p4cpm.ACTION_CHANGE`.
@@ -86,8 +88,6 @@ When doing verify, change or reconcile from Privilege Cloud:
 4. When `p4cpm.args.action` comes as `p4cpm.ACTION_VERIFY`, `p4cpm.ACTION_LOGON` and `p4cpm.ACTION_PRERECONCILE`,`p4cpm.secrets.new_password.get()` will always return an empty string.
 5. If a logon account is not linked, `p4cpm.args.logon_username` and `p4cpm.secrets.logon_password.get()` will return an empty string.
 6. If a reconcile account is not linked, `p4cpm.args.reconcile_username` and `p4cpm.secrets.reconcile_password.get()` will return an empty string.
-
-(*) a more realistic example can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/credmanagement.py).
 
 
 ### Dev Helper:
