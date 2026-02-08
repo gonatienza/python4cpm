@@ -26,7 +26,7 @@ from python4cpm import Python4CPM
 
 p4cpm = Python4CPM("MyApp") # this initiates the object and grabs all arguments and secrets shared by TPC
 
-# These are the usable properties from the object:
+# These are the usable properties and related methods from the object:
 p4cpm.args.action # action requested from CPM
 p4cpm.args.address # address from the account address field
 p4cpm.args.username # username from the account username field
@@ -37,6 +37,16 @@ p4cpm.secrets.password.get() # get str from password received from the vault
 p4cpm.secrets.new_password.get() # get str from new password in case of a rotation
 p4cpm.secrets.logon_password.get() # get str from linked logon account password
 p4cpm.secrets.reconcile_password.get() # get str from linked reconcile account password
+
+# These are the other methods from the object to keep in mind:
+p4cpm.log_error("something went wrong") # logs error into Logs/ThirdParty/Python4CPM/MyApp.log
+p4cpm.log_warning("this is a warning") # logs warning into Logs/ThirdParty/Python4CPM/MyApp.log
+p4cpm.log_error("this is an info message") # logs info into Logs/ThirdParty/Python4CPM/MyApp.log
+
+# Terminate signals -> ALWAYS use one of the following three signals to terminate the script.
+## p4cpm.close_success() # terminate with success state
+## p4cpm.close_fail() # terminate with recoverable failed state
+## p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
 
 
 def change():
