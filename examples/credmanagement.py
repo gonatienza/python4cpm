@@ -17,10 +17,10 @@ P4CPM = Python4CPM("MyApp")
 def _get_payload(from_reconcile):
     if not from_reconcile:
         username = P4CPM.args.username
-        password = P4CPM.secrets.password
+        password = P4CPM.secrets.password.get()
     else:
         username = P4CPM.args.reconcile_username
-        password = P4CPM.secrets.reconcile_password
+        password = P4CPM.secrets.reconcile_password.get()
     return {
         "username": username,
         "password": password
@@ -64,7 +64,7 @@ def verify():
 
 
 def change():
-    payload = {"new_password": P4CPM.secrets.new_password}
+    payload = {"new_password": P4CPM.secrets.new_password.get()}
     data = json.dumps(payload).encode()
     headers = {"Content-Type": "application/json"}
     method = "POST"
@@ -84,7 +84,7 @@ def change():
 def reconcile():
     payload = {
         "username": P4CPM.args.username,
-        "new_password": P4CPM.secrets.new_password
+        "new_password": P4CPM.secrets.new_password.get()
     }
     data = json.dumps(payload).encode()
     headers = {"Content-Type": "application/json"}

@@ -33,15 +33,15 @@ p4cpm.args.username # username from the account username field
 p4cpm.args.reconcile_username # reconcile username from the linked reconcile account
 p4cpm.args.logon_username # logon username from the linked logon account
 p4cpm.args.logging # used to carry the platform logging settings for python
-p4cpm.secrets.password # password received from the vault
-p4cpm.secrets.new_password # new password in case of a rotation
-p4cpm.secrets.logon_password # linked logon account password
-p4cpm.secrets.reconcile_password # linked reconcile account password
+p4cpm.secrets.password.get() # get str from password received from the vault
+p4cpm.secrets.new_password.get() # get str from new password in case of a rotation
+p4cpm.secrets.logon_password.get() # get str from linked logon account password
+p4cpm.secrets.reconcile_password.get() # get str from linked reconcile account password
 
 
 def change():
-    # use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password 
-    # and p4cpm.secrets.new_password for your logic in a rotation
+    # use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
+    # and p4cpm.secrets.new_password.get() for your logic in a rotation
     result = True
     if result is True:
         p4cpm.log_info("rotation successful") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
@@ -87,7 +87,7 @@ TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Pyt
 ```python
 from python4cpm import TPCHelper
 
-helper = TPCHelper(
+p4cpm = TPCHelper.run(
     action="logon",
     address="myapp.corp.local",
     username="jdoe",
@@ -99,5 +99,4 @@ helper = TPCHelper(
     reconcile_password="myreconcilepass",
     new_password="mynewpass"
 )
-p4cpm = helper.run()
 ```
