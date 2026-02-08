@@ -1,5 +1,4 @@
-from python4cpm import Python4CPM
-from python4cpm.python4cpm import Secrets, Args
+from python4cpm import Python4CPM, Secrets, Args
 from configparser import ConfigParser
 import json
 import pytest
