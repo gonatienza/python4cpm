@@ -27,9 +27,9 @@ PARAMS = [
 ]
 INPUTS_VERIFY_PRERECONCILE = [
     INPUTS[Secrets.SECRETS[0]],
-    "",
+    INPUTS[Secrets.SECRETS[1]],
     INPUTS[Secrets.SECRETS[2]],
-    INPUTS[Secrets.SECRETS[3]]
+    ""
 ]
 INPUTS_CHANGE_RECONCILE = [
     INPUTS[Secrets.SECRETS[0]],

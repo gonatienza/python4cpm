@@ -59,22 +59,22 @@ class Args:
 class Secrets:
     SECRETS = (
         "password",
-        "new_password",
         "logon_password",
-        "reconcile_password"
+        "reconcile_password",
+        "new_password"
     )
 
     def __init__(
         self: str,
         password: str,
-        new_password: str,
         logon_password: str,
-        reconcile_password: str
+        reconcile_password: str,
+        new_password: str
     ) -> None:
         self._password = password
-        self._new_password = new_password
         self._logon_password = logon_password
         self._reconcile_password = reconcile_password
+        self._new_password = new_password
 
     @property
     def password(self) -> str:
