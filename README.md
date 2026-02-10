@@ -65,15 +65,15 @@ def change():
 
 if __name__ == "__main__":
     action = p4cpm.args.action
-    if action == p4cpm.ACTION_VERIFY: # attribute holds the verify action value
+    if action == Python4CPM.ACTION_VERIFY: # attribute holds the verify action value
         pass
-    elif action == p4cpm.ACTION_LOGON: # attribute holds the logon action value
+    elif action == Python4CPM.ACTION_LOGON: # attribute holds the logon action value
         pass
-    elif action == p4cpm.ACTION_CHANGE: # attribute holds the password change action value
+    elif action == Python4CPM.ACTION_CHANGE: # attribute holds the password change action value
         change()
-    elif action == p4cpm.ACTION_PRERECONCILE: # attribute holds the pre-reconcile action value
+    elif action == Python4CPM.ACTION_PRERECONCILE: # attribute holds the pre-reconcile action value
         pass
-    elif action == p4cpm.ACTION_RECONCILE: # attribute holds the reconcile action value
+    elif action == Python4CPM.ACTION_RECONCILE: # attribute holds the reconcile action value
         pass
     else:
         p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
@@ -82,10 +82,10 @@ if __name__ == "__main__":
 (*) a more realistic example can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/credmanagement.py).
 
 When doing verify, change or reconcile from Privilege Cloud/PVWA:
-1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `p4cpm.ACTION_VERIFY`.
-2. Change -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `p4cpm.ACTION_LOGON` and once as `p4cpm.ACTION_CHANGE`.
-3. Reconcile -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `p4cpm.ACTION_PRERECONCILE` and once as `p4cpm.ACTION_RECONCILE`.
-4. When `p4cpm.args.action` comes as `p4cpm.ACTION_VERIFY`, `p4cpm.ACTION_LOGON` and `p4cpm.ACTION_PRERECONCILE`,`p4cpm.secrets.new_password.get()` will always return an empty string.
+1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `Python4CPM.ACTION_VERIFY`.
+2. Change -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `Python4CPM.ACTION_LOGON` and once as `Python4CPM.ACTION_CHANGE`.
+3. Reconcile -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `Python4CPM.ACTION_PRERECONCILE` and once as `Python4CPM.ACTION_RECONCILE`.
+4. When `p4cpm.args.action` comes as `Python4CPM.ACTION_VERIFY`, `Python4CPM.ACTION_LOGON` and `Python4CPM.ACTION_PRERECONCILE`, `p4cpm.secrets.new_password.get()` will always return an empty string.
 5. If a logon account is not linked, `p4cpm.args.logon_username` and `p4cpm.secrets.logon_password.get()` will return an empty string.
 6. If a reconcile account is not linked, `p4cpm.args.reconcile_username` and `p4cpm.secrets.reconcile_password.get()` will return an empty string.
 
@@ -118,7 +118,7 @@ reconcile_password = getpass("reconcile_password: ") # password from linked reco
 new_password = getpass("new_password: ") # new password for the rotation
 
 p4cpm = TPCHelper.run(
-    action=Python4CPM.ACTION_LOGON, # use actions from p4cpm.ACTION_*
+    action=Python4CPM.ACTION_LOGON, # use actions from Python4CPM.ACTION_*
     address="myapp.corp.local", # populate with the address from your account properties
     username="jdoe", # populate with the username from your account properties
     logon_username="ldoe", # populate with the logon account username from your linked logon account

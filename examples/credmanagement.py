@@ -105,19 +105,19 @@ def reconcile():
 def main():
     try:
         action = P4CPM.args.action
-        if action == P4CPM.ACTION_VERIFY:
+        if action == Python4CPM.ACTION_VERIFY:
             verify()
             P4CPM.close_success()
-        elif action == P4CPM.ACTION_LOGON:
+        elif action == Python4CPM.ACTION_LOGON:
             pass
             P4CPM.close_success()
-        elif action == P4CPM.ACTION_CHANGE:
+        elif action == Python4CPM.ACTION_CHANGE:
             change()
             P4CPM.close_success()
-        elif action == P4CPM.ACTION_PRERECONCILE:
+        elif action == Python4CPM.ACTION_PRERECONCILE:
             pass
             P4CPM.close_success()
-        elif action == P4CPM.ACTION_RECONCILE:
+        elif action == Python4CPM.ACTION_RECONCILE:
             reconcile()
             P4CPM.close_success()
         else:

@@ -8,7 +8,7 @@ import sys
 
 def get_prompts_and_inputs():
     file_dir = os.path.dirname(__file__)
-    inputs_path = os.path.join(file_dir, "inputs", "inputs.json")
+    inputs_path = os.path.join(file_dir, "inputs.json")
     with open(inputs_path, "r") as f:
         inputs = json.load(f)
     root_dir = os.path.dirname(file_dir)
@@ -139,6 +139,7 @@ def test_tpc_helper():
         reconcile_password=INPUTS["reconcile_password"],
         new_password=INPUTS["new_password"]
     )
+    assert isinstance(p4cpm, Python4CPM) # noqa: S101
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.address == INPUTS["address"] # noqa: S101
     assert p4cpm.args.username == INPUTS["username"] # noqa: S101
