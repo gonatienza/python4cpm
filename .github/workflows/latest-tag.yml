@@ -16,21 +16,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure Git
-        run: |
+      - run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Delete remote 'latest' tag (if it exists)
-        run: |
-          git push --delete origin latest || echo "No remote tag to delete"
-
-      - name: Delete local 'latest' tag (if it exists)
-        run: |
-          git tag -d latest || echo "No local tag to delete"
-
-      - name: Create 'latest' tag
-        run: git tag latest
-
-      - name: Push 'latest' tag
-        run: git push origin latest
+          git tag -f latest
+          git push -f origin latest
