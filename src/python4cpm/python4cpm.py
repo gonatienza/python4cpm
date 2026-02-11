@@ -172,7 +172,7 @@ class Python4CPM:
         secrets = {}
         try:
             for prompt in Secrets.SECRETS:
-                secrets[prompt] = input(f"{prompt}:")
+                secrets[prompt] = input(prompt)
                 common_message = f"Python4CPM._get_secrets: {prompt} ->"
                 if secrets[prompt]:
                     self.log_info(f"{common_message} [*******]")
