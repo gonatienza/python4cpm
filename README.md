@@ -148,7 +148,7 @@ As with any python venv, you can install dependancies in your venv.
 
 TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.
 For dev purposes, `TPCHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts.
-This is **only** available if you install this module (in a dev workstation) with:
+This is **ONLY** available if you install this module (in a dev workstation) with:
 
 ```bash
 pip install git+https://github.com/gonatienza/python4cpm
