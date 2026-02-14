@@ -41,10 +41,11 @@ p4cpm.secrets.new_password.get() # get str from new password in case of a rotati
 p4cpm.secrets.logon_password.get() # get str from linked logon account password
 p4cpm.secrets.reconcile_password.get() # get str from linked reconcile account password
 
-# Logging methods -> Will only log if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging is set to yes (default)
-p4cpm.log_error("something went wrong") # logs error into Logs/ThirdParty/Python4CPM/MyApp.log
-p4cpm.log_warning("this is a warning") # logs warning into Logs/ThirdParty/Python4CPM/MyApp.log
+# Logging methods -> Will only log if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging is set to yes (default is yes)
+p4cpm.log_error("this is an error message") # logs error into Logs/ThirdParty/Python4CPM/MyApp.log
+p4cpm.log_warning("this is a warning message") # logs warning into Logs/ThirdParty/Python4CPM/MyApp.log
 p4cpm.log_info("this is an info message") # logs info into Logs/ThirdParty/Python4CPM/MyApp.log
+# Logging level -> Will only log debug messages if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel is set to debug (default is info)
 p4cpm.log_debug("this is an debug message") # logs info into Logs/ThirdParty/Python4CPM/MyApp.log if logging level is set to debug
 
 # Terminate signals -> ALWAYS use one of the following three signals to terminate the script
@@ -54,43 +55,82 @@ p4cpm.log_debug("this is an debug message") # logs info into Logs/ThirdParty/Pyt
 # If no signal is call, CPM will not know if the action was successful and display an error
 
 
-# Rotation example
+# Verification example -> verify the username and password are valid
+def verify():
+    # Use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
+    # for your logic in a verification
+    result = True
+    if result is True:
+        p4cpm.log_info("verification successful") # logs info message into Logs/ThirdParty/Python4CPM/MyApp.log
+    else:
+        p4cpm.log_error("something went wrong") # logs error message Logs/ThirdParty/Python4CPM/MyApp.log
+        raise Exception("verify failed") # raise to trigger failed termination signal
+
+
+# Rotation example -> rotate the password of the account
 def change():
     # Use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
     # and p4cpm.secrets.new_password.get() for your logic in a rotation
     result = True
     if result is True:
         p4cpm.log_info("rotation successful") # logs info message into Logs/ThirdParty/Python4CPM/MyApp.log
-        p4cpm.close_success() # terminate with success state
     else:
-        p4cpm.log_error("something went wrong") # logs into message Logs/ThirdParty/Python4CPM/MyApp.log
-        p4cpm.close_fail() # terminate with recoverable failed state
+        p4cpm.log_error("something went wrong") # logs error message Logs/ThirdParty/Python4CPM/MyApp.log
+        raise Exception("change failed") # raise to trigger failed termination signal
+
+
+# Reconcilation example -> use a reconciliation linked account to reset the password of the main account
+def reconcile():
+    # Use p4cpm.args.address, p4cpm.args.username, p4cpm.args.reconcile_username,
+    # p4cpm.secrets.reconcile_password.get() and p4cpm.secrets.new_password.get() for your logic in a reconciliation
+    result = True
+    if result is True:
+        p4cpm.log_info("reconciliation successful") # logs info message into Logs/ThirdParty/Python4CPM/MyApp.log
+    else:
+        p4cpm.log_error("something went wrong") # logs error message Logs/ThirdParty/Python4CPM/MyApp.log
+        raise Exception("reconcile failed") # raise to trigger failed termination signal
 
 
 if __name__ == "__main__":
-    action = p4cpm.args.action
-
-    if action == Python4CPM.ACTION_VERIFY: # attribute holds the verify action value
-        p4cpm.close_fail() # let CPM know there is no logic for this action
-    elif action == Python4CPM.ACTION_LOGON: # attribute holds the logon action value
-        p4cpm.close_fail() # let CPM know there is no logic for this action
-    elif action == Python4CPM.ACTION_CHANGE: # attribute holds the password change action value
-        change()
-    elif action == Python4CPM.ACTION_PRERECONCILE: # attribute holds the pre-reconcile action value
-        p4cpm.close_fail() # let CPM know there is no logic for this action
-    elif action == Python4CPM.ACTION_RECONCILE: # attribute holds the reconcile action value
-        p4cpm.close_fail() # let CPM know there is no logic for this action
-    else:
-        p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
-        p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
+    try:
+        if action == Python4CPM.ACTION_VERIFY: # class attribute ACTION_VERIFY holds the verify action value
+            verify()
+            p4cpm.close_success() # terminate with success state
+        elif p4cpm.args.action == Python4CPM.ACTION_LOGON: # class attribute ACTION_LOGON holds the logon action value
+            pass # read below to understand why passing for this action
+            p4cpm.close_success() # terminate with success state
+        elif p4cpm.args.action == Python4CPM.ACTION_CHANGE: # class attribute ACTION_CHANGE holds the password change action value
+            change()
+            p4cpm.close_success() # terminate with success state
+        elif p4cpm.args.action == Python4CPM.ACTION_PRERECONCILE: # class attribute ACTION_PRERECONCILE holds the pre-reconcile action value
+            pass # read below to understand why passing for this action
+            p4cpm.close_success() # terminate with success state
+        elif p4cpm.args.action == Python4CPM.ACTION_RECONCILE: # class attribute ACTION_RECONCILE holds the reconcile action value
+            reconcile()
+            p4cpm.close_success() # terminate with success state
+            # Alternatively ->
+            ## p4cpm.log_error("reconciliation is not supported") # let the logs know that reconciliation is not supported
+            ## p4cpm.close_fail() # let CPM know to check the logs
+        else:
+            p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
+            p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
+    except Exception as e:
+        p4cpm.log_error(f"{type(e).__name__}: {e}")
+        p4cpm.close_fail()
 ```
 (*) a more realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples).
 
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 1. Verify action -> the sciprt will be executed once with the `p4cpm.args.action` as `Python4CPM.ACTION_VERIFY`.
 2. Change action -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `Python4CPM.ACTION_LOGON` and once as `Python4CPM.ACTION_CHANGE`.
+    - Most of the times for the `Python4CPM.ACTION_LOGON` action you can close with success.
+    - If you do not close `Python4CPM.ACTION_LOGON` with success the script will not be called again with the action `Python4CPM.ACTION_CHANGE`.
+    - Alternatively, you can use `Python4CPM.ACTION_LOGON` for other logic if needed.
 3. Reconcile action -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `Python4CPM.ACTION_PRERECONCILE` and once as `Python4CPM.ACTION_RECONCILE`.
-4. When `p4cpm.args.action` comes as `Python4CPM.ACTION_VERIFY`, `Python4CPM.ACTION_LOGON` and `Python4CPM.ACTION_PRERECONCILE`, `p4cpm.secrets.new_password.get()` will always return an empty string.
+    - Most of the times for the `Python4CPM.ACTION_PRERECONCILE` action you can close with success.
+    - If you do not close `Python4CPM.ACTION_PRERECONCILE` with success the script will not be called again with the action `Python4CPM.ACTION_RECONCILE`.
+    - Alternatively, you can use `Python4CPM.ACTION_PRERECONCILE` for other logic if needed.
+4. When `p4cpm.args.action` comes as `Python4CPM.ACTION_VERIFY`, `Python4CPM.ACTION_LOGON` or `Python4CPM.ACTION_PRERECONCILE`: `p4cpm.secrets.new_password.get()` will always return an empty string.
 5. If a logon account is not linked, `p4cpm.args.logon_username` and `p4cpm.secrets.logon_password.get()` will return an empty string.
 6. If a reconcile account is not linked, `p4cpm.args.reconcile_username` and `p4cpm.secrets.reconcile_password.get()` will return an empty string.
 
@@ -108,7 +148,7 @@ As with any python venv, you can install dependancies in your venv.
 
 TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.
 For dev purposes, `TPCHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts.
-This is only available if you install this module (in a dev workstation) with:
+This is **only** available if you install this module (in a dev workstation) with:
 
 ```bash
 pip install git+https://github.com/gonatienza/python4cpm
@@ -138,6 +178,7 @@ p4cpm = TPCHelper.run(
     logon_username="ldoe", # populate with the logon account username from your linked logon account
     reconcile_username="rdoe", # ppopulate with the reconcile account username from your linked logon account
     logging="yes", # populate with the PythonLogging parameter from the platform: "yes" or "no"
+    logging_level="info", # populate with the PythonLoggingLevel parameter from the platform: "info" or "debug"
     password=password,
     logon_password=logon_password,
     reconcile_password=reconcile_password,
@@ -150,7 +191,12 @@ p4cpm.log_info("success!")
 p4cpm.close_success()
 
 # Remember for your final script:
-# changing the definition of p4cpm from TPCHelper.run() to Python4CPM("MyApp")
-# remove any secrets prompting
-# remove the TPCHelper import
+## changing the definition of p4cpm from TPCHelper.run() to Python4CPM("MyApp")
+## remove any secrets prompting
+## remove the TPCHelper import
 ```
+
+Remember for your final script:
+- Change the definition of `p4cpm` from `p4cpm = TPCHelper.run(**kwargs)` to `p4cpm = Python4CPM("MyApp")`.
+- Remove any secrets prompting or interactive interruptions.
+- Remove the import of `TPCHelper`.  If not, you will trigger an `ImportError` during execution in CPM.
