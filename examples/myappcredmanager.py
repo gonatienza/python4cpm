@@ -1,17 +1,17 @@
 # ruff: noqa S105, S310
 
+from python4cpm import Python4CPM
 from urllib.request import Request, urlopen
 import json
-from python4cpm import Python4CPM
+
+
+P4CPM = Python4CPM("MyApp")
 
 
 TOKEN_URL_FORMAT = "https://{}:8443/token"
 VERIFY_URL_FORMAT = "https://{}:8443/verify"
 CHANGE_URL_FORMAT = "https://{}:8443/change"
 RECONCILE_URL_FORMAT = "https://{}:8443/reconcile"
-
-
-P4CPM = Python4CPM("MyApp")
 
 
 def _get_payload(from_reconcile):

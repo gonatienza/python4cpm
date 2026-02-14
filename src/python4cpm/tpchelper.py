@@ -12,6 +12,7 @@ class TPCHelper:
         logon_username: str = "",
         reconcile_username: str = "",
         logging: str = "",
+        logging_level: str = "",
         password: str = "",
         logon_password: str = "",
         reconcile_password: str = "",
@@ -24,7 +25,8 @@ class TPCHelper:
             f"--{Args.ARGS[2]}={username}",
             f"--{Args.ARGS[3]}={logon_username}",
             f"--{Args.ARGS[4]}={reconcile_username}",
-            f"--{Args.ARGS[5]}={logging}"
+            f"--{Args.ARGS[5]}={logging}",
+            f"--{Args.ARGS[6]}={logging_level}"
         ]
         secrets = [
             password,
