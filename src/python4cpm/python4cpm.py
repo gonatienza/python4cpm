@@ -12,7 +12,8 @@ class Args:
         "username",
         "logon_username",
         "reconcile_username",
-        "logging"
+        "logging",
+        "logging_level"
     )
 
     def __init__(
@@ -22,7 +23,8 @@ class Args:
         username: str,
         reconcile_username: str,
         logon_username: str,
-        logging: str
+        logging: str,
+        logging_level: str
     ) -> None:
         self._action = action
         self._address = address
@@ -30,6 +32,7 @@ class Args:
         self._reconcile_username = reconcile_username
         self._logon_username = logon_username
         self._logging = logging
+        self._logging_level = logging_level
 
     @property
     def action(self) -> str:
@@ -54,6 +57,10 @@ class Args:
     @property
     def logging(self) -> str:
         return self._logging
+
+    @property
+    def logging_level(self) -> str:
+        return self._logging_level
 
 
 class Secret:
@@ -117,10 +124,15 @@ class Python4CPM:
         ACTION_PRERECONCILE,
         ACTION_RECONCILE,
     )
-    LOGS_DIR = os.path.join("Logs", "ThirdParty", "Python4CPM")
+    _LOGS_DIR = os.path.join("Logs", "ThirdParty", "Python4CPM")
     _CPM_ROOT_DIR = "C:\\Program Files (x86)\\CyberArk\\Password Manager"
     if os.path.exists(_CPM_ROOT_DIR):
-        LOGS_DIR = os.path.join(_CPM_ROOT_DIR, LOGS_DIR)
+        _LOGS_DIR = os.path.join(_CPM_ROOT_DIR, _LOGS_DIR)
+    _LOGGING_ENABLED_VALUE = "yes"
+    _LOGGING_LEVELS = {
+        "info": logging.INFO,
+        "debug": logging.DEBUG
+    }
     SUCCESS_PROMPT = "SUCCESS"
     FAILED_RECOVERABLE_PROMPT = "FAILED_RECOVERABLE"
     FAILED_UNRECOVERABLE_PROMPT = "FAILED_UNRECOVERABLE"
@@ -147,6 +159,10 @@ class Python4CPM:
     @property
     def logger(self) -> logging.Logger:
         return self._logger
+
+    def log_debug(self, message: str) -> None:
+        if self._logger is not None:
+            self._logger.debug(message)
 
     def log_info(self, message: str) -> None:
         if self._logger is not None:
@@ -199,11 +215,15 @@ class Python4CPM:
                 self.log_info(f"{common_message} [NOT SET]")
 
     def _get_logger(self, name: str) -> logging.Logger:
-        if self._args.logging and self._args.logging.lower() == "yes":
-            os.makedirs(self.LOGS_DIR, exist_ok=True)
-            logs_file = os.path.join(self.LOGS_DIR, f"{name}.log")
+        if self._args.logging.lower() == self._LOGGING_ENABLED_VALUE:
+            os.makedirs(self._LOGS_DIR, exist_ok=True)
+            logs_file = os.path.join(self._LOGS_DIR, f"{name}.log")
             logger = logging.getLogger(name)
-            logger.setLevel(logging.INFO)
+            logging_level = self._args.logging_level.lower()
+            if logging_level in self._LOGGING_LEVELS:
+                logger.setLevel(self._LOGGING_LEVELS[logging_level])
+            else:
+                logger.setLevel(self._LOGGING_LEVELS["info"])
             handler = RotatingFileHandler(
                 filename=logs_file,
                 maxBytes=1 * 1024 * 1024,
@@ -220,10 +240,10 @@ class Python4CPM:
         return logger
 
     def close_fail(self, unrecoverable: bool = False) -> None:
-        if unrecoverable is True:
-            prompt = self.FAILED_UNRECOVERABLE_PROMPT
-        else:
+        if unrecoverable is False:
             prompt = self.FAILED_RECOVERABLE_PROMPT
+        else:
+            prompt = self.FAILED_UNRECOVERABLE_PROMPT
         self.log_error(f"Python4CPM.close_fail: closing with {prompt}")
         print(prompt)
         sys.exit(1)
