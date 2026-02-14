@@ -62,13 +62,13 @@ INPUT_PROMPTS = [
     PROMPTS["SetReconcilePasswordPronmpt"],
     PROMPTS["SetNewPasswordPrompt"]
 ]
-SUCCESS_PROMPT = PROMPTS["SuccessPrompt"]
-FAILED_RECOVERABLE_PROMPT = PROMPTS["FailedRecoverablePrompt"]
-FAILED_UNRECOVERABLE_PROMPT = PROMPTS["FailedUnrecoverablePrompt"]
+SUCCESS_PROMPT_FROM_INI = PROMPTS["SuccessPrompt"]
+FAILED_RECOVERABLE_PROMPT_FROM_INI = PROMPTS["FailedRecoverablePrompt"]
+FAILED_UNRECOVERABLE_PROMPT_FROM_INI = PROMPTS["FailedUnrecoverablePrompt"]
 CLOSE_SIGNALS = [
-    Python4CPM.SUCCESS_PROMPT,
-    Python4CPM.FAILED_RECOVERABLE_PROMPT,
-    Python4CPM.FAILED_UNRECOVERABLE_PROMPT
+    Python4CPM._SUCCESS_PROMPT,
+    Python4CPM._FAILED_RECOVERABLE_PROMPT,
+    Python4CPM._FAILED_UNRECOVERABLE_PROMPT
 ]
 
 
@@ -130,17 +130,17 @@ def test_prompts(close, monkeypatch, capsys):
         with pytest.raises(SystemExit) as e:
             p4cpm.close_success()
         assert e.value.code == 0 # noqa: S101
-        close_prompt = SUCCESS_PROMPT
+        close_prompt = SUCCESS_PROMPT_FROM_INI
     elif close == CLOSE_SIGNALS[1]:
         with pytest.raises(SystemExit) as e:
             p4cpm.close_fail()
         assert e.value.code == 1 # noqa: S101
-        close_prompt = FAILED_RECOVERABLE_PROMPT
+        close_prompt = FAILED_RECOVERABLE_PROMPT_FROM_INI
     elif close == CLOSE_SIGNALS[2]:
         with pytest.raises(SystemExit) as e:
             p4cpm.close_fail(unrecoverable=True)
         assert e.value.code == 1 # noqa: S101
-        close_prompt = FAILED_UNRECOVERABLE_PROMPT
+        close_prompt = FAILED_UNRECOVERABLE_PROMPT_FROM_INI
     prompts = INPUT_PROMPTS + [close_prompt]
     out = capsys.readouterr().out.splitlines()
     assert out == prompts # noqa: S101
