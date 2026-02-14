@@ -133,9 +133,9 @@ class Python4CPM:
         "info": logging.INFO,
         "debug": logging.DEBUG
     }
-    SUCCESS_PROMPT = "SUCCESS"
-    FAILED_RECOVERABLE_PROMPT = "FAILED_RECOVERABLE"
-    FAILED_UNRECOVERABLE_PROMPT = "FAILED_UNRECOVERABLE"
+    _SUCCESS_PROMPT = "SUCCESS"
+    _FAILED_RECOVERABLE_PROMPT = "FAILED_RECOVERABLE"
+    _FAILED_UNRECOVERABLE_PROMPT = "FAILED_UNRECOVERABLE"
 
     def __init__(self, name: str) -> None:
         self._name = name
@@ -241,15 +241,15 @@ class Python4CPM:
 
     def close_fail(self, unrecoverable: bool = False) -> None:
         if unrecoverable is False:
-            prompt = self.FAILED_RECOVERABLE_PROMPT
+            prompt = self._FAILED_RECOVERABLE_PROMPT
         else:
-            prompt = self.FAILED_UNRECOVERABLE_PROMPT
+            prompt = self._FAILED_UNRECOVERABLE_PROMPT
         self.log_error(f"Python4CPM.close_fail: closing with {prompt}")
         print(prompt)
         sys.exit(1)
 
     def close_success(self) -> None:
-        prompt = self.SUCCESS_PROMPT
+        prompt = self._SUCCESS_PROMPT
         self.log_info(f"Python4CPM.close_success: closing with {prompt}")
         print(prompt)
         sys.exit(0)
