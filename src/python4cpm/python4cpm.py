@@ -215,28 +215,29 @@ class Python4CPM:
                 self.log_info(f"{common_message} [NOT SET]")
 
     def _get_logger(self, name: str) -> logging.Logger:
-        if self._args.logging.lower() == self._LOGGING_ENABLED_VALUE:
-            os.makedirs(self._LOGS_DIR, exist_ok=True)
-            logs_file = os.path.join(self._LOGS_DIR, f"{name}.log")
-            logger = logging.getLogger(name)
-            logging_level = self._args.logging_level.lower()
-            if logging_level in self._LOGGING_LEVELS:
-                logger.setLevel(self._LOGGING_LEVELS[logging_level])
-            else:
-                logger.setLevel(self._LOGGING_LEVELS["info"])
-            handler = RotatingFileHandler(
-                filename=logs_file,
-                maxBytes=1 * 1024 * 1024,
-                backupCount=2
-            )
-            formatter = logging.Formatter(
-                fmt="%(asctime)s | %(levelname)s | %(message)s",
-                datefmt="%Y-%m-%d %H:%M:%S"
-            )
-            handler.setFormatter(formatter)
-            logger.addHandler(handler)
+        if self._args.logging is None:
+            return None
+        if self._args.logging.lower() != self._LOGGING_ENABLED_VALUE:
+            return None
+        os.makedirs(self._LOGS_DIR, exist_ok=True)
+        logs_file = os.path.join(self._LOGS_DIR, f"{name}.log")
+        logger = logging.getLogger(name)
+        logging_level = self._args.logging_level.lower()
+        if logging_level in self._LOGGING_LEVELS:
+            logger.setLevel(self._LOGGING_LEVELS[logging_level])
         else:
-            logger = None
+            logger.setLevel(self._LOGGING_LEVELS["info"])
+        handler = RotatingFileHandler(
+            filename=logs_file,
+            maxBytes=1 * 1024 * 1024,
+            backupCount=2
+        )
+        formatter = logging.Formatter(
+            fmt="%(asctime)s | %(levelname)s | %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
+        )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
         return logger
 
     def close_fail(self, unrecoverable: bool = False) -> None:
