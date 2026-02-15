@@ -14,7 +14,7 @@ def verify():
         autocommit=True
     ) as conn:
         with conn.cursor():
-            P4CPM.log_info("change: Password verified successfully")
+            P4CPM.log_info("verify: Password verified successfully")
 
 
 def change(from_reconcile=False):
