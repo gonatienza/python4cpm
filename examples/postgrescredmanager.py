@@ -5,12 +5,23 @@ from psycopg import connect, sql
 P4CPM = Python4CPM("Postgres")
 
 
-def verify():
+def _get_creds(from_reconcile=False):
+    if from_reconcile is False:
+        username = P4CPM.args.username
+        password = P4CPM.secrets.password.get()
+    else:
+        username = P4CPM.args.reconcile_username
+        password = P4CPM.secrets.reconcile_username.get()
+    return username, password
+
+
+def verify(from_reconcile=False):
+    username, password = _get_creds(from_reconcile)
     with connect(
         host=P4CPM.args.address,
         dbname="postgres",
-        user=P4CPM.args.username,
-        password=P4CPM.secrets.password.get(),
+        user=username,
+        password=password,
         autocommit=True
     ) as conn:
         with conn.cursor():
@@ -18,12 +29,7 @@ def verify():
 
 
 def change(from_reconcile=False):
-    if from_reconcile is False:
-        username = P4CPM.args.username
-        password = P4CPM.secrets.password.get()
-    else:
-        username = P4CPM.args.reconcile_username
-        password = P4CPM.secrets.reconcile_username.get()
+    username, password = _get_creds(from_reconcile)
     with connect(
         host=P4CPM.args.address,
         dbname="postgres",
@@ -48,13 +54,13 @@ def main():
             verify()
             P4CPM.close_success()
         elif action == Python4CPM.ACTION_LOGON:
-            pass
+            verify()
             P4CPM.close_success()
         elif action == Python4CPM.ACTION_CHANGE:
             change()
             P4CPM.close_success()
         elif action == Python4CPM.ACTION_PRERECONCILE:
-            pass
+            verify(from_reconcile=True)
             P4CPM.close_success()
         elif action == Python4CPM.ACTION_RECONCILE:
             change(from_reconcile=True)
