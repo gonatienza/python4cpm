@@ -72,6 +72,15 @@ CLOSE_SIGNALS = [
 ]
 
 
+class InputHandler:
+    def __init__(self, inputs):
+        self.iter_inputs = iter(inputs)
+
+    def __call__(self, prompt):
+        print(prompt)
+        return next(self.iter_inputs)
+
+
 @pytest.mark.parametrize("action,logging,logging_level", ARGS_PARAMS)
 def test_main(action, logging, logging_level,  monkeypatch):
     args = ARGS + [
@@ -86,8 +95,8 @@ def test_main(action, logging, logging_level,  monkeypatch):
     elif action in ACTIONS_WITH_NEW_PASSWORD:
         inputs = INPUTS_WITH_NEW_PASSWORD
     print(f"inputs -> {inputs}")
-    iter_inputs = iter(inputs)
-    monkeypatch.setattr("builtins.input", lambda _: next(iter_inputs))
+    input_handler = InputHandler(inputs)
+    monkeypatch.setattr("builtins.input", input_handler)
     p4cpm = Python4CPM("PyTest")
     for k, v in vars(p4cpm.args).items():
         print(f"{k} -> {v}")
@@ -114,17 +123,13 @@ def test_main(action, logging, logging_level,  monkeypatch):
             assert p4cpm._logger is None # noqa: S101
 
 
-def prompt_interact(prompt):
-    print(prompt)
-    iter_inputs = iter(INPUTS_WITH_NEW_PASSWORD)
-    return next(iter_inputs)
-
-
 @pytest.mark.parametrize("close", CLOSE_SIGNALS)
 def test_prompts(close, monkeypatch, capsys):
     args = ARGS + ["--action=verifypass", "--logging=no"]
     monkeypatch.setattr(sys, "argv", args)
-    monkeypatch.setattr("builtins.input", prompt_interact)
+    inputs = INPUTS_WITH_NEW_PASSWORD
+    input_handler = InputHandler(inputs)
+    monkeypatch.setattr("builtins.input", input_handler)
     p4cpm = Python4CPM("PyTest")
     if close == CLOSE_SIGNALS[0]:
         with pytest.raises(SystemExit) as e:
