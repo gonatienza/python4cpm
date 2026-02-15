@@ -56,9 +56,15 @@ p4cpm.log_debug("this is an debug message") # logs info into Logs/ThirdParty/Pyt
 
 
 # Verification example -> verify the username and password are valid
-def verify():
-    # Use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
-    # for your logic in a verification
+def verify(from_reconcile=False):
+    if from_reconcile is False:
+        pass
+        # Use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
+        # for your logic in a verification
+    else:
+        pass
+        # Use p4cpm.args.address, p4cpm.args.reconcile_username, p4cpm.secrets.reconcile_password.get()
+        # for your logic in a verification
     result = True
     if result is True:
         p4cpm.log_info("verification successful") # logs info message into Logs/ThirdParty/Python4CPM/MyApp.log
@@ -68,9 +74,15 @@ def verify():
 
 
 # Rotation example -> rotate the password of the account
-def change():
-    # Use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
-    # and p4cpm.secrets.new_password.get() for your logic in a rotation
+def change(from_reconcile=False):
+    if from_reconcile is False:
+        pass
+        # Use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
+        # and p4cpm.secrets.new_password.get() for your logic in a rotation
+    else:
+        pass
+        # Use p4cpm.args.address, p4cpm.args.username, p4cpm.args.reconcile_username,
+        # p4cpm.secrets.reconcile_password.get() and p4cpm.secrets.new_password.get() for your logic in a reconciliation
     result = True
     if result is True:
         p4cpm.log_info("rotation successful") # logs info message into Logs/ThirdParty/Python4CPM/MyApp.log
@@ -79,34 +91,25 @@ def change():
         raise Exception("change failed") # raise to trigger failed termination signal
 
 
-# Reconcilation example -> use a reconciliation linked account to reset the password of the main account
-def reconcile():
-    # Use p4cpm.args.address, p4cpm.args.username, p4cpm.args.reconcile_username,
-    # p4cpm.secrets.reconcile_password.get() and p4cpm.secrets.new_password.get() for your logic in a reconciliation
-    result = True
-    if result is True:
-        p4cpm.log_info("reconciliation successful") # logs info message into Logs/ThirdParty/Python4CPM/MyApp.log
-    else:
-        p4cpm.log_error("something went wrong") # logs error message Logs/ThirdParty/Python4CPM/MyApp.log
-        raise Exception("reconcile failed") # raise to trigger failed termination signal
-
-
 if __name__ == "__main__":
     try:
         if action == Python4CPM.ACTION_VERIFY: # class attribute ACTION_VERIFY holds the verify action value
             verify()
             p4cpm.close_success() # terminate with success state
         elif p4cpm.args.action == Python4CPM.ACTION_LOGON: # class attribute ACTION_LOGON holds the logon action value
-            pass # read below to understand why passing for this action
+            verify()
             p4cpm.close_success() # terminate with success state
         elif p4cpm.args.action == Python4CPM.ACTION_CHANGE: # class attribute ACTION_CHANGE holds the password change action value
             change()
             p4cpm.close_success() # terminate with success state
         elif p4cpm.args.action == Python4CPM.ACTION_PRERECONCILE: # class attribute ACTION_PRERECONCILE holds the pre-reconcile action value
-            pass # read below to understand why passing for this action
+            verify(from_reconcile=True)
             p4cpm.close_success() # terminate with success state
+            # Alternatively ->
+            ## p4cpm.log_error("reconciliation is not supported") # let the logs know that reconciliation is not supported
+            ## p4cpm.close_fail() # let CPM know to check the logs
         elif p4cpm.args.action == Python4CPM.ACTION_RECONCILE: # class attribute ACTION_RECONCILE holds the reconcile action value
-            reconcile()
+            change(from_reconcile=True)
             p4cpm.close_success() # terminate with success state
             # Alternatively ->
             ## p4cpm.log_error("reconciliation is not supported") # let the logs know that reconciliation is not supported
@@ -121,15 +124,11 @@ if __name__ == "__main__":
 (*) a more realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples).
 
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
-1. Verify action -> the sciprt will be executed once with the `p4cpm.args.action` as `Python4CPM.ACTION_VERIFY`.
-2. Change action -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `Python4CPM.ACTION_LOGON` and once as `Python4CPM.ACTION_CHANGE`.
-    - Most of the times for the `Python4CPM.ACTION_LOGON` action you can close with success.
-    - If you do not close `Python4CPM.ACTION_LOGON` with success the script will not be called again with the action `Python4CPM.ACTION_CHANGE`.
-    - Alternatively, you can use `Python4CPM.ACTION_LOGON` for other logic if needed.
-3. Reconcile action -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `Python4CPM.ACTION_PRERECONCILE` and once as `Python4CPM.ACTION_RECONCILE`.
-    - Most of the times for the `Python4CPM.ACTION_PRERECONCILE` action you can close with success.
-    - If you do not close `Python4CPM.ACTION_PRERECONCILE` with success the script will not be called again with the action `Python4CPM.ACTION_RECONCILE`.
-    - Alternatively, you can use `Python4CPM.ACTION_PRERECONCILE` for other logic if needed.
+1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `Python4CPM.ACTION_VERIFY`.
+2. Change -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `Python4CPM.ACTION_LOGON` and once as `Python4CPM.ACTION_CHANGE`.
+    - If all actions are not terminated with `p4cpm.close_success()` the overall change will fail.
+3. Reconcile -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `Python4CPM.ACTION_PRERECONCILE` and once as `Python4CPM.ACTION_RECONCILE`.
+    - If all actions are not terminated with `p4cpm.close_success()` the overall reconcile will fail.
 4. When `p4cpm.args.action` comes as `Python4CPM.ACTION_VERIFY`, `Python4CPM.ACTION_LOGON` or `Python4CPM.ACTION_PRERECONCILE`: `p4cpm.secrets.new_password.get()` will always return an empty string.
 5. If a logon account is not linked, `p4cpm.args.logon_username` and `p4cpm.secrets.logon_password.get()` will return an empty string.
 6. If a reconcile account is not linked, `p4cpm.args.reconcile_username` and `p4cpm.secrets.reconcile_password.get()` will return an empty string.
