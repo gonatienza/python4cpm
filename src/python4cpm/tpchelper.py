@@ -28,18 +28,17 @@ class TPCHelper:
             f"--{Args.ARGS[5]}={logging}",
             f"--{Args.ARGS[6]}={logging_level}"
         ]
-        secrets = [
+        secrets = (
             password,
             logon_password,
             reconcile_password,
             new_password
-        ]
-        iter_secrets = iter(secrets)
+        )
         with mock.patch(
             "sys.argv",
             args
         ), mock.patch(
             "builtins.input",
-            lambda _: next(iter_secrets)
+            side_effect=secrets
         ):
             return Python4CPM(cls.__name__)
