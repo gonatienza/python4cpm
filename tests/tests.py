@@ -127,8 +127,7 @@ def test_main(action, logging, logging_level,  monkeypatch):
 def test_prompts(close, monkeypatch, capsys):
     args = ARGS + ["--action=verifypass", "--logging=no"]
     monkeypatch.setattr(sys, "argv", args)
-    inputs = INPUTS_WITH_NEW_PASSWORD
-    input_handler = InputHandler(inputs)
+    input_handler = InputHandler(INPUTS_WITH_NEW_PASSWORD)
     monkeypatch.setattr("builtins.input", input_handler)
     p4cpm = Python4CPM("PyTest")
     if close == CLOSE_SIGNALS[0]:
@@ -175,6 +174,7 @@ def test_tpc_helper():
     assert p4cpm.args.logon_username == INPUTS["logon_username"] # noqa: S101
     assert p4cpm.args.reconcile_username == INPUTS["reconcile_username"] # noqa: S101
     assert p4cpm.args.logging == logging # noqa: S101
+    assert p4cpm.args.logging_level == logging_level # noqa: S101
     assert p4cpm.secrets.password.get() == INPUTS["password"] # noqa: S101
     assert p4cpm.secrets.logon_password.get() == INPUTS["logon_password"] # noqa: S101
     assert p4cpm.secrets.reconcile_password.get() == INPUTS["reconcile_password"] # noqa: S101
