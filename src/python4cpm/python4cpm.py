@@ -133,9 +133,10 @@ class Python4CPM:
         "info": logging.INFO,
         "debug": logging.DEBUG
     }
-    _SUCCESS_PROMPT = ":::SUCCESS:::"
-    _FAILED_RECOVERABLE_PROMPT = ":::FAILED_RECOVERABLE:::"
-    _FAILED_UNRECOVERABLE_PROMPT = ":::FAILED_UNRECOVERABLE:::"
+    _SECRETS_PADDING = "@@@"
+    _SUCCESS_PROMPT = "~~~SUCCESS~~~"
+    _FAILED_RECOVERABLE_PROMPT = "~~~FAILED_RECOVERABLE~~~"
+    _FAILED_UNRECOVERABLE_PROMPT = "~~~FAILED_UNRECOVERABLE~~~"
 
     def __init__(self, name: str) -> None:
         self._name = name
@@ -187,10 +188,11 @@ class Python4CPM:
     def _get_secrets(self) -> dict:
         secrets = {}
         try:
-            for prompt in Secrets.SECRETS:
-                secrets[prompt] = input(f":::{prompt}:::")
-                common_message = f"Python4CPM._get_secrets: {prompt} ->"
-                if secrets[prompt]:
+            for secret in Secrets.SECRETS:
+                prompt = self._SECRETS_PADDING + secret + self._SECRETS_PADDING
+                secrets[secret] = input(prompt)
+                common_message = f"Python4CPM._get_secrets: {secret} ->"
+                if secrets[secret]:
                     self.log_info(f"{common_message} [*******]")
                 else:
                     self.log_info(f"{common_message} [NOT SET]")
