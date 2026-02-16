@@ -133,9 +133,9 @@ class Python4CPM:
         "info": logging.INFO,
         "debug": logging.DEBUG
     }
-    _SUCCESS_PROMPT = "SUCCESS"
-    _FAILED_RECOVERABLE_PROMPT = "FAILED_RECOVERABLE"
-    _FAILED_UNRECOVERABLE_PROMPT = "FAILED_UNRECOVERABLE"
+    _SUCCESS_PROMPT = ":::SUCCESS:::"
+    _FAILED_RECOVERABLE_PROMPT = ":::FAILED_RECOVERABLE:::"
+    _FAILED_UNRECOVERABLE_PROMPT = ":::FAILED_UNRECOVERABLE:::"
 
     def __init__(self, name: str) -> None:
         self._name = name
@@ -188,7 +188,7 @@ class Python4CPM:
         secrets = {}
         try:
             for prompt in Secrets.SECRETS:
-                secrets[prompt] = input(prompt)
+                secrets[prompt] = input(f":::{prompt}:::")
                 common_message = f"Python4CPM._get_secrets: {prompt} ->"
                 if secrets[prompt]:
                     self.log_info(f"{common_message} [*******]")
@@ -202,8 +202,7 @@ class Python4CPM:
     def _verify_action(self) -> None:
         if self.args.action not in self._VALID_ACTIONS:
             self.log_warning(
-                f"Python4CPM._verify_action: unkonwn action "
-                f"-> {self.args.action}"
+                f"Python4CPM._verify_action: unkonwn action -> {self.args.action}"
             )
 
     def _log_args(self) -> None:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python4cpm"
-version = "1.0.7"
+version = "1.0.8"
 description = "Python for CPM"
 authors = [
   { name = "Gonzalo Atienza Rela", email = "gonatienza@gmail.com" }
