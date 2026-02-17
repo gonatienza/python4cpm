@@ -8,10 +8,13 @@ on:
       - main
     paths:
       - 'src/**'
+  workflow_dispatch:
 
 jobs:
   publish:
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event.pull_request.merged == true ||
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     
     permissions:
@@ -35,4 +38,3 @@ jobs:
     
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-  
