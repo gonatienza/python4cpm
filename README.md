@@ -6,17 +6,29 @@ This platform allows you to duplicate it multiple times, simply changing its set
 
 ## Installation
 
-1. Install Python in CPM.  **IMPORTANT:** *Python must be installed for all users when running the install wizard*.
-2. Run in CPM (from powershell or cmd) `py -m venv c:\venv` to create a venv.  Use the default location `c:\venv` or a custom one (e.g., `c:\my-venv-path`).
-3. Download the latest platform [zip file](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm.zip).
-4. Import the platform zip file into Privilege Cloud/PVWA `(Administration -> Platform Management -> Import platform)`.
-5. Craft your python script and place it within the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
-6. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
-7. Edit the duplicated platform and specify the path of your placed script in the bin folder of CPM, under `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value` (e.g., `bin\myapp.py`).
-8. If you used a custom location in step 2, also update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonExePath -> Value` with the custom path for the venv's `python.exe` file (e.g., `c:\my-venv-path\Scripts\python.exe`).
-9. If you want to disable logging, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging -> Value` to `no`.
-10. If you want to change the logging level to `debug`, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel -> Value` to `debug`.
-11. For new applications repeat steps from 5 to 10.
+### Preparing Python
+
+1. Install Python in CPM.  **Python must be installed for all users when running the install wizard**.
+2. Create a venv in CPM, by running `py -m venv c:\venv`.  Use the default location `c:\venv` or a custom one (e.g., `c:\my-venv-path`).
+3. Install `python4cpm` in your venv:
+    - If your CPM can connect to the internet, install with `c:\venv\Scripts\pip install python4cpm`.
+    - If your CPM cannot connect to the internet:
+        - Download the [latest wheel](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-wheel.zip).
+        - Copy the file to CPM, extract to a temporary location.
+        - From the temporary location run `c:\venv\Scripts\pip install --no-index --find-links=.\python4cpm-wheel python4cpm`.
+
+
+### Importing the platform
+
+1. Download the [latest platform zip file](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-platform.zip).
+2. Import the platform zip file into Privilege Cloud/PVWA `(Administration -> Platform Management -> Import platform)`.
+3. Craft your python script and place it within the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
+4. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
+5. Edit the duplicated platform and specify the path of your placed script in the bin folder of CPM, under `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value` (e.g., `bin\myapp.py`).
+6. If you used a custom venv location, also update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonExePath -> Value` with the custom path for the venv's `python.exe` file (e.g., `c:\my-venv-path\Scripts\python.exe`).
+7. If you want to disable logging, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging -> Value` to `no`.
+8. If you want to change the logging level to `debug`, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel -> Value` to `debug`.
+9. For new applications repeat steps from 3 to 8.
 
 
 ## Python Script
@@ -147,14 +159,10 @@ As with any python venv, you can install dependancies in your venv.
 
 TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.
 For dev purposes, `TPCHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts.
-This is **ONLY** available if you install this module (in a dev workstation) with:
+Install this module (in a dev workstation) with:
 
 ```bash
-pip install git+https://github.com/gonatienza/python4cpm
-```
-or
-```bash
-pip install https://github.com/gonatienza/python4cpm/archive/refs/tags/latest.tar.gz
+pip install https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-latest-py3-none-any.whl
 ```
 
 ### Example:
@@ -198,4 +206,4 @@ p4cpm.close_success()
 Remember for your final script:
 - Change the definition of `p4cpm` from `p4cpm = TPCHelper.run(**kwargs)` to `p4cpm = Python4CPM("MyApp")`.
 - Remove any secrets prompting or interactive interruptions.
-- Remove the import of `TPCHelper`.  If not, you will trigger an `ImportError` during execution in CPM.
+- Remove the import of `TPCHelper`.
