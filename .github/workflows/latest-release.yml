@@ -56,7 +56,6 @@ jobs:
 
       - name: Delete latest tag
         run: |
-          git tag -d latest || true
           git push -d origin latest || true
 
       - name: Create new release
