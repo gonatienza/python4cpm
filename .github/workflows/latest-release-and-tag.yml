@@ -1,4 +1,4 @@
-name: Update 'latest' Release
+name: Update 'latest' Release and Tag
 
 on:
   push:
@@ -68,3 +68,21 @@ jobs:
             --notes "Automatically generated files for main branch update."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-latest-tag:
+    needs: update-latest-release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag -f latest
+          git push -f origin latest
