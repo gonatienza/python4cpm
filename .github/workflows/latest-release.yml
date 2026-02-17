@@ -63,6 +63,7 @@ jobs:
           gh release create latest \
             dist/python4cpm-platform.zip \
             dist/python4cpm-wheel.zip \
-            --title "Latest Release"
+            --title "Latest Release" \
+            --notes "Automatically generated files for main branch update."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
