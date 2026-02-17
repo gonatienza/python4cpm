@@ -30,14 +30,14 @@ jobs:
           python -m build
 
       - name: Build Platform ZIP
+        working-directory: src/plugin
         run: |
-          cd src/plugin
           zip -j ../../dist/python4cpm-platform.zip *
 
       - name: Build Wheel ZIP
+        working-directory: dist
         run: |
-          cd dist
-          zip -j ../../dist/python4cpm-wheel.zip *.whl
+          zip -j python4cpm-wheel.zip *.whl
 
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
