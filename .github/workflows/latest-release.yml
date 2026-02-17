@@ -15,14 +15,29 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
 
-      - name: Create ZIP
+      - name: Install build tools
         run: |
-          mkdir -p dist
+          python -m pip install --upgrade pip
+          pip install build
+   
+      - name: Build Wheel
+        run: |
+          python -m build
+
+      - name: Build Platform ZIP
+        run: |
           cd src/plugin
-          zip -j ../../dist/python4cpm.zip * ../python4cpm/python4cpm.py
+          zip -j ../../dist/python4cpm-platform.zip *
+
+      - name: Build Wheel ZIP
+        run: |
+          cd dist
+          zip -j ../../dist/python4cpm-wheel.zip *.whl
 
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
@@ -45,8 +60,10 @@ jobs:
 
       - name: Create new release
         run: |
-          gh release create latest dist/python4cpm.zip \
+          gh release create latest \
+            dist/python4cpm-platform.zip \
+            dist/python4cpm-wheel.zip \
             --title "Latest Release" \
-            --notes "Automatically generated ZIP for main branch update."
+            --notes "Automatically generated files for main branch update."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
