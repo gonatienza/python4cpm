@@ -162,7 +162,7 @@ For dev purposes, `TPCHelper` is a companion helper that simplifies the instanti
 Install this module (in a dev workstation) with:
 
 ```bash
-pip install https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-latest-py3-none-any.whl
+pip install python4cpm
 ```
 
 ### Example:
