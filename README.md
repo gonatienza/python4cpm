@@ -14,7 +14,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
     - If your CPM can connect to the internet, install with `c:\venv\Scripts\pip install python4cpm`.
     - If your CPM cannot connect to the internet:
         - Download the [latest wheel](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-wheel.zip).
-        - Copy the file to CPM, extract to a temporary location.
+        - Copy the file to CPM and extract to a temporary location.
         - From the temporary location run `c:\venv\Scripts\pip install --no-index --find-links=.\python4cpm-wheel python4cpm`.
 
 
