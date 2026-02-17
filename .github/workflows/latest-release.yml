@@ -1,4 +1,4 @@
-name: Update 'latest' Release and Tag
+name: Update 'latest' Release
 
 on:
   push:
@@ -48,16 +48,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Delete existing release
+      - name: Delete latest release
         run: |
-          if gh release view latest &>/dev/null; then
-            echo "Deleting existing 'latest' release..."
-            gh release delete latest -y
-          else
-            echo "No existing 'latest' release found."
-          fi
+          gh release delete latest -y || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete latest tag
+        run: |
+          git tag -d latest || true
+          git push -d origin latest || true
 
       - name: Create new release
         run: |
@@ -68,21 +68,3 @@ jobs:
             --notes "Automatically generated files for main branch update."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  update-latest-tag:
-    needs: update-latest-release
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git tag -f latest
-          git push -f origin latest
