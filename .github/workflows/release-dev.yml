@@ -1,11 +1,6 @@
-name: Release Latest Version
+name: Release Dev Version
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'src/**'
   workflow_dispatch:
 
 permissions:
@@ -17,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: dev
 
       - uses: actions/setup-python@v4
         with:
@@ -45,6 +42,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: dev
 
       - uses: microsoft/setup-msbuild@v1
 
@@ -70,11 +69,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: dev
 
-      - name: Extract version
+      - name: Set version to dev
         run: |
-          VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=dev" >> $GITHUB_ENV
 
       - uses: actions/download-artifact@v3
         with:
@@ -103,6 +103,6 @@ jobs:
             dist/python4cpm-wheel.zip \
             dist/python4cpm-platform.zip \
             --title "v${VERSION}" \
-            --notes "Release v${VERSION}"
+            --notes "Dev build from branch 'dev'"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
