@@ -9,10 +9,10 @@ namespace CyberArk.Extensions.Python4CPM
         private const string ACTION = "reconcilepass";
 
         public ReconcileAction(List<IAccount> accountList, ILogger logger)
-            :base(accountList, logger)
+            : base(accountList, logger)
         {
         }
-        
+
         protected override bool RequiresNewPassword
         {
             get { return true; }

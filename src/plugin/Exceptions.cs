@@ -19,7 +19,7 @@ namespace CyberArk.Extensions.Python4CPM
             }
         }
 
-        public PythonExecutionException(int exitCode): base()
+        public PythonExecutionException(int exitCode) : base()
         {
             ExitCode = exitCode;
         }
