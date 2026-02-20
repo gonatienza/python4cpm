@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: dev
 
@@ -32,7 +32,7 @@ jobs:
           cd dist
           zip -j python4cpm-wheel.zip *.whl
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: wheel-artifact
           path: dist/python4cpm-wheel.zip
@@ -41,7 +41,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: dev
 
@@ -54,11 +54,11 @@ jobs:
         run: |
           mkdir dist
           mkdir dist\platform
-          copy src\plugin\bin\Release\* dist\platform\
+          copy src\plugin\bin\Release\CyberArk.Extensions.Python4CPM.dll dist\platform\
           copy src\plugin\platform\* dist\platform\
           Compress-Archive -Path dist\platform\* -DestinationPath dist\python4cpm-platform.zip -Force
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: platform-artifact
           path: dist/python4cpm-platform.zip
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: dev
 
@@ -76,12 +76,12 @@ jobs:
         run: |
           echo "VERSION=dev" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: wheel-artifact
           path: dist
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: platform-artifact
           path: dist
@@ -102,7 +102,7 @@ jobs:
           gh release create v${VERSION} \
             dist/python4cpm-wheel.zip \
             dist/python4cpm-platform.zip \
-            --title "v${VERSION}" \
-            --notes "Dev build from branch 'dev'"
+            --title "${VERSION}" \
+            --notes "Release ${VERSION}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
