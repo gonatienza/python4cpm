@@ -3,6 +3,7 @@ from python4cpm.secrets import Secrets
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
 from python4cpm.nethelper import NETHelper
+from python4cpm.logger import _LOGGING_ENABLED_VALUE, _LOGGING_LEVELS
 import json
 import pytest
 import os
@@ -81,12 +82,12 @@ def test_main(action, logging, logging_level,  monkeypatch):
     assert p4cpm.secrets.logon_password.get() == SECRETS["logon_password"] # noqa: S101
     assert p4cpm.secrets.reconcile_password.get() == SECRETS["reconcile_password"] # noqa: S101
     assert p4cpm.secrets.new_password.get() == secrets["PYTHON4CPM_NEW_PASSWORD"] # noqa: S101
-    if logging.lower() in Python4CPM._LOGGING_ENABLED_VALUE:
+    if logging.lower() in _LOGGING_ENABLED_VALUE:
         assert p4cpm._logger # noqa: S101
         if logging_level.lower() == LOGGING_LEVELS[1]:
-            assert p4cpm._logger.level == p4cpm._LOGGING_LEVELS[LOGGING_LEVELS[1]] # noqa: S101
+            assert p4cpm._logger.level == _LOGGING_LEVELS[LOGGING_LEVELS[1]] # noqa: S101
         else:
-            assert p4cpm._logger.level == p4cpm._LOGGING_LEVELS[LOGGING_LEVELS[0]] # noqa: S101
+            assert p4cpm._logger.level == _LOGGING_LEVELS[LOGGING_LEVELS[0]] # noqa: S101
     else:
             assert p4cpm._logger is None # noqa: S101
 
