@@ -9,7 +9,7 @@ namespace CyberArk.Extensions.Python4CPM
         private const string ACTION = "logon";
 
         public LogonAction(List<IAccount> accountList, ILogger logger)
-            :base(accountList, logger)
+            : base(accountList, logger)
         {
         }
 
