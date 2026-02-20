@@ -13,6 +13,11 @@ namespace CyberArk.Extensions.Python4CPM
         {
         }
         
+        protected override bool RequiresNewPassword
+        {
+            get { return true; }
+        }
+
         override public CPMAction ActionName
         {
             get { return CPMAction.reconcilepass; }
@@ -22,7 +27,6 @@ namespace CyberArk.Extensions.Python4CPM
         {
             Logger.MethodStart();
             Logger.WriteLine($"Running action: {ACTION}", LogLevel.INFO);
-
             return RunAndReturn(ACTION, ref platformOutput);
         }
     }

@@ -11,7 +11,7 @@ class SecureString:
         return self._is_encrypted
 
     def get(self) -> str:
-        if self._is_encrypted:
+        if self._is_encrypted and self._secret:
             return Crypto.decrypt(self._secret)
         else:
             return self._secret

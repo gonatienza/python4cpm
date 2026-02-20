@@ -27,8 +27,8 @@ namespace CyberArk.Extensions.Python4CPM
         protected const int CLOSE_SUCCESS = 0;
         protected const int CLOSE_FAILED_UNRECOVERABLE = 8900;
         protected const int CLOSE_FAILED_RECOVERABLE = 8100;
-        protected const int PYTHON_CLOSE_FAILED_UNRECOVERABLE = 89;
-        protected const int PYTHON_CLOSE_FAILED_RECOVERABLE = 81;
+        public const int PYTHON_CLOSE_FAILED_UNRECOVERABLE = 89;
+        public const int PYTHON_CLOSE_FAILED_RECOVERABLE = 81;
         private string PythonExePath;
         private string PythonScriptPath;
         private string PythonLogging;
@@ -36,6 +36,15 @@ namespace CyberArk.Extensions.Python4CPM
 
         public BaseAction(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
+        {
+        }
+
+        protected abstract bool RequiresNewPassword
+        { 
+            get; 
+        }
+
+        protected void GetParams()
         {
             PythonExePath = TargetAccount.ExtraInfoProp[PYTHON_EXE_PATH];
             PythonScriptPath = TargetAccount.ExtraInfoProp[PYTHON_SCRIPT_PATH];
@@ -45,33 +54,6 @@ namespace CyberArk.Extensions.Python4CPM
             Logger.WriteLine($"{PYTHON_SCRIPT_PATH}: {PythonScriptPath}", LogLevel.INFO);
             Logger.WriteLine($"{PYTHON_LOGGING}: {PythonLogging}", LogLevel.INFO);
             Logger.WriteLine($"{PYTHON_LOGGING_LEVEL}: {PythonLoggingLevel}", LogLevel.INFO);
-        }
-
-        private Dictionary<string,string> GetEnv(string action)
-        {
-            string currentPasswordEncBase64 = Crypto.Encrypt(TargetAccount.CurrentPassword);
-            string logonCurrentPasswordEncBase64 = Crypto.Encrypt(LogOnAccount.CurrentPassword);
-            string reconcileCurrentPasswordEncBase64 = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
-            string newPasswordEncBase64 = Crypto.Encrypt(TargetAccount.NewPassword);
-            var envVars = new Dictionary<string, string>
-            {
-                { ENV_ACTION, action },
-                { ENV_ADDRESS, TargetAccount.AccountProp["address"] },
-                { ENV_USERNAME, TargetAccount.AccountProp["username"] },
-                { ENV_LOGON_USERNAME, LogOnAccount.AccountProp["username"] },
-                { ENV_RECONCILE_USERNAME, ReconcileAccount.AccountProp["username"] },
-                { ENV_LOGGING, PythonLogging },
-                { ENV_LOGGING_LEVEL, PythonLoggingLevel },
-                { ENV_PASSWORD, currentPasswordEncBase64 },
-                { ENV_LOGON_PASSWORD, logonCurrentPasswordEncBase64 },
-                { ENV_RECONCILE_PASSWORD, reconcileCurrentPasswordEncBase64 },
-                { ENV_NEW_PASSWORD, newPasswordEncBase64 }
-            };
-            return envVars;
-        }
-
-        protected void PreRunScriptValidation()
-        {
             if (!File.Exists(PythonExePath))
                 throw new FileNotFoundException(
                     $"{PYTHON_EXE_PATH}: {PythonExePath} does not exist"
@@ -81,7 +63,68 @@ namespace CyberArk.Extensions.Python4CPM
                     $"{PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist"
                 );
         }
-        private void RunScript(string action)
+        
+        private Dictionary<string, string> GetEnv(string action)
+        {
+            string address = string.Empty;
+            string username = string.Empty;
+            string logonUsername = string.Empty;
+            string reconcileUsername = string.Empty;
+            string currentPassword = string.Empty;
+            string logonCurrentPassword = string.Empty;
+            string reconcileCurrentPassword = string.Empty;
+            string newPassword = string.Empty;
+            if (TargetAccount.AccountProp.ContainsKey("address"))
+            {
+                address = TargetAccount.AccountProp["address"];
+            }
+            if (TargetAccount.AccountProp.ContainsKey("username"))
+            {
+                username = TargetAccount.AccountProp["username"];
+            }
+            if (LogOnAccount != null && LogOnAccount.AccountProp.ContainsKey("username"))
+            {
+                logonUsername = LogOnAccount.AccountProp["username"];
+            }
+            if (ReconcileAccount != null && ReconcileAccount.AccountProp.ContainsKey("username"))
+            {
+                reconcileUsername = ReconcileAccount.AccountProp["username"];
+            }
+            if (username != string.Empty)
+            {
+                currentPassword = Crypto.Encrypt(TargetAccount.CurrentPassword);
+            }
+            if (logonUsername != string.Empty)
+            {
+                logonCurrentPassword = Crypto.Encrypt(LogOnAccount.CurrentPassword);
+            }
+            if (reconcileUsername != string.Empty)
+            {
+                reconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
+            }
+            if (RequiresNewPassword)
+            {
+                newPassword = Crypto.Encrypt(TargetAccount.NewPassword);
+            }
+            var envVars = new Dictionary<string, string>
+            {
+                { ENV_ACTION, action },
+                { ENV_ADDRESS, address },
+                { ENV_USERNAME, username },
+                { ENV_LOGON_USERNAME, logonUsername },
+                { ENV_RECONCILE_USERNAME, reconcileUsername },
+                { ENV_LOGGING, PythonLogging },
+                { ENV_LOGGING_LEVEL, PythonLoggingLevel },
+                { ENV_PASSWORD, currentPassword },
+                { ENV_LOGON_PASSWORD, logonCurrentPassword },
+                { ENV_RECONCILE_PASSWORD, reconcileCurrentPassword },
+                { ENV_NEW_PASSWORD, newPassword }
+            };
+
+            return envVars;
+        }
+
+        private string RunScript(string action)
         {
             var envVars = GetEnv(action);
             var process = new Process
@@ -107,40 +150,40 @@ namespace CyberArk.Extensions.Python4CPM
             process.Start();
             string stderr = process.StandardError.ReadToEnd();
             process.WaitForExit();
+            string message = $"Python failed with exit code: {process.ExitCode}";
             if (process.ExitCode != 0)
             {
-                string message = $"Python failed with exit code: {process.ExitCode}";
                 Logger.WriteLine(message, LogLevel.ERROR);
                 if (!string.IsNullOrWhiteSpace(stderr))
                 {
                     Logger.WriteLine($"StdErr Output: \n{stderr}", LogLevel.ERROR);
                 }
-                throw new PythonExecutionException(message, process.ExitCode);
+                throw new PythonExecutionException(process.ExitCode);
             }
+            Logger.WriteLine(message, LogLevel.INFO);
+            return "Python closed with success";
         }
 
         protected int RunAndReturn(string action, ref PlatformOutput platformOutput)
         {
-            Logger.MethodStart();
-            Logger.WriteLine($"Running action: {action}", LogLevel.INFO);
-
             try
             {
-                PreRunScriptValidation();
+                GetParams();
             }
             catch (FileNotFoundException ex)
             {
-                platformOutput.Message = $"Received exception: {ex.Message}.";
+                platformOutput.Message = ex.Message;
                 return CLOSE_FAILED_UNRECOVERABLE;
             }
             try
             {
-                RunScript(action);
+                string message = RunScript(action);
+                platformOutput.Message = message;
                 return CLOSE_SUCCESS;
             }
             catch (PythonExecutionException ex)
             {
-                platformOutput.Message = $"Received exception: {ex.Message}.";
+                platformOutput.Message = ex.Message;
                 if (ex.ExitCode == PYTHON_CLOSE_FAILED_UNRECOVERABLE)
                 {
                     return CLOSE_FAILED_UNRECOVERABLE;

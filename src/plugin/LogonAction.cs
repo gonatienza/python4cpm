@@ -12,7 +12,12 @@ namespace CyberArk.Extensions.Python4CPM
             :base(accountList, logger)
         {
         }
-        
+
+        protected override bool RequiresNewPassword
+        {
+            get { return false; }
+        }
+
         override public CPMAction ActionName
         {
             get { return CPMAction.logon; }
@@ -22,7 +27,6 @@ namespace CyberArk.Extensions.Python4CPM
         {
             Logger.MethodStart();
             Logger.WriteLine($"Running action: {ACTION}", LogLevel.INFO);
-
             return RunAndReturn(ACTION, ref platformOutput);
         }
     }
