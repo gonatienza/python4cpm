@@ -1,4 +1,4 @@
-name: Update Release From pyproject Version
+name: Release latest version
 
 on:
   push:
