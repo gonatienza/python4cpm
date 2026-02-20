@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CyberArk.Extensions.Python4CPM</RootNamespace>
+    <AssemblyName>CyberArk.Extensions.Python4CPM</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <ProjectGuid>{0ebaf0ea-d0de-4bd7-8db7-8af58235114a}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CyberArk.Extensions.Utilties">
+      <HintPath>lib\CyberArk.Extensions.Utilties.dll</HintPath>
+    </Reference>
+    <Reference Include="CyberArk.Extensions.Plugins.Models">
+      <HintPath>lib\CyberArk.Extensions.Plugins.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="Crypto.cs" />
+    <Compile Include="BaseAction.cs" />
+    <Compile Include="VerifyAction.cs" />
+    <Compile Include="LogonAction.cs" />
+    <Compile Include="ChangeAction.cs" />
+    <Compile Include="PrereconcileAction.cs" />
+    <Compile Include="ReconcileAction.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
