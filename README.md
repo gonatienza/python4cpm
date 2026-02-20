@@ -106,7 +106,7 @@ def change(from_reconcile=False):
 
 if __name__ == "__main__":
     try:
-        if action == Python4CPM.ACTION_VERIFY: # class attribute ACTION_VERIFY holds the verify action value
+        if p4cpm.args.action == Python4CPM.ACTION_VERIFY: # class attribute ACTION_VERIFY holds the verify action value
             verify()
             p4cpm.close_success() # terminate with success state
         elif p4cpm.args.action == Python4CPM.ACTION_LOGON: # class attribute ACTION_LOGON holds the logon action value
@@ -128,7 +128,7 @@ if __name__ == "__main__":
             ## p4cpm.log_error("reconciliation is not supported") # let the logs know that reconciliation is not supported
             ## p4cpm.close_fail() # let CPM know to check the logs
         else:
-            p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
+            p4cpm.log_error(f"invalid action: '{p4cpm.args.action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
             p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
     except Exception as e:
         p4cpm.log_error(f"{type(e).__name__}: {e}")
