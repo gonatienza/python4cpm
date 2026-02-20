@@ -2,113 +2,8 @@ import os
 import sys
 import logging
 from logging.handlers import RotatingFileHandler
-from argparse import ArgumentParser
-
-
-class Args:
-    ARGS = (
-        "action",
-        "address",
-        "username",
-        "logon_username",
-        "reconcile_username",
-        "logging",
-        "logging_level"
-    )
-
-    def __init__(
-        self: str,
-        action: str,
-        address: str,
-        username: str,
-        reconcile_username: str,
-        logon_username: str,
-        logging: str,
-        logging_level: str
-    ) -> None:
-        self._action = action
-        self._address = address
-        self._username = username
-        self._reconcile_username = reconcile_username
-        self._logon_username = logon_username
-        self._logging = logging
-        self._logging_level = logging_level
-
-    @property
-    def action(self) -> str:
-        return self._action
-
-    @property
-    def address(self) -> str:
-        return self._address
-
-    @property
-    def username(self) -> str:
-        return self._username
-
-    @property
-    def reconcile_username(self) -> str:
-        return self._reconcile_username
-
-    @property
-    def logon_username(self) -> str:
-        return self._logon_username
-
-    @property
-    def logging(self) -> str:
-        return self._logging
-
-    @property
-    def logging_level(self) -> str:
-        return self._logging_level
-
-
-class Secret:
-    def __init__(self, value: str) -> None:
-        self._secret = value
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}('***')"
-
-    def get(self) -> str:
-        return self._secret
-
-
-class Secrets:
-    SECRETS = (
-        "password",
-        "logon_password",
-        "reconcile_password",
-        "new_password"
-    )
-
-    def __init__(
-        self: str,
-        password: str,
-        logon_password: str,
-        reconcile_password: str,
-        new_password: str
-    ) -> None:
-        self._password = Secret(password)
-        self._logon_password = Secret(logon_password)
-        self._reconcile_password = Secret(reconcile_password)
-        self._new_password = Secret(new_password)
-
-    @property
-    def password(self) -> str:
-        return self._password
-
-    @property
-    def new_password(self) -> str:
-        return self._new_password
-
-    @property
-    def logon_password(self) -> str:
-        return self._logon_password
-
-    @property
-    def reconcile_password(self) -> str:
-        return self._reconcile_password
+from python4cpm.secrets import Secrets
+from python4cpm.args import Args
 
 
 class Python4CPM:
@@ -133,10 +28,10 @@ class Python4CPM:
         "info": logging.INFO,
         "debug": logging.DEBUG
     }
-    _SECRETS_PADDING = "@@@"
-    _SUCCESS_PROMPT = "~~~SUCCESS~~~"
-    _FAILED_RECOVERABLE_PROMPT = "~~~FAILED_RECOVERABLE~~~"
-    _FAILED_UNRECOVERABLE_PROMPT = "~~~FAILED_UNRECOVERABLE~~~"
+    _SUCCESS_CODE = 0
+    _FAILED_RECOVERABLE_CODE = 81
+    _FAILED_UNRECOVERABLE_CODE = 89
+    _ENV_PREFIX = "PYTHON4CPM_"
 
     def __init__(self, name: str) -> None:
         self._name = name
@@ -177,28 +72,26 @@ class Python4CPM:
         if self._logger is not None:
             self._logger.error(message)
 
-    @staticmethod
-    def _get_args() -> dict:
-        parser = ArgumentParser()
+    @classmethod
+    def _get_env_key(cls, key: str) -> str:
+        return f"{cls._ENV_PREFIX}{key.upper()}"
+
+    @classmethod
+    def _get_args(cls) -> dict:
+        args = {}
         for arg in Args.ARGS:
-            parser.add_argument(f"--{arg}")
-        args = parser.parse_args()
-        return dict(vars(args))
+            args[arg] = os.environ.get(cls._get_env_key(arg))
+        return args
 
     def _get_secrets(self) -> dict:
         secrets = {}
-        try:
-            for secret in Secrets.SECRETS:
-                prompt = self._SECRETS_PADDING + secret + self._SECRETS_PADDING
-                secrets[secret] = input(prompt)
-                common_message = f"Python4CPM._get_secrets: {secret} ->"
-                if secrets[secret]:
-                    self.log_info(f"{common_message} [*******]")
-                else:
-                    self.log_info(f"{common_message} [NOT SET]")
-        except Exception as e:
-            self.log_error(f"Python4CPM._get_secrets: {type(e).__name__}: {e}")
-            self.close_fail()
+        for secret in Secrets.SECRETS:
+            secrets[secret] = os.environ.get(self._get_env_key(secret))
+            common_message = f"Python4CPM._get_secrets: {secret} ->"
+            if secrets[secret]:
+                self.log_info(f"{common_message} [*******]")
+            else:
+                self.log_info(f"{common_message} [NOT SET]")
         return secrets
 
     def _verify_action(self) -> None:
@@ -243,15 +136,14 @@ class Python4CPM:
 
     def close_fail(self, unrecoverable: bool = False) -> None:
         if unrecoverable is False:
-            prompt = self._FAILED_RECOVERABLE_PROMPT
+            code = self._FAILED_RECOVERABLE_CODE
         else:
-            prompt = self._FAILED_UNRECOVERABLE_PROMPT
-        self.log_error(f"Python4CPM.close_fail: closing with {prompt}")
-        print(prompt)
-        sys.exit(1)
+            code = self._FAILED_UNRECOVERABLE_CODE
+        self.log_error(f"Python4CPM.close_fail: closing with code {code}")
+        sys.exit(code)
 
     def close_success(self) -> None:
-        prompt = self._SUCCESS_PROMPT
-        self.log_info(f"Python4CPM.close_success: closing with {prompt}")
-        print(prompt)
-        sys.exit(0)
+        self.log_info(
+            f"Python4CPM.close_success: closing with code {self._SUCCESS_CODE}"
+        )
+        sys.exit(self._SUCCESS_CODE)
