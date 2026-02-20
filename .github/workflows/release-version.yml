@@ -1,4 +1,4 @@
-name: Release latest version
+name: Release Latest Version
 
 on:
   push:
