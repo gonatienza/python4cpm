@@ -150,7 +150,7 @@ namespace CyberArk.Extensions.Python4CPM
             process.Start();
             string stderr = process.StandardError.ReadToEnd();
             process.WaitForExit();
-            string message = $"Python failed with exit code: {process.ExitCode}";
+            string message = $"Python closed with exit code: {process.ExitCode}";
             if (process.ExitCode != 0)
             {
                 Logger.WriteLine(message, LogLevel.ERROR);
