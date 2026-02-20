@@ -22,7 +22,7 @@ class Crypto:
             raise OSError("DPAPI is only available on Windows")
 
     @classmethod
-    def decrypt(cls, base64_enc_string):
+    def decrypt(cls, base64_enc_string: str) -> str:
         cls._verify_enabled()
         encrypted_bytes = base64.b64decode(base64_enc_string.encode())
         buffer = ctypes.create_string_buffer(encrypted_bytes)
@@ -48,7 +48,7 @@ class Crypto:
             raise ctypes.WinError()
 
     @classmethod
-    def encrypt(cls, plaintext):
+    def encrypt(cls, plaintext: str) -> str:
         cls._verify_enabled()
         plain_bytes = plaintext.encode()
         buffer = ctypes.create_string_buffer(plain_bytes)
