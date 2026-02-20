@@ -1,0 +1,9 @@
+{
+    "action": null,
+    "address": "myapp.corp.local",
+    "username": "jdoe",
+    "reconcile_username": "rdoe",
+    "logon_username": "ldoe",
+    "logging": null,
+    "logging_level": null
+}
