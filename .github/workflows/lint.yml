@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  lint:
+  lint-python:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,3 +21,15 @@ jobs:
           pip install ruff
       - name: Run Ruff
         run: ruff check .
+
+  lint-dotnet:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - name: Restore
+        run: dotnet restore src\plugin\Python4CPM.csproj
+      - name: Lint
+        run: dotnet format src\plugin\Python4CPM.csproj --verify-no-changes --no-restore

@@ -40,8 +40,8 @@ namespace CyberArk.Extensions.Python4CPM
         }
 
         protected abstract bool RequiresNewPassword
-        { 
-            get; 
+        {
+            get;
         }
 
         protected void GetParams()
@@ -63,7 +63,7 @@ namespace CyberArk.Extensions.Python4CPM
                     $"{PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist"
                 );
         }
-        
+
         private Dictionary<string, string> GetEnv(string action)
         {
             string address = string.Empty;
