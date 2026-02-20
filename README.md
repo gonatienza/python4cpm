@@ -1,6 +1,6 @@
 # Python4CPM
 
-A simple way of using python scripts with CyberArk CPM rotations.  This module levereages the [Terminal Plugin Controller](https://docs.cyberark.com/pam-self-hosted/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm) (TPC) in CPM to offload a password rotation logic into a script.
+A simple way of using python scripts with CyberArk CPM rotations.  This module levereages the [Credential Management .NET SDK](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-netinvoker.htm) from CyberArk to securely offload a password rotation logic into a python script.
 
 This platform allows you to duplicate it multiple times, simply changing its settings from Privilege Cloud/PVWA to point to different python scripts leveraging the module `python4cpm`.
 
@@ -20,15 +20,16 @@ This platform allows you to duplicate it multiple times, simply changing its set
 
 ### Importing the platform
 
-1. Download the [latest platform zip file](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-platform.zip).
-2. Import the platform zip file into Privilege Cloud/PVWA `(Administration -> Platform Management -> Import platform)`.
-3. Craft your python script and place it within the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
-4. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
-5. Edit the duplicated platform and specify the path of your placed script in the bin folder of CPM, under `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value` (e.g., `bin\myapp.py`).
-6. If you used a custom venv location, also update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonExePath -> Value` with the custom path for the venv's `python.exe` file (e.g., `c:\my-venv-path\Scripts\python.exe`).
-7. If you want to disable logging, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging -> Value` to `no`.
-8. If you want to change the logging level to `debug`, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel -> Value` to `debug`.
-9. For new applications repeat steps from 3 to 8.
+1. Download the latest [Credential Management .NET SDK](https://community.cyberark.com/marketplace/s/#a3550000000EkA0AAK-a3950000000jjoOAAQ) and place its content in the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
+2. Download the [latest platform zip file](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-platform.zip).
+3. Import the platform zip file into Privilege Cloud/PVWA `(Administration -> Platform Management -> Import platform)`.
+4. Craft your python script and place it within the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
+5. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
+6. Edit the duplicated platform and specify the path of your placed script in the bin folder of CPM, under `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value` (e.g., `bin\myapp.py`).
+7. If you used a custom venv location, also update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonExePath -> Value` with the custom path for the venv's `python.exe` file (e.g., `c:\my-venv-path\Scripts\python.exe`).
+8. If you want to disable logging, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging -> Value` to `no`.
+9. If you want to change the logging level to `debug`, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel -> Value` to `debug`.
+10. For new applications repeat steps from 4 to 9.
 
 
 ## Python Script
@@ -105,7 +106,7 @@ def change(from_reconcile=False):
 
 if __name__ == "__main__":
     try:
-        if action == Python4CPM.ACTION_VERIFY: # class attribute ACTION_VERIFY holds the verify action value
+        if p4cpm.args.action == Python4CPM.ACTION_VERIFY: # class attribute ACTION_VERIFY holds the verify action value
             verify()
             p4cpm.close_success() # terminate with success state
         elif p4cpm.args.action == Python4CPM.ACTION_LOGON: # class attribute ACTION_LOGON holds the logon action value
@@ -127,7 +128,7 @@ if __name__ == "__main__":
             ## p4cpm.log_error("reconciliation is not supported") # let the logs know that reconciliation is not supported
             ## p4cpm.close_fail() # let CPM know to check the logs
         else:
-            p4cpm.log_error(f"invalid action: '{action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
+            p4cpm.log_error(f"invalid action: '{p4cpm.args.action}'") # logs into Logs/ThirdParty/Python4CPM/MyApp.log
             p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
     except Exception as e:
         p4cpm.log_error(f"{type(e).__name__}: {e}")
@@ -157,13 +158,14 @@ As with any python venv, you can install dependancies in your venv.
 
 ## Dev Helper:
 
-TPC is a binary Terminal Plugin Controller in CPM.  It passes information to Python4CPM through arguments and prompts when calling the script.
-For dev purposes, `TPCHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` object by simulating how TPC passes those arguments and prompts.
+For dev purposes, `NETHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` object by simulating how the plugin passes arguments and secrets to `Python4CPM`.
 Install this module (in a dev workstation) with:
 
 ```bash
 pip install python4cpm
 ```
+
+**Note**: As CPM runs in Windows, the plugin was built to pass secrets securely to the `Python4CPM.crypto` module using the Data Protection API (DPAPI).  For dev purposes in Linux/Mac dev workstations, those secrets will appear as plaintext in the process environment.  This is informational only, the module will use its encryption/decryption capabilities automatically in Windows and you do not have to do anything specific to enable it.
 
 ### Example:
 
