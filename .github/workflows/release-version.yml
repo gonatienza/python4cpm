@@ -1,4 +1,4 @@
-name: Update 'latest' Release
+name: Release latest version
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-latest-release:
+  update-release:
     runs-on: ubuntu-latest
 
     permissions:
@@ -25,7 +25,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install build
-   
+
+      - name: Extract version
+        run: |
+          VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Build Wheel
         run: |
           python -m build
@@ -43,27 +48,22 @@ jobs:
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
 
-      - name: Authenticate GitHub CLI
-        run: gh auth setup-git
+      - name: Delete existing release
+        run: |
+          gh release delete v${VERSION} -y || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Delete latest release
+      - name: Delete existing tag
         run: |
-          gh release delete latest -y || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete latest tag
-        run: |
-          git push -d origin latest || true
+          git push -d origin v${VERSION} || true
 
       - name: Create new release
         run: |
-          gh release create latest \
+          gh release create v${VERSION} \
             dist/python4cpm-platform.zip \
             dist/python4cpm-wheel.zip \
-            --title "Latest Release" \
-            --notes "Automatically generated files for main branch update."
+            --title "v${VERSION}" \
+            --notes "Release v${VERSION}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
