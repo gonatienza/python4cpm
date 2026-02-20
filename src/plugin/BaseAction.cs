@@ -124,7 +124,7 @@ namespace CyberArk.Extensions.Python4CPM
             return envVars;
         }
 
-        private string RunScript(string action)
+        private void RunScript(string action)
         {
             var envVars = GetEnv(action);
             var process = new Process
@@ -161,7 +161,6 @@ namespace CyberArk.Extensions.Python4CPM
                 throw new PythonExecutionException(process.ExitCode);
             }
             Logger.WriteLine(message, LogLevel.INFO);
-            return "Python closed with success";
         }
 
         protected int RunAndReturn(string action, ref PlatformOutput platformOutput)
@@ -177,8 +176,7 @@ namespace CyberArk.Extensions.Python4CPM
             }
             try
             {
-                string message = RunScript(action);
-                platformOutput.Message = message;
+                RunScript(action);
                 return CLOSE_SUCCESS;
             }
             catch (PythonExecutionException ex)
