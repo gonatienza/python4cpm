@@ -103,6 +103,8 @@ jobs:
             dist/python4cpm-wheel.zip \
             dist/python4cpm-platform.zip \
             --title "${VERSION}" \
-            --notes "Release ${VERSION}"
+            --notes "Release ${VERSION}" \
+            --target dev
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
