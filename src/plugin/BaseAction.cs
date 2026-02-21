@@ -163,7 +163,7 @@ namespace CyberArk.Extensions.Python4CPM
             Logger.WriteLine(message, LogLevel.INFO);
         }
 
-        protected int RunAndReturn(string action, ref PlatformOutput platformOutput)
+        protected int RunAction(string action, ref PlatformOutput platformOutput)
         {
             try
             {

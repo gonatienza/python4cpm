@@ -27,7 +27,7 @@ namespace CyberArk.Extensions.Python4CPM
         {
             Logger.MethodStart();
             Logger.WriteLine($"Running action: {ACTION}", LogLevel.INFO);
-            return RunAndReturn(ACTION, ref platformOutput);
+            return RunAction(ACTION, ref platformOutput);
         }
     }
 }
