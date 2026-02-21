@@ -4,6 +4,7 @@ using CyberArk.Extensions.Utilties.Reader;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System;
 
 namespace CyberArk.Extensions.Python4CPM
 {
@@ -74,19 +75,19 @@ namespace CyberArk.Extensions.Python4CPM
             string logonCurrentPassword = string.Empty;
             string reconcileCurrentPassword = string.Empty;
             string newPassword = string.Empty;
-            if (TargetAccount?.AccountProp?.ContainsKey("address"))
+            if (TargetAccount?.AccountProp?.ContainsKey("address") == true)
             {
                 address = TargetAccount.AccountProp["address"];
             }
-            if (TargetAccount?.AccountProp?.ContainsKey("username"))
+            if (TargetAccount?.AccountProp?.ContainsKey("username") == true)
             {
                 username = TargetAccount.AccountProp["username"];
             }
-            if (LogOnAccount?.AccountProp?.ContainsKey("username"))
+            if (LogOnAccount?.AccountProp?.ContainsKey("username") == true)
             {
                 logonUsername = LogOnAccount.AccountProp["username"];
             }
-            if (ReconcileAccount?.AccountProp?.ContainsKey("username"))
+            if (ReconcileAccount?.AccountProp?.ContainsKey("username") == true)
             {
                 reconcileUsername = ReconcileAccount.AccountProp["username"];
             }
@@ -106,7 +107,7 @@ namespace CyberArk.Extensions.Python4CPM
             {
                 if (TargetAccount?.NewPassword == null)
                 {
-                    throw new InvalidOperationException("Required TargetAccount.NewPassword is null")
+                    throw new InvalidOperationException("Required TargetAccount.NewPassword is null");
                 }
                 newPassword = Crypto.Encrypt(TargetAccount.NewPassword);
             }

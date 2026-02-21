@@ -33,3 +33,13 @@ jobs:
         run: dotnet restore src\plugin\Python4CPM.csproj
       - name: Lint
         run: dotnet format src\plugin\Python4CPM.csproj --verify-no-changes --no-restore
+
+  build-dotnet:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v1
+
+      - name: Build .NET Release
+        run: msbuild src\plugin\Python4CPM.csproj /p:Configuration=Release /p:Platform="AnyCPU"
