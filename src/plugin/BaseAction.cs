@@ -74,36 +74,40 @@ namespace CyberArk.Extensions.Python4CPM
             string logonCurrentPassword = string.Empty;
             string reconcileCurrentPassword = string.Empty;
             string newPassword = string.Empty;
-            if (TargetAccount.AccountProp.ContainsKey("address"))
+            if (TargetAccount?.AccountProp?.ContainsKey("address"))
             {
                 address = TargetAccount.AccountProp["address"];
             }
-            if (TargetAccount.AccountProp.ContainsKey("username"))
+            if (TargetAccount?.AccountProp?.ContainsKey("username"))
             {
                 username = TargetAccount.AccountProp["username"];
             }
-            if (LogOnAccount != null && LogOnAccount.AccountProp.ContainsKey("username"))
+            if (LogOnAccount?.AccountProp?.ContainsKey("username"))
             {
                 logonUsername = LogOnAccount.AccountProp["username"];
             }
-            if (ReconcileAccount != null && ReconcileAccount.AccountProp.ContainsKey("username"))
+            if (ReconcileAccount?.AccountProp?.ContainsKey("username"))
             {
                 reconcileUsername = ReconcileAccount.AccountProp["username"];
             }
-            if (username != string.Empty)
+            if (TargetAccount?.CurrentPassword != null)
             {
                 currentPassword = Crypto.Encrypt(TargetAccount.CurrentPassword);
             }
-            if (logonUsername != string.Empty)
+            if (LogOnAccount?.CurrentPassword != null)
             {
                 logonCurrentPassword = Crypto.Encrypt(LogOnAccount.CurrentPassword);
             }
-            if (reconcileUsername != string.Empty)
+            if (ReconcileAccount?.CurrentPassword != null)
             {
                 reconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
             }
             if (RequiresNewPassword)
             {
+                if (TargetAccount?.NewPassword == null)
+                {
+                    throw new InvalidOperationException("Required TargetAccount.NewPassword is null")
+                }
                 newPassword = Crypto.Encrypt(TargetAccount.NewPassword);
             }
             var envVars = new Dictionary<string, string>
