@@ -1,17 +1,12 @@
 from python4cpm.crypto import Crypto
 
 
-class SecureString:
+class Secret:
     def __init__(self, secret: str) -> None:
         self._secret = secret
-        self._is_encrypted = Crypto.ENABLED
-
-    @property
-    def is_encrypted(self):
-        return self._is_encrypted
 
     def get(self) -> str:
-        if self._is_encrypted and self._secret:
+        if Crypto.ENABLED and self._secret:
             return Crypto.decrypt(self._secret)
         else:
             return self._secret
@@ -32,10 +27,10 @@ class Secrets:
         reconcile_password: str,
         new_password: str
     ) -> None:
-        self._password = SecureString(password)
-        self._logon_password = SecureString(logon_password)
-        self._reconcile_password = SecureString(reconcile_password)
-        self._new_password = SecureString(new_password)
+        self._password = Secret(password)
+        self._logon_password = Secret(logon_password)
+        self._reconcile_password = Secret(reconcile_password)
+        self._new_password = Secret(new_password)
 
     @property
     def password(self) -> str:
