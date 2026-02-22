@@ -13,7 +13,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 3. Install `python4cpm` in your venv:
     - If your CPM can connect to the internet, install with `c:\venv\Scripts\pip install python4cpm`.
     - If your CPM cannot connect to the internet:
-        - Download the [latest wheel](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-wheel.zip).
+        - Download the `python4cpm-wheel.zip` asset from the latest [release](https://github.com/gonatienza/python4cpm/releases).
         - Copy the file to CPM and extract to a temporary location.
         - From the temporary location run `c:\venv\Scripts\pip install --no-index --find-links=.\python4cpm-wheel python4cpm`.
 
@@ -21,7 +21,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 ### Importing the platform
 
 1. Download the latest [Credential Management .NET SDK](https://community.cyberark.com/marketplace/s/#a3550000000EkA0AAK-a3950000000jjoOAAQ) and place its content in the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
-2. Download the [latest platform zip file](https://github.com/gonatienza/python4cpm/releases/download/latest/python4cpm-platform.zip).
+2. Download the `python4cpm-platform.zip` asset from the [release](https://github.com/gonatienza/python4cpm/releases).
 3. Import the platform zip file into Privilege Cloud/PVWA `(Administration -> Platform Management -> Import platform)`.
 4. Craft your python script and place it within the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
 5. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
@@ -165,7 +165,7 @@ Install this module (in a dev workstation) with:
 pip install python4cpm
 ```
 
-**Note**: As CPM runs in Windows, the plugin was built to pass secrets securely to the `Python4CPM.crypto` module using the Data Protection API (DPAPI).  For dev purposes in Linux/Mac dev workstations, those secrets will appear as plaintext in the process environment.  This is informational only, the module will use its encryption/decryption capabilities automatically in Windows and you do not have to do anything specific to enable it.
+**Note**: As CPM runs in Windows, the plugin was built to pass secrets securely to the `Python4CPM.crypto` module using the Data Protection API (DPAPI).  For dev purposes in Linux/Mac dev workstations, those secrets will appear as plaintext in the environment of the process.  This is informational only, the module will use its encryption/decryption capabilities automatically in Windows and you do not have to do anything specific to enable it.
 
 ### Example:
 
