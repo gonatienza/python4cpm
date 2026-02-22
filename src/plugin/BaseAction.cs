@@ -68,13 +68,9 @@ namespace CyberArk.Extensions.Python4CPM
             Logger.WriteLine($"{PYTHON_LOGGING}: {PythonLogging}", LogLevel.INFO);
             Logger.WriteLine($"{PYTHON_LOGGING_LEVEL}: {PythonLoggingLevel}", LogLevel.INFO);
             if (!File.Exists(PythonExePath))
-                throw new FileNotFoundException(
-                    $"{PYTHON_EXE_PATH}: {PythonExePath} does not exist"
-                );
+                throw new FileNotFoundException($"{PYTHON_EXE_PATH}: {PythonExePath} does not exist");
             if (!File.Exists(PythonScriptPath))
-                throw new FileNotFoundException(
-                    $"{PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist"
-                );
+                throw new FileNotFoundException($"{PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist");
         }
 
         private Dictionary<string, string> GetEnv(string action)
@@ -188,12 +184,7 @@ namespace CyberArk.Extensions.Python4CPM
             }
             catch (Exception ex)
             {
-                string exType = ex.GetType().ToString();
-                string message = $"{exType}: {ex.Message}";
-                platformOutput.Message = message;
-                Logger.WriteLine(message, LogLevel.ERROR);
-                Logger.WriteLine("Closing with failed unrecoverable", LogLevel.ERROR);
-                return CLOSE_FAILED_UNRECOVERABLE;
+                return HandleException(ex, true, ref platformOutput);
             }
             try
             {
@@ -203,24 +194,30 @@ namespace CyberArk.Extensions.Python4CPM
             }
             catch (PythonExecutionException ex)
             {
-                string exType = ex.GetType().ToString();
-                string message = $"{exType}: {ex.Message}";
-                platformOutput.Message = message;
-                Logger.WriteLine(message, LogLevel.ERROR);
                 if (ex.ExitCode == PYTHON_CLOSE_FAILED_UNRECOVERABLE)
                 {
-                    Logger.WriteLine("Closing with failed unrecoverable", LogLevel.ERROR);
-                    return CLOSE_FAILED_UNRECOVERABLE;
+                    return HandleException(ex, true, ref platformOutput);
                 }
-                Logger.WriteLine("Closing with failed recoverable", LogLevel.ERROR);
-                return CLOSE_FAILED_RECOVERABLE;
+                return HandleException(ex, false, ref platformOutput);
             }
             catch (Exception ex)
             {
-                string exType = ex.GetType().ToString();
-                string message = $"{exType}: {ex.Message}";
-                platformOutput.Message = message;
-                Logger.WriteLine(message, LogLevel.ERROR);
+                return HandleException(ex, true, ref platformOutput);
+            }
+        }
+
+        private int HandleException(Exception ex, bool unrecoverable, ref PlatformOutput platformOutput)
+        {
+            string message = $"{ex.GetType()}: {ex.Message}";
+            platformOutput.Message = message;
+            Logger.WriteLine(message, LogLevel.ERROR);
+            if (!unrecoverable)
+            {
+                Logger.WriteLine("Closing with failed recoverable", LogLevel.ERROR);
+                return CLOSE_FAILED_RECOVERABLE;
+            }
+            else
+            {
                 Logger.WriteLine("Closing with failed unrecoverable", LogLevel.ERROR);
                 return CLOSE_FAILED_UNRECOVERABLE;
             }
