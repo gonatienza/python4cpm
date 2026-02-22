@@ -1,9 +1,7 @@
 using System;
-using System.Diagnostics;
 using System.Security;
 using System.Security.Cryptography;
-using System.Text;
-using CyberArk.Extensions.Utilties.Reader;
+using System.Runtime.InteropServices;
 
 namespace CyberArk.Extensions.Python4CPM
 {
@@ -11,12 +9,31 @@ namespace CyberArk.Extensions.Python4CPM
     {
         public static string Encrypt(SecureString secureStr)
         {
-            string plainText = secureStr.convertSecureStringToString();
-            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
-            byte[] encrypted = ProtectedData.Protect(plainBytes, null, DataProtectionScope.CurrentUser);
-            Array.Clear(plainBytes, 0, plainBytes.Length);
-            string base64String = Convert.ToBase64String(encrypted);
-            return base64String;
+            IntPtr unmanagedPtr = IntPtr.Zero;
+            try
+            {
+                unmanagedPtr = Marshal.SecureStringToGlobalAllocUnicode(secureStr);
+                int byteCount = secureStr.Length * 2;
+                byte[] plainBytes = new byte[byteCount];
+                try
+                {
+                    Marshal.Copy(unmanagedPtr, plainBytes, 0, byteCount);
+                    byte[] encrypted = ProtectedData.Protect(
+                        plainBytes,
+                        null,
+                        DataProtectionScope.CurrentUser);
+                    return Convert.ToBase64String(encrypted);
+                }
+                finally
+                {
+                    Array.Clear(plainBytes, 0, plainBytes.Length);
+                }
+            }
+            finally
+            {
+                if (unmanagedPtr != IntPtr.Zero)
+                    Marshal.ZeroFreeGlobalAllocUnicode(unmanagedPtr);
+            }
         }
     }
 }
