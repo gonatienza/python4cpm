@@ -30,10 +30,10 @@ namespace CyberArk.Extensions.Python4CPM
         protected const int CLOSE_FAILED_RECOVERABLE = 8100;
         public const int PYTHON_CLOSE_FAILED_UNRECOVERABLE = 89;
         public const int PYTHON_CLOSE_FAILED_RECOVERABLE = 81;
-        private string PythonExePath;
-        private string PythonScriptPath;
-        private string PythonLogging;
-        private string PythonLoggingLevel;
+        private string PythonExePath = String.Empty;
+        private string PythonScriptPath = String.Empty;
+        private string PythonLogging = String.Empty;
+        private string PythonLoggingLevel = String.Empty;
 
         public BaseAction(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
@@ -47,22 +47,30 @@ namespace CyberArk.Extensions.Python4CPM
 
         protected void GetParams()
         {
-            PythonExePath = TargetAccount.ExtraInfoProp[PYTHON_EXE_PATH];
-            PythonScriptPath = TargetAccount.ExtraInfoProp[PYTHON_SCRIPT_PATH];
-            PythonLogging = TargetAccount.ExtraInfoProp[PYTHON_LOGGING];
-            PythonLoggingLevel = TargetAccount.ExtraInfoProp[PYTHON_LOGGING_LEVEL];
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PYTHON_EXE_PATH) == true)
+            {
+                PythonExePath = TargetAccount.ExtraInfoProp[PYTHON_EXE_PATH];
+            }
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PYTHON_SCRIPT_PATH) == true)
+            {
+                PythonScriptPath = TargetAccount.ExtraInfoProp[PYTHON_SCRIPT_PATH];
+            }
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PYTHON_LOGGING) == true)
+            {
+                PythonLogging = TargetAccount.ExtraInfoProp[PYTHON_LOGGING];
+            }
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PYTHON_LOGGING_LEVEL) == true)
+            {
+                PythonLoggingLevel = TargetAccount.ExtraInfoProp[PYTHON_LOGGING_LEVEL];
+            }
             Logger.WriteLine($"{PYTHON_EXE_PATH}: {PythonExePath}", LogLevel.INFO);
             Logger.WriteLine($"{PYTHON_SCRIPT_PATH}: {PythonScriptPath}", LogLevel.INFO);
             Logger.WriteLine($"{PYTHON_LOGGING}: {PythonLogging}", LogLevel.INFO);
             Logger.WriteLine($"{PYTHON_LOGGING_LEVEL}: {PythonLoggingLevel}", LogLevel.INFO);
             if (!File.Exists(PythonExePath))
-                throw new FileNotFoundException(
-                    $"{PYTHON_EXE_PATH}: {PythonExePath} does not exist"
-                );
+                throw new FileNotFoundException($"{PYTHON_EXE_PATH}: {PythonExePath} does not exist");
             if (!File.Exists(PythonScriptPath))
-                throw new FileNotFoundException(
-                    $"{PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist"
-                );
+                throw new FileNotFoundException($"{PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist");
         }
 
         private Dictionary<string, string> GetEnv(string action)
@@ -174,24 +182,44 @@ namespace CyberArk.Extensions.Python4CPM
             {
                 GetParams();
             }
-            catch (FileNotFoundException ex)
+            catch (Exception ex)
             {
-                platformOutput.Message = ex.Message;
-                return CLOSE_FAILED_UNRECOVERABLE;
+                return HandleException(ex, true, ref platformOutput);
             }
             try
             {
                 RunScript(action);
+                Logger.WriteLine("Closing with success", LogLevel.INFO);
                 return CLOSE_SUCCESS;
             }
             catch (PythonExecutionException ex)
             {
-                platformOutput.Message = ex.Message;
                 if (ex.ExitCode == PYTHON_CLOSE_FAILED_UNRECOVERABLE)
                 {
-                    return CLOSE_FAILED_UNRECOVERABLE;
+                    return HandleException(ex, true, ref platformOutput);
                 }
+                return HandleException(ex, false, ref platformOutput);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, true, ref platformOutput);
+            }
+        }
+
+        private int HandleException(Exception ex, bool unrecoverable, ref PlatformOutput platformOutput)
+        {
+            string message = $"{ex.GetType()}: {ex.Message}";
+            platformOutput.Message = message;
+            Logger.WriteLine(message, LogLevel.ERROR);
+            if (!unrecoverable)
+            {
+                Logger.WriteLine("Closing with failed recoverable", LogLevel.ERROR);
                 return CLOSE_FAILED_RECOVERABLE;
+            }
+            else
+            {
+                Logger.WriteLine("Closing with failed unrecoverable", LogLevel.ERROR);
+                return CLOSE_FAILED_UNRECOVERABLE;
             }
         }
     }
