@@ -43,14 +43,14 @@ class Crypto:
         if crypt_res:
             plaintext = ctypes.string_at(output_blob.pbData, output_blob.cbData)
             ctypes.windll.kernel32.LocalFree(output_blob.pbData)
-            return plaintext.decode()
+            return plaintext.decode("utf-16-le")
         else:
             raise ctypes.WinError()
 
     @classmethod
     def encrypt(cls, plaintext: str) -> str:
         cls._verify_enabled()
-        plain_bytes = plaintext.encode()
+        plain_bytes = plaintext.encode("utf-16-le")
         buffer = ctypes.create_string_buffer(plain_bytes)
         input_blob = cls.DataBlob(
             len(plain_bytes),
