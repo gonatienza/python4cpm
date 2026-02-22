@@ -7,7 +7,7 @@ Python4CPM Changelog
 ## [1.0.16] - 2026-02-22
 
 ### Changed
-- Modified Python4cpm module and plugin platform to work with the [Credential Management .NET SDK](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-netinvoker.htm).
+- Modified Python4CPM class and plugin platform to work with the [Credential Management .NET SDK](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-netinvoker.htm).
 
 ### Added
 - Secured handoff of secrets between the Credential Management .NET SDK and Python to be protected by [DPAPI](https://learn.microsoft.com/en-us/dotnet/standard/security/how-to-use-data-protection).
@@ -19,7 +19,7 @@ Python4CPM Changelog
 ## [1.0.14] - 2026-02-17
 
 ### Added
-- Added Python4CPM module and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
+- Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
 [Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.0.16...HEAD
 [1.0.16]: https://github.com/gonatienza/python4cpm/compare/v1.0.14...v1.0.16
