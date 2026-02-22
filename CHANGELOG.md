@@ -11,9 +11,8 @@ Python4CPM Changelog
 
 ### Added
 - Secured handoff of secrets between the Credential Management .NET SDK and Python to be protected by [DPAPI](https://learn.microsoft.com/en-us/dotnet/standard/security/how-to-use-data-protection).
-    - Added DPAPI Encryption through `ProtectedData.Protect`.
-    - Added memory hygiene in the .NET handoff to clear the presence of plaintext secrets in managed/unmanaged memory.
-    - Added transfer of encrypted blobs through base64 encoding in environment variables for the Python subprocess execution.
+    - DPAPI Encryption through `ProtectedData.Protect`, keeping memory hygiene in .NET to clear the any plaintext secrets used for the encryption.
+    - Passes encrypted blobs through base64 encoding for the Python subprocess execution.
     - During the object `python4cpm.Python4CPM` initialization in Python, secrets are now kept in the `python4cpm.Secret` object encrypted at all times.
     - The secret plaintext `str` object is only created when calling the `python4cpm.Secret` object `get()` method.
 
