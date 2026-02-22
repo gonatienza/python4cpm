@@ -9,27 +9,21 @@ permissions:
 jobs:
   wheel-build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v4
         with:
           python-version: '3.14'
-
       - name: Install build tools
         run: |
           python -m pip install --upgrade pip
           pip install build
-
       - name: Build wheel
         run: python -m build
-
       - name: Zip wheel
         run: |
           cd dist
           zip -j python4cpm-wheel.zip *.whl
-
       - uses: actions/upload-artifact@v4
         with:
           name: wheel-artifact
@@ -37,15 +31,17 @@ jobs:
 
   dotnet-build:
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+        with:
+          repository: gonatienza/_python4cpm
+          token: ${{ secrets._PYTHON4CPM_TOKEN }}
+          path: src\plugin\lib
       - uses: microsoft/setup-msbuild@v1
-
       - name: Build .NET Release
-        run: msbuild src\plugin\Python4CPM.csproj /p:Configuration=Release /p:Platform="AnyCPU"
-
+        run: |
+          msbuild src\plugin\Python4CPM.csproj /p:Configuration=Release /p:Platform="AnyCPU"
       - name: Zip platform
         run: |
           mkdir dist
@@ -53,7 +49,6 @@ jobs:
           copy src\plugin\bin\Release\CyberArk.Extensions.Python4CPM.dll dist\platform\
           copy src\plugin\platform\* dist\platform\
           Compress-Archive -Path dist\platform\* -DestinationPath dist\python4cpm-platform.zip -Force
-
       - uses: actions/upload-artifact@v4
         with:
           name: platform-artifact
@@ -62,35 +57,27 @@ jobs:
   release:
     needs: [wheel-build, dotnet-build]
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set version to dev
         run: |
           echo "VERSION=dev" >> $GITHUB_ENV
-
       - uses: actions/download-artifact@v4
         with:
           name: wheel-artifact
           path: dist
-
       - uses: actions/download-artifact@v4
         with:
           name: platform-artifact
           path: dist
-
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
-
       - name: Delete existing release
         run: gh release delete v${VERSION} -y || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Delete existing tag
         run: git push -d origin v${VERSION} || true
-
       - name: Create release
         run: |
           gh release create v${VERSION} \
@@ -98,6 +85,5 @@ jobs:
             dist/python4cpm-platform.zip \
             --title "${VERSION}" \
             --notes "Release ${VERSION}" \
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

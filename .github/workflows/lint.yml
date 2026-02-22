@@ -36,10 +36,14 @@ jobs:
 
   build-dotnet:
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: gonatienza/_python4cpm
+          token: ${{ secrets._PYTHON4CPM_TOKEN }}
+          path: src\plugin\lib
       - uses: microsoft/setup-msbuild@v1
-
       - name: Build .NET Release
-        run: msbuild src\plugin\Python4CPM.csproj /p:Configuration=Release /p:Platform="AnyCPU"
+        run: |
+          msbuild src\plugin\Python4CPM.csproj /p:Configuration=Release /p:Platform="AnyCPU"
