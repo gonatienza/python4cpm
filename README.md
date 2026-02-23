@@ -134,7 +134,7 @@ if __name__ == "__main__":
         p4cpm.log_error(f"{type(e).__name__}: {e}")
         p4cpm.close_fail()
 ```
-(*) a more realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples).
+(*) more realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples).
 
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `Python4CPM.ACTION_VERIFY`.
