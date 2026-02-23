@@ -11,8 +11,8 @@ import os
 
 def get_args_and_secrets():
     file_dir = os.path.dirname(__file__)
-    args_path = os.path.join(file_dir, "env", "args.json")
-    secrets_path = os.path.join(file_dir, "env", "secrets.json")
+    args_path = os.path.join(file_dir, "sources", "args.json")
+    secrets_path = os.path.join(file_dir, "sources", "secrets.json")
     with open(args_path, "r") as f:
         args = json.load(f)
     with open(secrets_path, "r") as f:

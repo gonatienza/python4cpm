@@ -194,11 +194,11 @@ namespace CyberArk.Extensions.Python4CPM
             }
             catch (PythonExecutionException ex)
             {
-                if (ex.ExitCode == PYTHON_CLOSE_FAILED_UNRECOVERABLE)
+                if (ex.ExitCode == PYTHON_CLOSE_FAILED_RECOVERABLE)
                 {
-                    return HandleException(ex, true, ref platformOutput);
+                    return HandleException(ex, false, ref platformOutput);
                 }
-                return HandleException(ex, false, ref platformOutput);
+                return HandleException(ex, true, ref platformOutput);
             }
             catch (Exception ex)
             {
