@@ -21,10 +21,10 @@ namespace CyberArk.Extensions.Python4CPM
         private const string ENV_LOGON_PASSWORD = "PYTHON4CPM_LOGON_PASSWORD";
         private const string ENV_RECONCILE_PASSWORD = "PYTHON4CPM_RECONCILE_PASSWORD";
         private const string ENV_NEW_PASSWORD = "PYTHON4CPM_NEW_PASSWORD";
-        private const string PYTHON_EXE_PATH = "PythonExePath";
-        private const string PYTHON_SCRIPT_PATH = "PythonScriptPath";
-        private const string PYTHON_LOGGING = "PythonLogging";
-        private const string PYTHON_LOGGING_LEVEL = "PythonLoggingLevel";
+        private const string PARAMS_PYTHON_EXE_PATH = "PythonExePath";
+        private const string PARAMS_PYTHON_SCRIPT_PATH = "PythonScriptPath";
+        private const string PARAMS_PYTHON_LOGGING = "PythonLogging";
+        private const string PARAMS_PYTHON_LOGGING_LEVEL = "PythonLoggingLevel";
         protected const int CLOSE_SUCCESS = 0;
         protected const int CLOSE_FAILED_UNRECOVERABLE = 8900;
         protected const int CLOSE_FAILED_RECOVERABLE = 8100;
@@ -32,8 +32,16 @@ namespace CyberArk.Extensions.Python4CPM
         public const int PYTHON_CLOSE_FAILED_RECOVERABLE = 81;
         private string PythonExePath = String.Empty;
         private string PythonScriptPath = String.Empty;
+        private string Address = String.Empty;
+        private string Username = String.Empty;
+        private string LogonUsername = String.Empty;
+        private string ReconcileUsername = String.Empty;
         private string PythonLogging = String.Empty;
         private string PythonLoggingLevel = String.Empty;
+        private string CurrentPassword = String.Empty;
+        private string LogonCurrentPassword = String.Empty;
+        private string ReconcileCurrentPassword = String.Empty;
+        private string NewPassword = String.Empty;
 
         public BaseAction(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
@@ -45,71 +53,63 @@ namespace CyberArk.Extensions.Python4CPM
             get;
         }
 
-        protected void GetParams()
+        protected void GetFields()
         {
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PYTHON_EXE_PATH) == true)
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_EXE_PATH) == true)
             {
-                PythonExePath = TargetAccount.ExtraInfoProp[PYTHON_EXE_PATH];
+                PythonExePath = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_EXE_PATH];
             }
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PYTHON_SCRIPT_PATH) == true)
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_SCRIPT_PATH) == true)
             {
-                PythonScriptPath = TargetAccount.ExtraInfoProp[PYTHON_SCRIPT_PATH];
+                PythonScriptPath = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_SCRIPT_PATH];
             }
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PYTHON_LOGGING) == true)
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_LOGGING) == true)
             {
-                PythonLogging = TargetAccount.ExtraInfoProp[PYTHON_LOGGING];
+                PythonLogging = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_LOGGING];
             }
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PYTHON_LOGGING_LEVEL) == true)
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_LOGGING_LEVEL) == true)
             {
-                PythonLoggingLevel = TargetAccount.ExtraInfoProp[PYTHON_LOGGING_LEVEL];
+                PythonLoggingLevel = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_LOGGING_LEVEL];
             }
-            Logger.WriteLine($"{PYTHON_EXE_PATH}: {PythonExePath}", LogLevel.INFO);
-            Logger.WriteLine($"{PYTHON_SCRIPT_PATH}: {PythonScriptPath}", LogLevel.INFO);
-            Logger.WriteLine($"{PYTHON_LOGGING}: {PythonLogging}", LogLevel.INFO);
-            Logger.WriteLine($"{PYTHON_LOGGING_LEVEL}: {PythonLoggingLevel}", LogLevel.INFO);
+            Logger.WriteLine($"{PARAMS_PYTHON_EXE_PATH}: {PythonExePath}", LogLevel.INFO);
+            Logger.WriteLine($"{PARAMS_PYTHON_SCRIPT_PATH}: {PythonScriptPath}", LogLevel.INFO);
+            Logger.WriteLine($"{PARAMS_PYTHON_LOGGING}: {PythonLogging}", LogLevel.INFO);
+            Logger.WriteLine($"{PARAMS_PYTHON_LOGGING_LEVEL}: {PythonLoggingLevel}", LogLevel.INFO);
             if (!File.Exists(PythonExePath))
-                throw new FileNotFoundException($"{PYTHON_EXE_PATH}: {PythonExePath} does not exist");
+                throw new FileNotFoundException(
+                    $"{PARAMS_PYTHON_EXE_PATH}: {PythonExePath} does not exist"
+                );
             if (!File.Exists(PythonScriptPath))
-                throw new FileNotFoundException($"{PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist");
-        }
-
-        private Dictionary<string, string> GetEnv(string action)
-        {
-            string address = string.Empty;
-            string username = string.Empty;
-            string logonUsername = string.Empty;
-            string reconcileUsername = string.Empty;
-            string currentPassword = string.Empty;
-            string logonCurrentPassword = string.Empty;
-            string reconcileCurrentPassword = string.Empty;
-            string newPassword = string.Empty;
+                throw new FileNotFoundException(
+                    $"{PARAMS_PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist"
+                );
             if (TargetAccount?.AccountProp?.ContainsKey("address") == true)
             {
-                address = TargetAccount.AccountProp["address"];
+                Address = TargetAccount.AccountProp["address"];
             }
             if (TargetAccount?.AccountProp?.ContainsKey("username") == true)
             {
-                username = TargetAccount.AccountProp["username"];
+                Username = TargetAccount.AccountProp["username"];
             }
             if (LogOnAccount?.AccountProp?.ContainsKey("username") == true)
             {
-                logonUsername = LogOnAccount.AccountProp["username"];
+                LogonUsername = LogOnAccount.AccountProp["username"];
             }
             if (ReconcileAccount?.AccountProp?.ContainsKey("username") == true)
             {
-                reconcileUsername = ReconcileAccount.AccountProp["username"];
+                ReconcileUsername = ReconcileAccount.AccountProp["username"];
             }
             if (TargetAccount?.CurrentPassword != null)
             {
-                currentPassword = Crypto.Encrypt(TargetAccount.CurrentPassword);
+                CurrentPassword = Crypto.Encrypt(TargetAccount.CurrentPassword);
             }
             if (LogOnAccount?.CurrentPassword != null)
             {
-                logonCurrentPassword = Crypto.Encrypt(LogOnAccount.CurrentPassword);
+                LogonCurrentPassword = Crypto.Encrypt(LogOnAccount.CurrentPassword);
             }
             if (ReconcileAccount?.CurrentPassword != null)
             {
-                reconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
+                ReconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
             }
             if (RequiresNewPassword)
             {
@@ -117,24 +117,26 @@ namespace CyberArk.Extensions.Python4CPM
                 {
                     throw new InvalidOperationException("Required TargetAccount.NewPassword is null");
                 }
-                newPassword = Crypto.Encrypt(TargetAccount.NewPassword);
+                NewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
             }
-            var envVars = new Dictionary<string, string>
+        }
+
+        private Dictionary<string, string> GetEnv(string action)
+        {
+            return new Dictionary<string, string>
             {
                 { ENV_ACTION, action },
-                { ENV_ADDRESS, address },
-                { ENV_USERNAME, username },
-                { ENV_LOGON_USERNAME, logonUsername },
-                { ENV_RECONCILE_USERNAME, reconcileUsername },
+                { ENV_ADDRESS, Address },
+                { ENV_USERNAME, Username },
+                { ENV_LOGON_USERNAME, LogonUsername },
+                { ENV_RECONCILE_USERNAME, ReconcileUsername },
                 { ENV_LOGGING, PythonLogging },
                 { ENV_LOGGING_LEVEL, PythonLoggingLevel },
-                { ENV_PASSWORD, currentPassword },
-                { ENV_LOGON_PASSWORD, logonCurrentPassword },
-                { ENV_RECONCILE_PASSWORD, reconcileCurrentPassword },
-                { ENV_NEW_PASSWORD, newPassword }
+                { ENV_PASSWORD, CurrentPassword },
+                { ENV_LOGON_PASSWORD, LogonCurrentPassword },
+                { ENV_RECONCILE_PASSWORD, ReconcileCurrentPassword },
+                { ENV_NEW_PASSWORD, NewPassword }
             };
-
-            return envVars;
         }
 
         private void RunScript(string action)
@@ -180,7 +182,7 @@ namespace CyberArk.Extensions.Python4CPM
         {
             try
             {
-                GetParams();
+                GetFields();
             }
             catch (Exception ex)
             {
