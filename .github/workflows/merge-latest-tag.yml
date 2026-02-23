@@ -1,0 +1,21 @@
+name: Update Latest Tag
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-latest-tag:
+    name: Move 'latest' tag to HEAD
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move 'latest' tag to current commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f latest
+          git push origin refs/tags/latest --force
