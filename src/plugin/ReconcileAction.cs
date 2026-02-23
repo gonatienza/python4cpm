@@ -2,7 +2,7 @@ using CyberArk.Extensions.Plugins.Models;
 using CyberArk.Extensions.Utilties.Logger;
 using System.Collections.Generic;
 
-namespace CyberArk.Extensions.Python4CPM
+namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     public class ReconcileAction : BaseAction
     {

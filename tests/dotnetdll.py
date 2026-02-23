@@ -26,7 +26,7 @@ def get_framework_paths():
     plugin_invoker_path = os.path.join(framework_dir, "CANetPluginInvoker.exe")
     python4cpm_dll_path = os.path.join(
         framework_dir,
-        "CyberArk.Extensions.Python4CPM.dll"
+        "CyberArk.Extensions.Plugin.Python4CPM.dll"
     )
     return plugin_invoker_path, python4cpm_dll_path
 
