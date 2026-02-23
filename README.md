@@ -40,7 +40,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 from python4cpm import Python4CPM
 
 
-p4cpm = Python4CPM("MyApp") # this instantiates the object and grabs all arguments and secrets shared by TPC
+p4cpm = Python4CPM("MyApp") # this instantiates the object and grabs all arguments and secrets shared by the .NET SDK
 
 # These are the usable properties and related methods from the object:
 p4cpm.args.action # action requested from CPM
@@ -170,7 +170,7 @@ pip install python4cpm
 ### Example:
 
 ```python
-from python4cpm import TPCHelper, Python4CPM
+from python4cpm import NETHelper, Python4CPM
 from getpass import getpass
 
 # Get secrets for your password, logon account password, reconcile account password and new password
@@ -180,7 +180,7 @@ logon_password = getpass("logon_password: ") # password from linked logon accoun
 reconcile_password = getpass("reconcile_password: ") # password from linked reconcile account
 new_password = getpass("new_password: ") # new password for the rotation
 
-p4cpm = TPCHelper.run(
+p4cpm = NETHelper.run(
     action=Python4CPM.ACTION_LOGON, # use actions from Python4CPM.ACTION_*
     address="myapp.corp.local", # populate with the address from your account properties
     username="jdoe", # populate with the username from your account properties
@@ -200,12 +200,12 @@ p4cpm.log_info("success!")
 p4cpm.close_success()
 
 # Remember for your final script:
-## changing the definition of p4cpm from TPCHelper.run() to Python4CPM("MyApp")
+## changing the definition of p4cpm from NETHelper.run() to Python4CPM("MyApp")
 ## remove any secrets prompting
-## remove the TPCHelper import
+## remove the NETHelper import
 ```
 
 Remember for your final script:
-- Change the definition of `p4cpm` from `p4cpm = TPCHelper.run(**kwargs)` to `p4cpm = Python4CPM("MyApp")`.
+- Change the definition of `p4cpm` from `p4cpm = NETHelper.run(**kwargs)` to `p4cpm = Python4CPM("MyApp")`.
 - Remove any secrets prompting or interactive interruptions.
-- Remove the import of `TPCHelper`.
+- Remove the import of `NETHelper`.
