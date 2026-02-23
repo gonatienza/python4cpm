@@ -4,7 +4,7 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
-## [1.0.16] - 2026-02-22
+## [1.0.16] - 2026-02-23
 
 ### Changed
 - Modified Python4CPM class and plugin platform to work with the [Credential Management .NET SDK](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-netinvoker.htm).
