@@ -1,4 +1,4 @@
-name: Python4CPM Tests
+name: Python4CPM Python Module Tests
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  linux:
+  linux-install-and-tests:
     name: Linux Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
@@ -21,9 +21,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install . pytest
-          pytest tests/python4cpmtests.py
+          pytest tests/pythonmodule.py
 
-  macos:
+  macos-install-and-tests:
     name: MacOs Python ${{ matrix.python-version }}
     runs-on: macos-latest
     strategy:
@@ -38,9 +38,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install . pytest
-          pytest tests/python4cpmtests.py
+          pytest tests/pythonmodule.py
 
-  windows:
+  windows-install-and-tests:
     name: Windows Python ${{ matrix.python-version }}
     runs-on: windows-latest
     strategy:
@@ -55,4 +55,4 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install . pytest
-          pytest tests/python4cpmtests.py
+          pytest tests/pythonmodule.py

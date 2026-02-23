@@ -38,12 +38,12 @@ jobs:
           repository: gonatienza/_python4cpm
           token: ${{ secrets._PYTHON4CPM_TOKEN }}
           path: _python4cpm
-      - name: Get private lib files
+      - name: Get private repo files
         run : |
-          Expand-Archive -Path "_python4cpm\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\lib"
+          Expand-Archive -Path "_python4cpm\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
           New-Item -ItemType Directory -Force -Path "src\plugin\lib"
-          Copy-Item -Path "_python4cpm\lib\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
-          Copy-Item -Path "_python4cpm\lib\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
+          Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
+          Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
       - uses: microsoft/setup-msbuild@v1
       - name: Build .NET Release
         run: |

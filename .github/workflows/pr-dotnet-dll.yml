@@ -1,0 +1,38 @@
+name: Python4CPM .NET DLL Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dotnet-build-and-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: gonatienza/_python4cpm
+          token: ${{ secrets._PYTHON4CPM_TOKEN }}
+          path: _python4cpm
+      - name: Get private repo files
+        run : |
+          Expand-Archive -Path "_python4cpm\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
+          New-Item -ItemType Directory -Force -Path "src\plugin\lib"
+          Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
+          Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
+      - uses: microsoft/setup-msbuild@v1
+      - name: Build .NET Release
+        run: |
+          msbuild src\plugin\Python4CPM.csproj /p:Configuration=Release /p:Platform="AnyCPU"
+      - name: Copy build to framework
+        run: |
+          Copy-Item -Path "src\plugin\bin\Release\CyberArk.Extensions.Python4CPM.dll" "_python4cpm\framework"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.14
+      - name: Install and test
+        run: |
+          python -m pip install --upgrade pip
+          pip install . pytest
+          pytest tests/dotnetdll.py
