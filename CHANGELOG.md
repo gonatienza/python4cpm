@@ -22,5 +22,5 @@ Python4CPM Changelog
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
 [Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.0.17...HEAD
-[1.0.16]: https://github.com/gonatienza/python4cpm/compare/v1.0.14...v1.0.17
+[1.0.17]: https://github.com/gonatienza/python4cpm/compare/v1.0.14...v1.0.17
 [1.0.14]: https://github.com/gonatienza/python4cpm/releases/tag/v1.0.14
