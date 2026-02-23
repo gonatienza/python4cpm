@@ -4,8 +4,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
-    <RootNamespace>CyberArk.Extensions.Python4CPM</RootNamespace>
-    <AssemblyName>CyberArk.Extensions.Python4CPM</AssemblyName>
+    <RootNamespace>CyberArk.Extensions.Plugin.Python4CPM</RootNamespace>
+    <AssemblyName>CyberArk.Extensions.Plugin.Python4CPM</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ProjectGuid>{0ebaf0ea-d0de-4bd7-8db7-8af58235114a}</ProjectGuid>
   </PropertyGroup>

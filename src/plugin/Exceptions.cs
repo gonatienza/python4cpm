@@ -1,6 +1,6 @@
 using System;
 
-namespace CyberArk.Extensions.Python4CPM
+namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     public class PythonExecutionException : Exception
     {

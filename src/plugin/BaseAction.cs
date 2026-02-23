@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System;
 
-namespace CyberArk.Extensions.Python4CPM
+namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     abstract public class BaseAction : AbsAction
     {
