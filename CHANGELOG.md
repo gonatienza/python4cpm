@@ -23,4 +23,4 @@ Python4CPM Changelog
 
 [Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.0.17...HEAD
 [1.0.17]: https://github.com/gonatienza/python4cpm/compare/v1.0.14...v1.0.17
-[1.0.14]: https://github.com/gonatienza/python4cpm/releases/tag/v1.0.14
+[1.0.14]: https://github.com/gonatienza/python4cpm/compare/72ca757...v1.0.14
