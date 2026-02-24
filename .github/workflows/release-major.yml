@@ -60,7 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete existing tag
         run: git push -d origin v${VERSION} || true
-      - name: Create release
+      - name: Create release and add minor
         run: |
           mv dist/python4cpm-platform.zip dist/python4cpm-platform-${MINOR_VERSION}.zip
           gh release create v${MAJOR_VERSION} \
