@@ -1,4 +1,4 @@
-name: Python4CPM Python Module Tests
+name: PR Python Module
 
 on:
   workflow_dispatch:
