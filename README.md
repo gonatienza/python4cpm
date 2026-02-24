@@ -13,9 +13,9 @@ This platform allows you to duplicate it multiple times, simply changing its set
 3. Install `python4cpm` in your venv:
     - If your CPM can connect to the internet, install with `c:\venv\Scripts\pip install python4cpm`.
     - If your CPM cannot connect to the internet:
-        - Download the `python4cpm-wheel.zip` asset from the latest [release](https://github.com/gonatienza/python4cpm/releases).
-        - Copy the file to CPM and extract to a temporary location.
-        - From the temporary location run `c:\venv\Scripts\pip install --no-index --find-links=.\python4cpm-wheel python4cpm`.
+        - Download the latest `*.whl` file from the [pypi project files](https://pypi.org/project/python4cpm/#files).
+        - Copy the file to CPM and extract to a temporary directory called `python4cpm-wheel`.
+        - From the parent directory of `python4cpm-wheel` run `c:\venv\Scripts\pip install --no-index --find-links=.\python4cpm-wheel python4cpm`.
 
 
 ### Importing the platform
