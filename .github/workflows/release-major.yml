@@ -1,4 +1,4 @@
-name: Release Latest Version
+name: Release Major
 
 on:
   workflow_dispatch:
