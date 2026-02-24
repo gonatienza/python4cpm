@@ -5,7 +5,7 @@ import os
 
 ENV_MAPPINGS_ASSERTIONS_RESULTS = os.path.join(
     os.path.dirname(__file__),
-    "assert_env_mappings.assertions"
+    "assert_env_mappings.log"
 )
 
 
@@ -14,7 +14,7 @@ def append_to_assertions_results(message):
             f.write(f"{message}\n")
 
 
-def get_user_ini():
+def get_config_from_ini():
     file_dir = os.path.dirname(__file__)
     tests_dir = os.path.dirname(file_dir)
     ini_path = os.path.join(tests_dir, "sources", "User.ini")
@@ -27,7 +27,7 @@ def get_user_ini():
 
 try:
     p4cpm = Python4CPM(__file__)
-    config = get_user_ini()
+    config = get_config_from_ini()
     assertions = (
         (p4cpm.args.action, Python4CPM.ACTION_VERIFY),
         (p4cpm.args.address, config["DEFAULT"]["address"]),
@@ -42,7 +42,7 @@ try:
     for a, b in assertions:
         append_to_assertions_results(f"Asserting '{a}' == '{b}'...")
         if a != b:
-            append_to_assertions_results("Assertions failed")
+            append_to_assertions_results("Assertion failed")
             raise AssertionError
 except Exception as e:
     append_to_assertions_results(f"{type(e).__name__}: {e}")

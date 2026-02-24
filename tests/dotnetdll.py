@@ -9,7 +9,7 @@ import sys
 import subprocess
 
 
-def get_user_ini():
+def get_config_from_ini():
     file_dir = os.path.dirname(__file__)
     ini_path = os.path.join(file_dir, "sources", "User.ini")
     config = ConfigParser()
@@ -66,8 +66,7 @@ PARAMS = [
     for python_path in PYTHON_PATHS
 ]
 ENV_MAPPINGS_ASSERTIONS_RESULTS = os.path.join(
-    get_scripts_path(),
-    "assert_env_mappings.assertions"
+    get_scripts_path(), "assert_env_mappings.log"
 )
 
 
@@ -75,7 +74,7 @@ ENV_MAPPINGS_ASSERTIONS_RESULTS = os.path.join(
 def test_python4cpm_dll_returns(python_path, script, action):
     print(f"action -> {action}")
     print(f"script -> {script}")
-    config = get_user_ini()
+    config = get_config_from_ini()
     config.set("extrainfo", "PythonExePath", python_path)
     config.set("extrainfo", "PythonScriptPath", script)
     buffer = StringIO()
@@ -101,12 +100,12 @@ def test_python4cpm_dll_returns(python_path, script, action):
         assert result.returncode == FAILED_UNRECOVERABLE_CODE # noqa: S101
 
 
-def test_env_mappings():
+def test_python4cpm_dll_env_mappings():
     action = Python4CPM.ACTION_VERIFY
     script = os.path.join(_SCRIPTS_PATH, "assert_env_mappings.py")
     print(f"action -> {action}")
     print(f"script -> {script}")
-    config = get_user_ini()
+    config = get_config_from_ini()
     config.set("extrainfo", "PythonExePath", PYTHON_PATHS[0])
     config.set("extrainfo", "PythonScriptPath", script)
     buffer = StringIO()
