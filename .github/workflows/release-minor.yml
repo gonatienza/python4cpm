@@ -52,7 +52,7 @@ jobs:
         with:
           name: platform-artifact
           path: dist
-      - name: Replace platform zip in release
+      - name: Add minor
         run: |
           mv dist/python4cpm-platform.zip dist/python4cpm-platform-${MINOR_VERSION}.zip
           gh release upload v${MAJOR_VERSION} \
