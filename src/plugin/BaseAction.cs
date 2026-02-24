@@ -213,16 +213,13 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             string message = $"{ex.GetType()}: {ex.Message}";
             platformOutput.Message = message;
             Logger.WriteLine(message, LogLevel.ERROR);
-            if (!unrecoverable)
-            {
-                Logger.WriteLine("Closing with failed recoverable", LogLevel.ERROR);
-                return CLOSE_FAILED_RECOVERABLE;
-            }
-            else
+            if (unrecoverable)
             {
                 Logger.WriteLine("Closing with failed unrecoverable", LogLevel.ERROR);
                 return CLOSE_FAILED_UNRECOVERABLE;
             }
+            Logger.WriteLine("Closing with failed recoverable", LogLevel.ERROR);
+            return CLOSE_FAILED_RECOVERABLE;
         }
     }
 }

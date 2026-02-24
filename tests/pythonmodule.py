@@ -22,7 +22,7 @@ def get_args_and_secrets():
 
 ARGS, SECRETS = get_args_and_secrets()
 LOGGING = ["yes", "YES", "bad"]
-LOGGING_LEVELS = ["info", "debug", "DEBUG", "bad"]
+LOGGING_LEVELS = ["info", "INFO", "debug", "DEBUG", "bad"]
 ARGS_PARAMS = [
     (action, logging, logging_level)
     for logging in LOGGING
@@ -84,8 +84,8 @@ def test_main(action, logging, logging_level,  monkeypatch):
     assert p4cpm.secrets.new_password.get() == secrets["PYTHON4CPM_NEW_PASSWORD"] # noqa: S101
     if logging.lower() in _LOGGING_ENABLED_VALUE:
         assert p4cpm._logger # noqa: S101
-        if logging_level.lower() == LOGGING_LEVELS[1]:
-            assert p4cpm._logger.level == _LOGGING_LEVELS[LOGGING_LEVELS[1]] # noqa: S101
+        if logging_level.lower() == LOGGING_LEVELS[2]:
+            assert p4cpm._logger.level == _LOGGING_LEVELS[LOGGING_LEVELS[2]] # noqa: S101
         else:
             assert p4cpm._logger.level == _LOGGING_LEVELS[LOGGING_LEVELS[0]] # noqa: S101
     else:
