@@ -4,9 +4,6 @@ from logging.handlers import RotatingFileHandler
 
 
 _LOGS_DIR = os.path.join("Logs", "ThirdParty", "Python4CPM")
-_CPM_ROOT_DIR = "C:\\Program Files (x86)\\CyberArk\\Password Manager"
-if os.path.exists(_CPM_ROOT_DIR):
-    _LOGS_DIR = os.path.join(_CPM_ROOT_DIR, _LOGS_DIR)
 _LOGGING_ENABLED_VALUE = "yes"
 _LOGGING_LEVELS = {
     "info": logging.INFO,
