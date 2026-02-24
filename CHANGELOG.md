@@ -16,6 +16,9 @@ Python4CPM Changelog
     - During the object `python4cpm.Python4CPM` initialization in Python, secrets are now kept in the `python4cpm.Secret` object encrypted at all times.
     - The secret plaintext `str` object is only created when calling the `python4cpm.Secret` object `get()` method.
 
+### Removed
+- `python4cpm.TPCHelper` which was replaced by `python4cpm.NETHelper`.
+
 ## [1.0.14] - 2026-02-17
 
 ### Added
