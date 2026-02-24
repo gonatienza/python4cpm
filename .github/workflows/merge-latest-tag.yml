@@ -1,4 +1,4 @@
-name: Update Latest Tag
+name: Merge Latest Tag
 
 on:
   workflow_dispatch:

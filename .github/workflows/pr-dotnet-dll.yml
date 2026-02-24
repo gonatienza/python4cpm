@@ -1,4 +1,4 @@
-name: Python4CPM .NET DLL Tests
+name: PR .NET DLL
 
 on:
   workflow_dispatch:
