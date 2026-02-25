@@ -1,5 +1,6 @@
 import os
 import sys
+import atexit
 import logging
 from python4cpm.secrets import Secrets
 from python4cpm.args import Args
@@ -19,15 +20,14 @@ class Python4CPM:
         ACTION_PRERECONCILE,
         ACTION_RECONCILE,
     )
-    _SUCCESS_CODE = 0
+    _SUCCESS_CODE = 10
     _FAILED_RECOVERABLE_CODE = 81
     _FAILED_UNRECOVERABLE_CODE = 89
     _ENV_PREFIX = "PYTHON4CPM_"
 
     def __init__(self, name: str) -> None:
         self._name = name
-        args = self._get_args()
-        self._args = Args(**args)
+        self._args = self._get_args()
         self._logger = get_logger(
             self._name,
             self._args.logging,
@@ -36,8 +36,9 @@ class Python4CPM:
         self.log_info("Python4CPM.__init__: initiating...")
         self._log_args()
         self._verify_action()
-        secrets = self._get_secrets()
-        self._secrets = Secrets(**secrets)
+        self._secrets = self._get_secrets()
+        self._closed = False
+        atexit.register(self._on_exit)
 
     @property
     def args(self) -> Args:
@@ -75,19 +76,21 @@ class Python4CPM:
     def _get_args(cls) -> dict:
         args = {}
         for arg in Args.ARGS:
-            args[arg] = os.environ.get(cls._get_env_key(arg))
-        return args
+            _arg = os.environ.get(cls._get_env_key(arg))
+            args[arg] = _arg if _arg is not None else ""
+        return Args(**args)
 
     def _get_secrets(self) -> dict:
         secrets = {}
         for secret in Secrets.SECRETS:
-            secrets[secret] = os.environ.get(self._get_env_key(secret))
+            _secret = os.environ.get(self._get_env_key(secret))
+            secrets[secret] = _secret if _secret is not None else ""
             common_message = f"Python4CPM._get_secrets: {secret} ->"
             if secrets[secret]:
                 self.log_info(f"{common_message} [*******]")
             else:
                 self.log_info(f"{common_message} [NOT SET]")
-        return secrets
+        return Secrets(**secrets)
 
     def _verify_action(self) -> None:
         if self.args.action not in self._VALID_ACTIONS:
@@ -109,10 +112,19 @@ class Python4CPM:
         else:
             code = self._FAILED_UNRECOVERABLE_CODE
         self.log_error(f"Python4CPM.close_fail: closing with code {code}")
+        self._closed = True
         sys.exit(code)
 
     def close_success(self) -> None:
         self.log_info(
             f"Python4CPM.close_success: closing with code {self._SUCCESS_CODE}"
         )
+        self._closed = True
         sys.exit(self._SUCCESS_CODE)
+
+    def _on_exit(self):
+        if self._closed is False:
+            message = "Python4CPM._on_exit: no close signal called"
+            self.log_error(message)
+            sys.stderr.write(message)
+            sys.stderr.flush()

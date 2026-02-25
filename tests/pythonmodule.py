@@ -90,10 +90,13 @@ def test_main(action, logging, logging_level,  monkeypatch):
             assert p4cpm._logger.level == _LOGGING_LEVELS[LOGGING_LEVELS[0]] # noqa: S101
     else:
             assert p4cpm._logger is None # noqa: S101
+    with pytest.raises(SystemExit) as e:
+        p4cpm.close_success()
+        assert e.value.code == CLOSE_CODES[0] # noqa: S101
 
 
 @pytest.mark.parametrize("close", CLOSE_CODES)
-def test_exit_codes(close, monkeypatch):
+def test_exit_codes(close, monkeypatch, capsys):
     args = {f"PYTHON4CPM_{k.upper()}": v for k, v in ARGS.items()}
     args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_VERIFY
     args[Python4CPM._get_env_key(Args.ARGS[5])] = LOGGING[0]
@@ -117,6 +120,23 @@ def test_exit_codes(close, monkeypatch):
         with pytest.raises(SystemExit) as e:
             p4cpm.close_fail(unrecoverable=True)
         assert e.value.code == CLOSE_CODES[2] # noqa: S101
+
+
+def test_on_exit_stderr(monkeypatch, capsys):
+    args = {f"PYTHON4CPM_{k.upper()}": v for k, v in ARGS.items()}
+    args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_VERIFY
+    args[Python4CPM._get_env_key(Args.ARGS[5])] = LOGGING[0]
+    args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING_LEVELS[0]
+    print(f"args -> {args}")
+    secrets = {f"PYTHON4CPM_{k.upper()}": v for k, v in SECRETS.items()}
+    print(f"secrets -> {secrets}")
+    final_env = args | secrets
+    for k, v in final_env.items():
+        monkeypatch.setenv(k, v)
+    p4cpm = Python4CPM("PyTest")
+    p4cpm._on_exit()
+    captured = capsys.readouterr()
+    assert captured.err != "" # noqa: S101
 
 
 def test_net_helper():
@@ -148,3 +168,6 @@ def test_net_helper():
     assert p4cpm.secrets.logon_password.get() == SECRETS["logon_password"] # noqa: S101
     assert p4cpm.secrets.reconcile_password.get() == SECRETS["reconcile_password"] # noqa: S101
     assert p4cpm.secrets.new_password.get() == SECRETS["new_password"] # noqa: S101
+    with pytest.raises(SystemExit) as e:
+        p4cpm.close_success()
+        assert e.value.code == CLOSE_CODES[0] # noqa: S101

@@ -44,6 +44,7 @@ try:
         if a != b:
             append_to_assertions_results("Assertion failed")
             raise AssertionError
+    p4cpm.close_success()
 except Exception as e:
     append_to_assertions_results(f"{type(e).__name__}: {e}")
     raise e

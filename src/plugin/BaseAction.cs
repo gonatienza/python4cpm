@@ -28,20 +28,21 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         protected const int CLOSE_SUCCESS = 0;
         protected const int CLOSE_FAILED_UNRECOVERABLE = 8900;
         protected const int CLOSE_FAILED_RECOVERABLE = 8100;
+        private const int PYTHON_CLOSE_SUCCESS = 10;
         public const int PYTHON_CLOSE_FAILED_UNRECOVERABLE = 89;
         public const int PYTHON_CLOSE_FAILED_RECOVERABLE = 81;
-        private string PythonExePath = String.Empty;
-        private string PythonScriptPath = String.Empty;
-        private string Address = String.Empty;
-        private string Username = String.Empty;
-        private string LogonUsername = String.Empty;
-        private string ReconcileUsername = String.Empty;
-        private string PythonLogging = String.Empty;
-        private string PythonLoggingLevel = String.Empty;
-        private string CurrentPassword = String.Empty;
-        private string LogonCurrentPassword = String.Empty;
-        private string ReconcileCurrentPassword = String.Empty;
-        private string NewPassword = String.Empty;
+        private string PythonExePath = string.Empty;
+        private string PythonScriptPath = string.Empty;
+        private string Address = string.Empty;
+        private string Username = string.Empty;
+        private string LogonUsername = string.Empty;
+        private string ReconcileUsername = string.Empty;
+        private string PythonLogging = string.Empty;
+        private string PythonLoggingLevel = string.Empty;
+        private string CurrentPassword = string.Empty;
+        private string LogonCurrentPassword = string.Empty;
+        private string ReconcileCurrentPassword = string.Empty;
+        private string NewPassword = string.Empty;
 
         public BaseAction(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
@@ -166,7 +167,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             string stderr = process.StandardError.ReadToEnd();
             process.WaitForExit();
             string message = $"Python closed with exit code: {process.ExitCode}";
-            if (process.ExitCode != 0)
+            if (process.ExitCode != PYTHON_CLOSE_SUCCESS)
             {
                 Logger.WriteLine(message, LogLevel.ERROR);
                 if (!string.IsNullOrWhiteSpace(stderr))
