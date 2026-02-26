@@ -61,11 +61,12 @@ p4cpm.log_info("this is an info message") # logs info into Logs/ThirdParty/Pytho
 # Logging level -> Will only log debug messages if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel is set to debug (default is info)
 p4cpm.log_debug("this is an debug message") # logs info into Logs/ThirdParty/Python4CPM/MyApp.log if logging level is set to debug
 
-# Terminate signals -> MUST ALWAYS use one of the following three signals to terminate the script:
+# Terminate signals -> MUST use one of the following three signals to terminate the script:
 ## p4cpm.close_success() # terminate with success state
 ## p4cpm.close_fail() # terminate with recoverable failed state
 ## p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
-# If no signal is call, and the script finishes without any exception, it will behave like p4cpm.close_fail(unrecoverable=True) and log an error message.
+# When calling a signal sys.exit is invoked and the script is terminated.
+# If no signal is called, and the script finishes without any exception, it will behave like p4cpm.close_fail(unrecoverable=True) and log an error message.
 
 
 # Verification example -> verify the username and password are valid
