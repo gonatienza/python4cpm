@@ -9,7 +9,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 ### Preparing Python
 
 1. Install Python in CPM.  **Python must be installed for all users when running the install wizard**.
-2. Create a venv in CPM, by running `py -m venv c:\venv`.  Use the default location `c:\venv` or a custom one (e.g., `c:\my-venv-path`).
+2. Create a venv in CPM, by running `py -m venv c:\venv`.  Use a custom location if you want (e.g., `c:\my-venv-path`) and adjust any future references.
 3. Install `python4cpm` in your venv:
     - If your CPM can connect to the internet, install with `c:\venv\Scripts\pip install python4cpm`.
     - If your CPM cannot connect to the internet:
@@ -20,17 +20,28 @@ This platform allows you to duplicate it multiple times, simply changing its set
 
 ### Importing the platform
 
-1. Download the latest [Credential Management .NET SDK](https://community.cyberark.com/marketplace/s/#a3550000000EkA0AAK-a3950000000jjoOAAQ) and place its content in the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
+#### If you are using CPM (SaaS or Self-Hosted):
+1. Download the latest [Credential Management .NET SDK](https://community.cyberark.com/marketplace/s/#a3550000000EkA0AAK-a3950000000jjoOAAQ) and place its content in the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).  The files for this may already be present.
 2. Download the `python4cpm-platform-*.zip` asset from the [release](https://github.com/gonatienza/python4cpm/releases).
 3. Import the platform zip file into Privilege Cloud/PVWA `(Administration -> Platform Management -> Import platform)`.
-4. Craft your python script and place it within the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).
+4. Craft your python script and place it within a folder in CPM (e.g., `C:\python4cpm-scripts`).
 5. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
-6. Edit the duplicated platform and specify the path of your placed script in the bin folder of CPM, under `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value` (e.g., `bin\myapp.py`).
-7. If you used a custom venv location, also update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonExePath -> Value` with the custom path for the venv's `python.exe` file (e.g., `c:\my-venv-path\Scripts\python.exe`).
+6. Edit the duplicated platform and specify the path of your script, under `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value` (e.g., `C:\python4cpm-scripts\myapp.py`).
+7. Also update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonExePath -> Value` with the custom path for the venv's `python.exe` file (e.g., `c:\venv\Scripts\python.exe`).
 8. If you want to disable logging, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging -> Value` to `no`.
 9. If you want to change the logging level to `debug`, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel -> Value` to `debug`.
 10. For new applications repeat steps from 4 to 9.
 
+#### If you are using SRS (SaaS only):
+1. Download the `python4cpm-platform-*.zip` asset from the [release](https://github.com/gonatienza/python4cpm/releases).
+2. Import the platform zip file into Privilege Cloud `(Administration -> Platform Management -> Import platform)`.
+3. Craft your python script and place it within a folder in the Cloud Connector (where the SRS Management Agent runs) (e.g., `C:\python4cpm-scripts`).
+4. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
+5. Edit the duplicated platform and specify the path of your script, under `Plugin Settings -> Additional Parameters -> PythonScriptPath` (e.g., `C:\python4cpm-scripts\myapp.py`).
+6. Also update `Plugin Settings -> Additional Parameters -> PythonExePath` with the custom path for the venv's `python.exe` file (e.g., `c:\venv\Scripts\python.exe`).
+7. If you want to disable logging, update `Plugin Settings -> Additional Parameters -> PythonLogging` to `no`.
+8. If you want to change the logging level to `debug`, update `Plugin Settings -> Additional Parameters -> PythonLoggingLevel -> Value` to `debug`.
+9. For new applications repeat steps from 3 to 8.
 
 ## Python Script
 

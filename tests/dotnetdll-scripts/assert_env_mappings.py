@@ -4,7 +4,8 @@ import os
 
 
 ENV_MAPPINGS_ASSERTIONS_RESULTS = os.path.join(
-    os.path.dirname(__file__),
+    "Logs",
+    "ThirdParty",
     "assert_env_mappings.log"
 )
 
@@ -26,7 +27,7 @@ def get_config_from_ini():
 
 
 try:
-    p4cpm = Python4CPM(__file__)
+    p4cpm = Python4CPM(os.path.basename(__file__))
     config = get_config_from_ini()
     assertions = (
         (p4cpm.args.action, Python4CPM.ACTION_VERIFY),
