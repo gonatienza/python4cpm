@@ -68,11 +68,11 @@ def test_main(action, logging, logging_level,  monkeypatch):
         final_env = args | secrets
     for k, v in final_env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM("PyTest")
+    p4cpm = Python4CPM(os.path.basename(__file__))
     for k, v in vars(p4cpm.args).items():
         LOGGER.info(f"{k} -> {v}")
     for k, v in vars(p4cpm.secrets).items():
-        LOGGER.info(f"{k} -> {v}")
+        LOGGER.info(f"{k} -> {v.get()}")
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.address == ARGS["address"] # noqa: S101
     assert p4cpm.args.username == ARGS["username"] # noqa: S101
@@ -109,7 +109,7 @@ def test_exit_codes(close, monkeypatch, capsys):
     final_env = args | secrets
     for k, v in final_env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM("PyTest")
+    p4cpm = Python4CPM(os.path.basename(__file__))
     if close == CLOSE_CODES[0]:
         with pytest.raises(SystemExit) as e:
             p4cpm.close_success()
@@ -135,7 +135,7 @@ def test_on_exit_stderr(monkeypatch, capsys):
     final_env = args | secrets
     for k, v in final_env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM("PyTest")
+    p4cpm = Python4CPM(os.path.basename(__file__))
     p4cpm._on_exit()
     captured = capsys.readouterr()
     assert captured.err != "" # noqa: S101
