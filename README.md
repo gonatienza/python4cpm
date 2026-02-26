@@ -8,9 +8,10 @@ This platform allows you to duplicate it multiple times, simply changing its set
 
 ### Preparing Python
 
-1. Install Python in CPM.  **Python must be installed for all users when running the install wizard**.
-2. Create a venv in CPM, by running `py -m venv c:\venv`.  If desired, use a custom location and adjust any future references.
-3. Install `python4cpm` in your venv:
+1. Install Python in CPM.
+    - **Python must be installed for all users**.  Follow the custom install steps from the installation wizard to check the checkbox.
+3. Create a venv in CPM, by running `py -m venv c:\venv`.  If desired, use a custom location and adjust any future references.
+4. Install `python4cpm` in your venv:
     - If your CPM can connect to the internet, install with `c:\venv\Scripts\pip install python4cpm`.
     - If your CPM cannot connect to the internet:
         - Download the latest `python4cpm-*.whl` file from the [pypi project files](https://pypi.org/project/python4cpm/#files).
