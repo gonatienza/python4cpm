@@ -172,7 +172,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 Logger.WriteLine(message, LogLevel.ERROR);
                 if (!string.IsNullOrWhiteSpace(stderr))
                 {
-                    Logger.WriteLine($"StdErr Output: \n{stderr}", LogLevel.ERROR);
+                    Logger.WriteLine($"StdErr Output: {stderr}", LogLevel.ERROR);
                 }
                 throw new PythonExecutionException(process.ExitCode);
             }
