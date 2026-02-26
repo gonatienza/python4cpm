@@ -4,7 +4,7 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
-## [1.0.20] - 2026-02-25
+## [1.0.20] - 2026-02-26
 
 ### Changed
 - If `close_success()` or `close_fail()` are not used to end the python script that initiated a `python4cpm.Python4CPM` object, the default behavior was modified to `close_fail(unrecoverable=True)` with an error message into the logs.
