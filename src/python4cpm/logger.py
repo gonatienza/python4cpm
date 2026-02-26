@@ -3,7 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 
-_LOGS_DIR = os.path.join("Logs", "ThirdParty", "Python4CPM")
+_LOGS_DIR = os.path.join("Logs", "ThirdParty")
 _LOGGING_ENABLED_VALUE = "yes"
 _LOGGING_LEVELS = {
     "info": logging.INFO,
@@ -19,7 +19,7 @@ def get_logger(
     if args_logging.lower() != _LOGGING_ENABLED_VALUE:
         return None
     os.makedirs(_LOGS_DIR, exist_ok=True)
-    logs_file = os.path.join(_LOGS_DIR, f"{name}.log")
+    logs_file = os.path.join(_LOGS_DIR, f"{__name__}-{name}.log")
     _id = os.urandom(4).hex()
     logger = logging.getLogger(_id)
     if args_logging_level.lower() in _LOGGING_LEVELS:

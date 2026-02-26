@@ -3,6 +3,7 @@ from configparser import ConfigParser
 from python4cpm import Python4CPM
 from tempfile import NamedTemporaryFile
 from io import StringIO
+from logger import get_logger
 import pytest
 import os
 import sys
@@ -36,6 +37,7 @@ def get_scripts_path():
     return os.path.join(file_dir, "dotnetdll-scripts")
 
 
+LOGGER = get_logger(os.path.basename(__file__))
 PLUGIN_INVOKER_PATH, PYTHON4CPM_DLL_PATH = get_framework_paths()
 SUCCESS_CODE = 0
 FAILED_RECOVERABLE_CODE = 8100
@@ -66,22 +68,19 @@ PARAMS = [
     for script in SCRIPTS_AND_CODES
     for python_path in PYTHON_PATHS
 ]
-ENV_MAPPINGS_ASSERTIONS_RESULTS = os.path.join(
-    get_scripts_path(), "assert_env_mappings.log"
-)
 
 
 @pytest.mark.parametrize("python_path,script,action", PARAMS)
 def test_python4cpm_dll_returns(python_path, script, action):
-    print(f"action -> {action}")
-    print(f"script -> {script}")
+    LOGGER.info(f"action -> {action}")
+    LOGGER.info(f"script -> {script}")
     config = get_config_from_ini()
     config.set("extrainfo", "PythonExePath", python_path)
     config.set("extrainfo", "PythonScriptPath", script)
     buffer = StringIO()
     config.write(buffer)
     _config = buffer.getvalue().split("\n", 1)[1]
-    print(f"config -> \n{_config}")
+    LOGGER.info(f"config -> \n{_config}")
     tmp = NamedTemporaryFile(mode="w", suffix=".ini", delete=False)
     tmp.write(_config)
     tmp.close()
@@ -92,9 +91,9 @@ def test_python4cpm_dll_returns(python_path, script, action):
         PYTHON4CPM_DLL_PATH,
         "True"
     ]
-    print(f"cmd -> {' '.join(cmd)}")
+    LOGGER.info(f"cmd -> {' '.join(cmd)}")
     result = subprocess.run(cmd) # noqa S603
-    print(f"return code -> {result.returncode}")
+    LOGGER.info(f"return code -> {result.returncode}")
     if python_path == PYTHON_PATHS[0]:
         assert result.returncode == SCRIPTS_AND_CODES[script] # noqa: S101
     else:
@@ -104,15 +103,15 @@ def test_python4cpm_dll_returns(python_path, script, action):
 def test_python4cpm_dll_env_mappings():
     action = Python4CPM.ACTION_VERIFY
     script = os.path.join(_SCRIPTS_PATH, "assert_env_mappings.py")
-    print(f"action -> {action}")
-    print(f"script -> {script}")
+    LOGGER.info(f"action -> {action}")
+    LOGGER.info(f"script -> {script}")
     config = get_config_from_ini()
     config.set("extrainfo", "PythonExePath", PYTHON_PATHS[0])
     config.set("extrainfo", "PythonScriptPath", script)
     buffer = StringIO()
     config.write(buffer)
     _config = buffer.getvalue().split("\n", 1)[1]
-    print(f"config -> \n{_config}")
+    LOGGER.info(f"config -> \n{_config}")
     tmp = NamedTemporaryFile(mode="w", suffix=".ini", delete=False)
     tmp.write(_config)
     tmp.close()
@@ -123,10 +122,7 @@ def test_python4cpm_dll_env_mappings():
         PYTHON4CPM_DLL_PATH,
         "True"
     ]
-    print(f"cmd -> {' '.join(cmd)}")
+    LOGGER.info(f"cmd -> {' '.join(cmd)}")
     result = subprocess.run(cmd, capture_output=True, text=True) # noqa S603
-    print(f"return code -> {result.returncode}")
-    if result.returncode != SUCCESS_CODE:
-        with open(ENV_MAPPINGS_ASSERTIONS_RESULTS, "r") as f:
-            print(f.read())
-        raise AssertionError
+    LOGGER.info(f"return code -> {result.returncode}")
+    assert result.returncode == SUCCESS_CODE # noqa S603

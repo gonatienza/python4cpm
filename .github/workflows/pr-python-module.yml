@@ -23,6 +23,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install . pytest
           pytest tests/pythonmodule.py
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Logs Linux Python ${{ matrix.python-version }}
+          path: Logs/ThirdParty
 
   macos-install-and-tests:
     name: MacOs Python ${{ matrix.python-version }}
@@ -40,6 +46,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install . pytest
           pytest tests/pythonmodule.py
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Logs MacOs Python ${{ matrix.python-version }}
+          path: Logs/ThirdParty
 
   windows-install-and-tests:
     name: Windows Python ${{ matrix.python-version }}
@@ -57,3 +69,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install . pytest
           pytest tests/pythonmodule.py
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Logs Windows Python ${{ matrix.python-version }}
+          path: Logs/ThirdParty
