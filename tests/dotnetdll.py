@@ -46,6 +46,7 @@ SCRIPTS_AND_CODES = {
     os.path.join(_SCRIPTS_PATH, "fail_unrecoverable.py"): FAILED_UNRECOVERABLE_CODE,
     os.path.join(_SCRIPTS_PATH, "success.py"): SUCCESS_CODE,
     os.path.join(_SCRIPTS_PATH, "unexpected_exception.py"): FAILED_UNRECOVERABLE_CODE,
+    os.path.join(_SCRIPTS_PATH, "no_close_signal.py"): FAILED_UNRECOVERABLE_CODE,
     "nonexistent": FAILED_UNRECOVERABLE_CODE
 }
 PYTHON_PATHS = [

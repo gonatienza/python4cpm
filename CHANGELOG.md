@@ -4,6 +4,11 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.0.20] - 2026-02-25
+
+### Changed
+- If `close_success()` or `close_fail()` are not used to end the python script that initiated a `python4cpm.Python4CPM` object, the default behavior was modified to `close_fail(unrecoverable=True)` with an error message into the logs.
+
 ## [1.0.19] - 2026-02-24
 
 ### Changed
@@ -24,6 +29,7 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.0.19...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.0.20...HEAD
+[1.0.20]: https://github.com/gonatienza/python4cpm/compare/v1.0.19...v1.0.20
 [1.0.19]: https://github.com/gonatienza/python4cpm/compare/v1.0.14...v1.0.19
 [1.0.14]: https://github.com/gonatienza/python4cpm/compare/72ca757...v1.0.14

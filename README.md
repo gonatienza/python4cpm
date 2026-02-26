@@ -61,11 +61,11 @@ p4cpm.log_info("this is an info message") # logs info into Logs/ThirdParty/Pytho
 # Logging level -> Will only log debug messages if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel is set to debug (default is info)
 p4cpm.log_debug("this is an debug message") # logs info into Logs/ThirdParty/Python4CPM/MyApp.log if logging level is set to debug
 
-# Terminate signals -> ALWAYS use one of the following three signals to terminate the script
+# Terminate signals -> MUST ALWAYS use one of the following three signals to terminate the script:
 ## p4cpm.close_success() # terminate with success state
 ## p4cpm.close_fail() # terminate with recoverable failed state
 ## p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
-# If no signal is call, CPM will not know if the action was successful and display an error
+# If no signal is call, and the script finishes without any exception, it will behave like p4cpm.close_fail(unrecoverable=True) and log an error message.
 
 
 # Verification example -> verify the username and password are valid
@@ -139,7 +139,7 @@ if __name__ == "__main__":
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `Python4CPM.ACTION_VERIFY`.
 2. Change -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `Python4CPM.ACTION_LOGON` and once as `Python4CPM.ACTION_CHANGE`.
-    - If all actions are not terminated with `p4cpm.close_success()` the overall change will fail.
+    - If all actions are not terminated with `p4cpm.close_success()` and the scripts terminates without any exception, it defaults to a successful return.
 3. Reconcile -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `Python4CPM.ACTION_PRERECONCILE` and once as `Python4CPM.ACTION_RECONCILE`.
     - If all actions are not terminated with `p4cpm.close_success()` the overall reconcile will fail.
 4. When `p4cpm.args.action` comes as `Python4CPM.ACTION_VERIFY`, `Python4CPM.ACTION_LOGON` or `Python4CPM.ACTION_PRERECONCILE`: `p4cpm.secrets.new_password.get()` will always return an empty string.
