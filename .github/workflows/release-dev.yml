@@ -59,7 +59,7 @@ jobs:
         run: git push -d origin v${VERSION} || true
       - name: Create release
         run: |
-          gh release create v${VERSION} \
+          gh release create ${VERSION} \
             dist/python4cpm-platform.zip \
             --title "${VERSION}" \
             --notes "Release ${VERSION}" \
