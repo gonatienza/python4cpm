@@ -8,7 +8,7 @@ _LOGGING_ENABLED_VALUE = "yes"
 _LOGGING_LEVELS = {
     "info": logging.INFO,
     "debug": logging.DEBUG
-    }
+}
 
 
 def get_logger(
