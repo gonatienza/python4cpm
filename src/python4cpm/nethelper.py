@@ -31,7 +31,8 @@ class NETHelper:
             logging_level
         ]
         for i, arg in enumerate(Args.ARGS):
-            os.environ[f"PYTHON4CPM_{arg.upper()}"] = _args[i]
+            env_var = Python4CPM._ENV_PREFIX + arg.upper()
+            os.environ[env_var] = _args[i]
         _secrets = [
             password,
             logon_password,
@@ -43,5 +44,6 @@ class NETHelper:
                 _secret = Crypto.encrypt(_secrets[i])
             else:
                 _secret = _secrets[i]
-            os.environ[f"PYTHON4CPM_{secret.upper()}"] = _secret
+            env_var = Python4CPM._ENV_PREFIX + secret.upper()
+            os.environ[env_var] = _secret
         return Python4CPM(cls.__name__)
