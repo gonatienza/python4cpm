@@ -87,7 +87,7 @@ class Python4CPM:
             secrets[secret] = _secret if _secret is not None else ""
             common_message = f"Python4CPM._get_secrets: {secret} ->"
             if secrets[secret]:
-                self.log_info(f"{common_message} [*******]")
+                self.log_info(f"{common_message} [SET]")
             else:
                 self.log_info(f"{common_message} [NOT SET]")
         return Secrets(**secrets)
