@@ -1,9 +1,9 @@
+from python4cpm import Python4CPM
 import ssl
 import urllib.request
 import urllib.parse
 import http.cookiejar as cookiejar
 import json
-from python4cpm import Python4CPM
 
 
 P4CPM = Python4CPM("SimpleAuth")

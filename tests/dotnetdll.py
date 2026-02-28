@@ -44,6 +44,10 @@ FAILED_RECOVERABLE_CODE = 8100
 FAILED_UNRECOVERABLE_CODE = 8900
 _SCRIPTS_PATH = get_scripts_path()
 SCRIPTS_AND_CODES = {
+    os.path.join(_SCRIPTS_PATH, "bad_handler.py"): FAILED_UNRECOVERABLE_CODE,
+    os.path.join(_SCRIPTS_PATH, "fail_recoverable_handler.py"): FAILED_RECOVERABLE_CODE,
+    os.path.join(_SCRIPTS_PATH, "fail_unrecoverable_handler.py"): FAILED_UNRECOVERABLE_CODE, # noqa E501
+    os.path.join(_SCRIPTS_PATH, "success_handler.py"): SUCCESS_CODE,
     os.path.join(_SCRIPTS_PATH, "fail_recoverable.py"): FAILED_RECOVERABLE_CODE,
     os.path.join(_SCRIPTS_PATH, "fail_unrecoverable.py"): FAILED_UNRECOVERABLE_CODE,
     os.path.join(_SCRIPTS_PATH, "success.py"): SUCCESS_CODE,

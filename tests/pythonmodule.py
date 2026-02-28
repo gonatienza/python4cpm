@@ -1,4 +1,5 @@
 from python4cpm.python4cpm import Python4CPM
+from python4cpm.python4cpmhandler import Python4CPMHandler
 from python4cpm.secrets import Secrets
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
@@ -47,6 +48,27 @@ CLOSE_CODES = [
 ]
 
 
+class GoodClass(Python4CPMHandler):
+    def verify(self):
+        self.close_success()
+
+    def logon(self):
+        self.close_success()
+
+    def change(self):
+        self.close_success()
+
+    def prereconcile(self):
+        self.close_success()
+
+    def reconcile(self):
+        self.close_success()
+
+
+class BadClassNoMethods(Python4CPMHandler):
+    pass
+
+
 @pytest.mark.parametrize("action,logging,logging_level", ARGS_PARAMS)
 def test_main(action, logging, logging_level,  monkeypatch):
     args = {Python4CPM._get_env_key(k): v for k, v in ARGS.items()}
@@ -93,8 +115,34 @@ def test_main(action, logging, logging_level,  monkeypatch):
     else:
             assert p4cpm._logger is None # noqa: S101
     with pytest.raises(SystemExit) as e:
-        p4cpm.close_success()
-        assert e.value.code == CLOSE_CODES[0] # noqa: S101
+        p4cpm.close_success() # avoiding stderr output
+    assert e.value.code == CLOSE_CODES[0] # noqa: S101
+    with pytest.raises(SystemExit):
+        GoodClass()
+    with pytest.raises(TypeError):
+        BadClassNoMethods()
+
+
+def test_handler_bad_action(monkeypatch):
+    args = {Python4CPM._get_env_key(k): v for k, v in ARGS.items()}
+    args[Python4CPM._get_env_key(Args.ARGS[0])] = "nonexistent"
+    args[Python4CPM._get_env_key(Args.ARGS[5])] = LOGGING[0]
+    args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING_LEVELS[0]
+    LOGGER.info(f"args -> {args}")
+    secrets = {Python4CPM._get_env_key(k): v for k, v in SECRETS.items()}
+    encrypted_secrets = {}
+    if Crypto.ENABLED:
+        for k, v in secrets.items():
+            encrypted_secrets[k] = Crypto.encrypt(v)
+    LOGGER.info(f"secrets -> {secrets}")
+    if encrypted_secrets:
+        final_env = args | encrypted_secrets
+    else:
+        final_env = args | secrets
+    for k, v in final_env.items():
+        monkeypatch.setenv(k, v)
+    with pytest.raises(ValueError):
+        GoodClass()
 
 
 @pytest.mark.parametrize("close", CLOSE_CODES)
@@ -145,7 +193,7 @@ def test_net_helper():
     action = Python4CPM.ACTION_VERIFY
     logging = LOGGING[0]
     logging_level = LOGGING_LEVELS[0]
-    p4cpm = NETHelper.run(
+    NETHelper.set(
         action=action,
         address=ARGS["address"],
         username=ARGS["username"],
@@ -158,6 +206,7 @@ def test_net_helper():
         reconcile_password=SECRETS["reconcile_password"],
         new_password=SECRETS["new_password"]
     )
+    p4cpm = NETHelper.get()
     assert isinstance(p4cpm, Python4CPM) # noqa: S101
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.address == ARGS["address"] # noqa: S101

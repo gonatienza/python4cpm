@@ -1,7 +1,6 @@
 import os
 import sys
 import atexit
-import logging
 from python4cpm.secrets import Secrets
 from python4cpm.args import Args
 from python4cpm.logger import get_logger
@@ -48,10 +47,6 @@ class Python4CPM:
     def secrets(self) -> Secrets:
         return self._secrets
 
-    @property
-    def logger(self) -> logging.Logger:
-        return self._logger
-
     def log_debug(self, message: str) -> None:
         if self._logger is not None:
             self._logger.debug(message)
@@ -93,9 +88,9 @@ class Python4CPM:
         return Secrets(**secrets)
 
     def _verify_action(self) -> None:
-        if self.args.action not in self._VALID_ACTIONS:
+        if self._args.action not in self._VALID_ACTIONS:
             self.log_warning(
-                f"Python4CPM._verify_action: unkonwn action -> {self.args.action}"
+                f"Python4CPM._verify_action: unkonwn action -> {self._args.action}"
             )
 
     def _log_args(self) -> None:
