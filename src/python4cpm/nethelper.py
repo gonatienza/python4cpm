@@ -7,7 +7,7 @@ import os
 
 class NETHelper:
     @classmethod
-    def run(
+    def set(
         cls,
         action: str = "",
         address: str = "",
@@ -20,7 +20,7 @@ class NETHelper:
         logon_password: str = "",
         reconcile_password: str = "",
         new_password: str = ""
-    ) -> Python4CPM:
+    ) -> None:
         _args = [
             action,
             address,
@@ -46,4 +46,7 @@ class NETHelper:
                 _secret = _secrets[i]
             env_var = Python4CPM._ENV_PREFIX + secret.upper()
             os.environ[env_var] = _secret
+
+    @classmethod
+    def get(cls) -> Python4CPM:
         return Python4CPM(cls.__name__)

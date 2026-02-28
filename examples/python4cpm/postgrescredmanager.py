@@ -54,7 +54,6 @@ def main():
             verify()
             P4CPM.close_success()
         elif action == Python4CPM.ACTION_LOGON:
-            verify()
             P4CPM.close_success()
         elif action == Python4CPM.ACTION_CHANGE:
             change()
