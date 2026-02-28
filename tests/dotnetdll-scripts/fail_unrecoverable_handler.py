@@ -18,4 +18,4 @@ class FailUnrecoverableHandler(Python4CPMHandler):
         self.close_fail(unrecoverable=True)
 
 
-FailUnrecoverableHandler()
+FailUnrecoverableHandler().run()

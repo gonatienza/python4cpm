@@ -118,9 +118,9 @@ def test_main(action, logging, logging_level,  monkeypatch):
         p4cpm.close_success() # avoiding stderr output
     assert e.value.code == CLOSE_CODES[0] # noqa: S101
     with pytest.raises(SystemExit):
-        GoodClass()
+        GoodClass().run()
     with pytest.raises(TypeError):
-        BadClassNoMethods()
+        BadClassNoMethods().run()
 
 
 def test_handler_bad_action(monkeypatch):
@@ -142,7 +142,7 @@ def test_handler_bad_action(monkeypatch):
     for k, v in final_env.items():
         monkeypatch.setenv(k, v)
     with pytest.raises(ValueError):
-        GoodClass()
+        GoodClass().run()
 
 
 @pytest.mark.parametrize("close", CLOSE_CODES)

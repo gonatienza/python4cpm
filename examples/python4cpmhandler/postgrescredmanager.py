@@ -71,4 +71,4 @@ class Postgres(Python4CPMHandler):
             self.close_fail()
 
 if __name__ == "__main__":
-    Postgres()
+    Postgres().run()

@@ -18,4 +18,4 @@ class SuccessHandler(Python4CPMHandler):
         self.close_success()
 
 
-SuccessHandler()
+SuccessHandler().run()

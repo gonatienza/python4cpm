@@ -151,7 +151,7 @@ class MyApp(Python4CPMHandler): # create a subclass for the Handler
 
 
 if __name__ == "__main__":
-    MyApp() # initializing the class will call the right action without having to manually define the logic
+    MyApp().run() # initializes the class and calls the action that was requested from CPM/SRS.
 ```
 (*) More realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/python4cpmhandler).
 
@@ -351,7 +351,7 @@ class MyApp(Python4CPMHandler):
         # TODO: Add your logic here
         self.close_success()
 
-MyApp()
+MyApp().run()
 ```
 
 #### Using Python4CPM properties and methods directly:
