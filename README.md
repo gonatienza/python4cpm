@@ -67,13 +67,13 @@ class MyApp(Python4CPMHandler): # create a subclass for the Handler
         self.secrets.logon_password.get() # get str from linked logon account password
         self.secrets.reconcile_password.get() # get str from linked reconcile account password
 
-    Logging methods -> Will only log if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging is set to yes (default is yes)
+    Logging methods -> Will only log if PythonLogging (platform parameters) is set to yes (default is yes)
     
         self.log_error("this is an error message") # logs error into Logs/ThirdParty/MyApp.log
         self.log_warning("this is a warning message") # logs warning into Logs/ThirdParty/MyApp.log
         self.log_info("this is an info message") # logs info into Logs/ThirdParty/MyApp.log
     
-    Logging level -> Will only log debug messages if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel is set to debug (default is info)
+    Logging level -> Will only log debug messages if PythonLoggingLevel (platform parameters) is set to debug (default is info)
     
         self.log_debug("this is an debug message") # logs info into Logs/ThirdParty/MyApp.log if logging level is set to debug
 
@@ -186,11 +186,11 @@ p4cpm.secrets.new_password.get() # get str from new password in case of a rotati
 p4cpm.secrets.logon_password.get() # get str from linked logon account password
 p4cpm.secrets.reconcile_password.get() # get str from linked reconcile account password
 
-# Logging methods -> Will only log if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging is set to yes (default is yes)
+# Logging methods -> Will only log if PythonLogging (platform parameters) is set to yes (default is yes)
 p4cpm.log_error("this is an error message") # logs error into Logs/ThirdParty/MyApp.log
 p4cpm.log_warning("this is a warning message") # logs warning into Logs/ThirdParty/MyApp.log
 p4cpm.log_info("this is an info message") # logs info into Logs/ThirdParty/MyApp.log
-# Logging level -> Will only log debug messages if Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel is set to debug (default is info)
+# Logging level -> Will only log debug messages if PythonLoggingLevel (platform parameters) is set to debug (default is info)
 p4cpm.log_debug("this is an debug message") # logs info into Logs/ThirdParty/MyApp.log if logging level is set to debug
 
 # Terminate signals -> MUST use one of the following three signals to terminate the script:
