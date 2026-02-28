@@ -18,4 +18,4 @@ class FailRecoverableHandler(Python4CPMHandler):
         self.close_fail()
 
 
-FailRecoverableHandler()
+FailRecoverableHandler().run()

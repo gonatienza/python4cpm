@@ -5,4 +5,4 @@ class BadHandler(Python4CPMHandler):
     pass
 
 
-BadHandler()
+BadHandler().run()

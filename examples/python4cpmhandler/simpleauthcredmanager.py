@@ -190,4 +190,4 @@ class SimpleAuth(Python4CPMHandler):
             self.close_fail()
 
 if __name__ == "__main__":
-    SimpleAuth()
+    SimpleAuth().run()
