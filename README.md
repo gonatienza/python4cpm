@@ -359,7 +359,7 @@ MyApp()
 ```python
 p4cpm = NETHelper.get()
 
-# Use the p4cpm object during dev to build your script logic
+# TODO: use the p4cpm object during dev to build your script logic
 assert password == p4cpm.secrets.password.get()
 p4cpm.log_info("success!")
 p4cpm.close_success()
@@ -367,6 +367,6 @@ p4cpm.close_success()
 
 #### Remember for your final script:
 
-- Change the definition of `p4cpm` from `p4cpm = NETHelper.run(**kwargs)` to `p4cpm = Python4CPM("MyApp")` if you are using the properties and methods directly.
+- Change the definition of `p4cpm` from `p4cpm = NETHelper.get()` to `p4cpm = Python4CPM("MyApp")` if you are using the properties and methods directly.
 - Remove any secrets prompting or interactive interruptions.
 - Remove the import of `NETHelper`.
