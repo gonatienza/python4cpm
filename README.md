@@ -156,14 +156,14 @@ if __name__ == "__main__":
 (*) More realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/python4cpmhandler).
 
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
-1. Verify -> the sciprt will be executed once with the `MyApp.verify()` method.
-2. Change -> the sciprt will be executed twice, once with the action `MyApp.logon()` method and once as `MyApp.change()` method.
-    - If all actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-3. Reconcile -> the sciprt will be executed twice, once with the action `MyApp.prereconcile()` method and once as `MyApp.reconcile()` method.
-    - If all actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-4. When calling `MyApp.logon()` or `MyApp.prereconcile()`: `self.secrets.new_password.get()` will always return an empty string.
-5. If a logon account is not linked, `self.args.logon_username` and `self.secrets.logon_password.get()` will return an empty string.
-6. If a reconcile account is not linked, `self.args.reconcile_username` and `self.secrets.reconcile_password.get()` will return an empty string.
+1. Verify -> the sciprt will be executed once running the `MyApp.verify()` method.
+2. Change -> the sciprt will be executed twice, running first the `MyApp.logon()` method and secondly the `MyApp.change()` method.
+    - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
+3. Reconcile -> the sciprt will be executed twice, running first the `MyApp.prereconcile()` method and secondly the `MyApp.reconcile()` method.
+    - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
+4. When calling `MyApp.verify()`, `MyApp.logon()` or `MyApp.prereconcile()`: `self.secrets.new_password.get()` will always return an empty string.
+5. If a logon account is not linked, `self.args.logon_username` and `self.secrets.logon_password.get()` will return empty strings.
+6. If a reconcile account is not linked, `self.args.reconcile_username` and `self.secrets.reconcile_password.get()` will return empty strings.
 
 
 ### Using Python4CPM properties and methods directly (for low level controls):
@@ -267,12 +267,12 @@ if __name__ == "__main__":
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `Python4CPM.ACTION_VERIFY`.
 2. Change -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `Python4CPM.ACTION_LOGON` and once as `Python4CPM.ACTION_CHANGE`.
-    - If all actions are not terminated with `p4cpm.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `p4cpm.close_fail(unrecoverable=True)`.
+    - If both actions are not terminated with `p4cpm.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `p4cpm.close_fail(unrecoverable=True)`.
 3. Reconcile -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `Python4CPM.ACTION_PRERECONCILE` and once as `Python4CPM.ACTION_RECONCILE`.
-    - If all actions are not terminated with `p4cpm.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `p4cpm.close_fail(unrecoverable=True)`.
+    - If both actions are not terminated with `p4cpm.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `p4cpm.close_fail(unrecoverable=True)`.
 4. When `p4cpm.args.action` comes as `Python4CPM.ACTION_VERIFY`, `Python4CPM.ACTION_LOGON` or `Python4CPM.ACTION_PRERECONCILE`: `p4cpm.secrets.new_password.get()` will always return an empty string.
-5. If a logon account is not linked, `p4cpm.args.logon_username` and `p4cpm.secrets.logon_password.get()` will return an empty string.
-6. If a reconcile account is not linked, `p4cpm.args.reconcile_username` and `p4cpm.secrets.reconcile_password.get()` will return an empty string.
+5. If a logon account is not linked, `p4cpm.args.logon_username` and `p4cpm.secrets.logon_password.get()` will return empty strings.
+6. If a reconcile account is not linked, `p4cpm.args.reconcile_username` and `p4cpm.secrets.reconcile_password.get()` will return empty strings.
 
 
 ### Installing dependencies in python venv
