@@ -12,7 +12,7 @@ class Python4CPMHandler(ABC, Python4CPM):
             self.ACTION_LOGON: self.logon,
             self.ACTION_CHANGE: self.change,
             self.ACTION_PRERECONCILE: self.prereconcile,
-            self.ACTION_RECONCILE: self.reconcile,
+            self.ACTION_RECONCILE: self.reconcile
         }
         action = actions.get(self._args.action)
         if action is not None:
