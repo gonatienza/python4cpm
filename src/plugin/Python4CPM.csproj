@@ -30,11 +30,11 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="BaseAction.cs" />
-    <Compile Include="VerifyAction.cs" />
-    <Compile Include="LogonAction.cs" />
-    <Compile Include="ChangeAction.cs" />
-    <Compile Include="PrereconcileAction.cs" />
-    <Compile Include="ReconcileAction.cs" />
+    <Compile Include="Verify.cs" />
+    <Compile Include="Logon.cs" />
+    <Compile Include="Change.cs" />
+    <Compile Include="Prereconcile.cs" />
+    <Compile Include="Reconcile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

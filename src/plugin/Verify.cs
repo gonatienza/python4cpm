@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace CyberArk.Extensions.Plugin.Python4CPM
 {
-    public class VerifyAction : BaseAction
+    public class Verify : BaseAction
     {
         private const string ACTION = "verifypass";
 
-        public VerifyAction(List<IAccount> accountList, ILogger logger)
+        public Verify(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
         {
         }

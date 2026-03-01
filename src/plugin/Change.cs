@@ -4,23 +4,23 @@ using System.Collections.Generic;
 
 namespace CyberArk.Extensions.Plugin.Python4CPM
 {
-    public class LogonAction : BaseAction
+    public class Change : BaseAction
     {
-        private const string ACTION = "logon";
+        private const string ACTION = "changepass";
 
-        public LogonAction(List<IAccount> accountList, ILogger logger)
+        public Change(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
         {
         }
 
         protected override bool RequiresNewPassword
         {
-            get { return false; }
+            get { return true; }
         }
 
         override public CPMAction ActionName
         {
-            get { return CPMAction.logon; }
+            get { return CPMAction.changepass; }
         }
 
         override public int run(ref PlatformOutput platformOutput)
