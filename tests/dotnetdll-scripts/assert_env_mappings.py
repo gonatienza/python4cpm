@@ -1,18 +1,14 @@
 from python4cpm import Python4CPM
+from python4cpm.logger import Logger
 from configparser import ConfigParser
 import os
 
 
-ENV_MAPPINGS_ASSERTIONS_RESULTS = os.path.join(
-    "Logs",
-    "ThirdParty",
-    "assert_env_mappings.log"
+LOGGER = Logger.get_logger(
+    os.path.basename(__file__),
+    Logger._LOGGING_ENABLED_VALUE,
+    list(Logger._LOGGING_LEVELS.keys())[0]
 )
-
-
-def append_to_assertions_results(message):
-    with open(ENV_MAPPINGS_ASSERTIONS_RESULTS, "a") as f:
-            f.write(f"{message}\n")
 
 
 def get_config_from_ini():
@@ -41,11 +37,11 @@ try:
         (p4cpm.secrets.reconcile_password.get(), config["extrapass3"]["password"]),
     )
     for a, b in assertions:
-        append_to_assertions_results(f"Asserting '{a}' == '{b}'...")
+        LOGGER.info(f"Asserting '{a}' == '{b}'...")
         if a != b:
-            append_to_assertions_results("Assertion failed")
+            LOGGER.error("Assertion failed")
             raise AssertionError
     p4cpm.close_success()
 except Exception as e:
-    append_to_assertions_results(f"{type(e).__name__}: {e}")
+    LOGGER.error(f"{type(e).__name__}: {e}")
     raise e

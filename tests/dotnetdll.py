@@ -1,9 +1,9 @@
 
 from configparser import ConfigParser
 from python4cpm import Python4CPM
+from python4cpm.logger import Logger
 from tempfile import NamedTemporaryFile
 from io import StringIO
-from logger import get_logger
 import pytest
 import os
 import sys
@@ -37,7 +37,11 @@ def get_scripts_path():
     return os.path.join(file_dir, "dotnetdll-scripts")
 
 
-LOGGER = get_logger(os.path.basename(__file__))
+LOGGER = Logger.get_logger(
+    os.path.basename(__file__),
+    Logger._LOGGING_ENABLED_VALUE,
+    list(Logger._LOGGING_LEVELS.keys())[0]
+)
 PLUGIN_INVOKER_PATH, PYTHON4CPM_DLL_PATH = get_framework_paths()
 SUCCESS_CODE = 0
 FAILED_RECOVERABLE_CODE = 8100

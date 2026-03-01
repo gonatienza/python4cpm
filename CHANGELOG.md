@@ -4,12 +4,17 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
-## [1.0.22] - 2026-02-29
+## [1.0.23] - 2026-03-01
+
+### Changed
+- `Python4CPM` logger formatting
+
+## [1.0.22] - 2026-02-28
 
 ### Added
 - Python4CPMHandler abstract class.
 
-### Modified
+### Changed
 - `NETHelper` initialization replaced with `NETHelper.set()` and `NETHelper.get()`.
 
 ## [1.0.21] - 2026-02-27
@@ -17,7 +22,7 @@ Python4CPM Changelog
 ### Added
 - Support for SRS.
 
-### Modified
+### Changed
 - Default value `PythonExePath` to be empty.
 - Default value for `PythonScriptPath` to be empty.
 - Default logging directory and file naming convention for python logs.
