@@ -144,9 +144,9 @@ class SimpleAuth(Python4CPMHandler):
             headers = {"Content-Type": "application/json"}
             method = "POST"
             if self.USE_COOKIE:
-                self._set_cookie(self._opener)
+                self._set_cookie()
             else:
-                auth_header = self._get_auth_header(self._opener)
+                auth_header = self._get_auth_header()
                 headers.update(auth_header)
             req = urllib.request.Request( # noqa S310
                 self.CHANGE_URL_FORMAT.format(self.args.address),
