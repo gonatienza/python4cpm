@@ -10,8 +10,9 @@ class NETHelper:
     def set(
         cls,
         action: str = "",
-        address: str = "",
         username: str = "",
+        address: str = "",
+        port: str = "",
         logon_username: str = "",
         reconcile_username: str = "",
         logging: str = "",
@@ -23,8 +24,9 @@ class NETHelper:
     ) -> None:
         _args = [
             action,
-            address,
             username,
+            address,
+            port,
             logon_username,
             reconcile_username,
             logging,

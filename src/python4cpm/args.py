@@ -1,8 +1,9 @@
 class Args:
     ARGS = (
         "action",
-        "address",
         "username",
+        "address",
+        "port",
         "logon_username",
         "reconcile_username",
         "logging",
@@ -12,16 +13,18 @@ class Args:
     def __init__(
         self: str,
         action: str,
-        address: str,
         username: str,
+        address: str,
+        port: str,
         reconcile_username: str,
         logon_username: str,
         logging: str,
         logging_level: str
     ) -> None:
         self._action = action
-        self._address = address
         self._username = username
+        self._address = address
+        self._port = port
         self._reconcile_username = reconcile_username
         self._logon_username = logon_username
         self._logging = logging
@@ -32,12 +35,16 @@ class Args:
         return self._action
 
     @property
+    def username(self) -> str:
+        return self._username
+
+    @property
     def address(self) -> str:
         return self._address
 
     @property
-    def username(self) -> str:
-        return self._username
+    def port(self) -> str:
+        return self._port
 
     @property
     def reconcile_username(self) -> str:

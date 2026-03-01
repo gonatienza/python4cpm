@@ -1,4 +1,4 @@
-<Device Name="Application">
+<Device Name="Python">
   <Policies>
     <Policy ID="Python4CPM" PlatformBaseID="Python4CPM" PlatformBaseType="Python4CPM" PlatformBaseProtocol="python" AutoChangeOnAdd="No" AutoVerifyOnAdd="No">
       <Properties>
@@ -6,7 +6,9 @@
           <Property Name="Username" />
           <Property Name="Address" />
         </Required>
-        <Optional />
+        <Optional>
+          <Property Name="Port" />
+        </Optional>
       </Properties>
       <LinkedPasswords>
         <Link Name="LogonAccount" PropertyIndex="1" />

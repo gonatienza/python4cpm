@@ -9,11 +9,11 @@ import json
 P4CPM = Python4CPM("SimpleAuth")
 
 
-ROOT_URL_FORMAT = "https://{}:8443"
-TOKEN_URL_FORMAT = "https://{}:8443/token"  # noqa S105
-VERIFY_URL_FORMAT = "https://{}:8443/verify"
-CHANGE_URL_FORMAT = "https://{}:8443/change"
-RECONCILE_URL_FORMAT = "https://{}:8443/reconcile"
+ROOT_URL_FORMAT = "https://{}:{}"
+TOKEN_URL_FORMAT = "https://{}:{}/token"  # noqa S105
+VERIFY_URL_FORMAT = "https://{}:{}/verify"
+CHANGE_URL_FORMAT = "https://{}:{}/change"
+RECONCILE_URL_FORMAT = "https://{}:{}/reconcile"
 USE_COOKIE = False
 
 
@@ -54,7 +54,7 @@ def set_cookie(opener, from_reconcile=False):
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     method = "POST"
     req = urllib.request.Request( # noqa S310
-        ROOT_URL_FORMAT.format(P4CPM.args.address),
+        ROOT_URL_FORMAT.format(P4CPM.args.address, P4CPM.args.port),
         data=data,
         headers=headers,
         method=method
@@ -79,7 +79,7 @@ def get_auth_header(opener, from_reconcile=False):
     headers = {"Content-Type": "application/json"}
     method = "POST"
     req = urllib.request.Request( # noqa S310
-        TOKEN_URL_FORMAT.format(P4CPM.args.address),
+        TOKEN_URL_FORMAT.format(P4CPM.args.address, P4CPM.args.port),
         data=data,
         headers=headers,
         method=method
@@ -102,7 +102,7 @@ def verify(opener, from_reconcile=False):
         auth_header = get_auth_header(opener, from_reconcile)
         headers.update(auth_header)
     req = urllib.request.Request( # noqa S310
-        VERIFY_URL_FORMAT.format(P4CPM.args.address),
+        VERIFY_URL_FORMAT.format(P4CPM.args.address, P4CPM.args.port),
         data=data,
         headers=headers,
         method=method
@@ -123,7 +123,7 @@ def change(opener):
         auth_header = get_auth_header(opener)
         headers.update(auth_header)
     req = urllib.request.Request( # noqa S310
-        CHANGE_URL_FORMAT.format(P4CPM.args.address),
+        CHANGE_URL_FORMAT.format(P4CPM.args.address, P4CPM.args.port),
         data=data,
         headers=headers,
         method=method
@@ -147,7 +147,7 @@ def reconcile(opener):
         auth_header = get_auth_header(opener, from_reconcile=True)
         headers.update(auth_header)
     req = urllib.request.Request( # noqa S310
-        RECONCILE_URL_FORMAT.format(P4CPM.args.address),
+        RECONCILE_URL_FORMAT.format(P4CPM.args.address, P4CPM.args.port),
         data=data,
         headers=headers,
         method=method

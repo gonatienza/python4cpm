@@ -13,11 +13,11 @@ class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
 
 
 class SimpleAuth(Python4CPMHandler):
-    ROOT_URL_FORMAT = "https://{}:8443"
-    TOKEN_URL_FORMAT = "https://{}:8443/token"  # noqa S105
-    VERIFY_URL_FORMAT = "https://{}:8443/verify"
-    CHANGE_URL_FORMAT = "https://{}:8443/change"
-    RECONCILE_URL_FORMAT = "https://{}:8443/reconcile"
+    ROOT_URL_FORMAT = "https://{}:{}"
+    TOKEN_URL_FORMAT = "https://{}:{}/token"  # noqa S105
+    VERIFY_URL_FORMAT = "https://{}:{}/verify"
+    CHANGE_URL_FORMAT = "https://{}:{}/change"
+    RECONCILE_URL_FORMAT = "https://{}:{}/reconcile"
     USE_COOKIE = False
 
     def __init__(self):
@@ -75,7 +75,7 @@ class SimpleAuth(Python4CPMHandler):
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         method = "POST"
         req = urllib.request.Request( # noqa S310
-            self.ROOT_URL_FORMAT.format(self.args.address),
+            self.ROOT_URL_FORMAT.format(self.args.address, self.args.port),
             data=data,
             headers=headers,
             method=method
@@ -100,7 +100,7 @@ class SimpleAuth(Python4CPMHandler):
         headers = {"Content-Type": "application/json"}
         method = "POST"
         req = urllib.request.Request( # noqa S310
-            self.TOKEN_URL_FORMAT.format(self.args.address),
+            self.TOKEN_URL_FORMAT.format(self.args.address, self.args.port),
             data=data,
             headers=headers,
             method=method
@@ -124,7 +124,7 @@ class SimpleAuth(Python4CPMHandler):
                 auth_header = self._get_auth_header(from_reconcile)
                 headers.update(auth_header)
             req = urllib.request.Request( # noqa S310
-                self.VERIFY_URL_FORMAT.format(self.args.address),
+                self.VERIFY_URL_FORMAT.format(self.args.address, self.args.port),
                 data=data,
                 headers=headers,
                 method=method
@@ -149,7 +149,7 @@ class SimpleAuth(Python4CPMHandler):
                 auth_header = self._get_auth_header()
                 headers.update(auth_header)
             req = urllib.request.Request( # noqa S310
-                self.CHANGE_URL_FORMAT.format(self.args.address),
+                self.CHANGE_URL_FORMAT.format(self.args.address, self.args.port),
                 data=data,
                 headers=headers,
                 method=method
@@ -177,7 +177,7 @@ class SimpleAuth(Python4CPMHandler):
                 auth_header = self._get_auth_header(from_reconcile=True)
                 headers.update(auth_header)
             req = urllib.request.Request( # noqa S310
-                self.RECONCILE_URL_FORMAT.format(self.args.address),
+                self.RECONCILE_URL_FORMAT.format(self.args.address, self.args.port),
                 data=data,
                 headers=headers,
                 method=method

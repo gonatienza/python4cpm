@@ -28,6 +28,8 @@ try:
     assertions = (
         (p4cpm.args.action, Python4CPM.ACTION_VERIFY),
         (p4cpm.args.address, config["DEFAULT"]["address"]),
+        (p4cpm.args.username, config["DEFAULT"]["username"]),
+        (p4cpm.args.port, config["DEFAULT"]["port"]),
         (p4cpm.args.logon_username, config["extrapass1"]["username"]),
         (p4cpm.args.reconcile_username, config["extrapass3"]["username"]),
         (p4cpm.args.logging, config["extrainfo"]["PythonLogging"]),
