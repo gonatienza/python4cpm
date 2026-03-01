@@ -365,6 +365,7 @@ p4cpm.close_success()
 
 #### Remember for your final script:
 
-- Change the definition of `p4cpm` from `p4cpm = NETHelper.get()` to `p4cpm = Python4CPM("MyApp")` if you are using the properties and methods directly.
-- Remove any secrets prompting or interactive interruptions.
 - Remove the import of `NETHelper`.
+- Remove the `NETHelper.set()` call.
+- Change the definition of `p4cpm` from `p4cpm = NETHelper.get()` to `p4cpm = Python4CPM("MyApp")` if applicable.
+- Remove any secrets prompting or interactive interruptions.
