@@ -9,6 +9,9 @@ Python4CPM Changelog
 ### Added
 - Python4CPMHandler abstract class.
 
+### Modified
+- `NETHelper` initialization replaced with `NETHelper.set()` and `NETHelper.get()`.
+
 ## [1.0.21] - 2026-02-27
 
 ### Added
