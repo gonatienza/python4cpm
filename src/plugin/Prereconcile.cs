@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace CyberArk.Extensions.Plugin.Python4CPM
 {
-    public class PrereconcileAction : BaseAction
+    public class Prereconcile : BaseAction
     {
         private const string ACTION = "prereconcilepass";
 
-        public PrereconcileAction(List<IAccount> accountList, ILogger logger)
+        public Prereconcile(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
         {
         }
