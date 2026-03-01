@@ -52,7 +52,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 from python4cpm import Python4CPMHandler
 
 
-class MyApp(Python4CPMHandler): # create a subclass for the Handler
+class MyRotator(Python4CPMHandler): # create a subclass for the Handler
     """
     These are the usable properties and methods from Python4CPMHandler:
     
@@ -69,13 +69,13 @@ class MyApp(Python4CPMHandler): # create a subclass for the Handler
 
     Logging methods -> Will only log if PythonLogging (platform parameters) is set to yes (default is yes)
     
-        self.log_error("this is an error message") # logs error into Logs/ThirdParty/MyApp.log
-        self.log_warning("this is a warning message") # logs warning into Logs/ThirdParty/MyApp.log
-        self.log_info("this is an info message") # logs info into Logs/ThirdParty/MyApp.log
+        self.log_error("this is an error message") # logs error into Logs/ThirdParty/MyRotator.log
+        self.log_warning("this is a warning message") # logs warning into Logs/ThirdParty/MyRotator.log
+        self.log_info("this is an info message") # logs info into Logs/ThirdParty/MyRotator.log
     
     Logging level -> Will only log debug messages if PythonLoggingLevel (platform parameters) is set to debug (default is info)
     
-        self.log_debug("this is an debug message") # logs info into Logs/ThirdParty/MyApp.log if logging level is set to debug
+        self.log_debug("this is an debug message") # logs info into Logs/ThirdParty/MyRotator.log if logging level is set to debug
 
     =============================
     REQUIRED TERMINATION SIGNALS
@@ -128,9 +128,9 @@ class MyApp(Python4CPMHandler): # create a subclass for the Handler
             # for your logic in a verification
         result = True
         if result is True:
-            self.log_info("verification successful") # logs info message into Logs/ThirdParty/MyApp.log
+            self.log_info("verification successful") # logs info message into Logs/ThirdParty/MyRotator.log
         else:
-            self.log_error("something went wrong") # logs error message Logs/ThirdParty/MyApp.log
+            self.log_error("something went wrong") # logs error message Logs/ThirdParty/MyRotator.log
             self.close_fail()
 
     def _change(self, from_reconcile=False):
@@ -144,24 +144,24 @@ class MyApp(Python4CPMHandler): # create a subclass for the Handler
             # self.secrets.reconcile_password.get() and self.secrets.new_password.get() for your logic in a reconciliation
         result = True
         if result is True:
-            self.log_info("rotation successful") # logs info message into Logs/ThirdParty/MyApp.log
+            self.log_info("rotation successful") # logs info message into Logs/ThirdParty/MyRotator.log
         else:
-            self.log_error("something went wrong") # logs error message Logs/ThirdParty/MyApp.log
+            self.log_error("something went wrong") # logs error message Logs/ThirdParty/MyRotator.log
             self.close_fail()
 
 
 if __name__ == "__main__":
-    MyApp().run() # initializes the class and calls the action that was requested from CPM/SRS.
+    MyRotator().run() # initializes the class and calls the action that was requested from CPM/SRS.
 ```
 (*) More realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/python4cpmhandler).
 
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
-1. Verify -> the sciprt will be executed once running the `MyApp.verify()` method.
-2. Change -> the sciprt will be executed twice, running first the `MyApp.logon()` method and secondly the `MyApp.change()` method.
+1. Verify -> the sciprt will be executed once running the `MyRotator.verify()` method.
+2. Change -> the sciprt will be executed twice, running first the `MyRotator.logon()` method and secondly the `MyRotator.change()` method.
     - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-3. Reconcile -> the sciprt will be executed twice, running first the `MyApp.prereconcile()` method and secondly the `MyApp.reconcile()` method.
+3. Reconcile -> the sciprt will be executed twice, running first the `MyRotator.prereconcile()` method and secondly the `MyRotator.reconcile()` method.
     - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-4. When calling `MyApp.verify()`, `MyApp.logon()` or `MyApp.prereconcile()`: `self.secrets.new_password.get()` will always return an empty string.
+4. When calling `MyRotator.verify()`, `MyRotator.logon()` or `MyRotator.prereconcile()`: `self.secrets.new_password.get()` will always return an empty string.
 5. If a logon account is not linked, `self.args.logon_username` and `self.secrets.logon_password.get()` will return empty strings.
 6. If a reconcile account is not linked, `self.args.reconcile_username` and `self.secrets.reconcile_password.get()` will return empty strings.
 
@@ -328,7 +328,7 @@ NETHelper.set(
 #### Using the handler (recommended):
 
 ```python
-class MyApp(Python4CPMHandler):
+class MyRotator(Python4CPMHandler):
     def verify(self):
         # TODO: Add your logic here
         self.close_success()
@@ -349,7 +349,7 @@ class MyApp(Python4CPMHandler):
         # TODO: Add your logic here
         self.close_success()
 
-MyApp().run()
+MyRotator().run()
 ```
 
 #### Using Python4CPM properties and methods directly:
