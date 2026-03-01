@@ -297,6 +297,8 @@ pip install python4cpm
 
 ### Example:
 
+#### Set your arguments and secrets:
+
 ```python
 from python4cpm import NETHelper, Python4CPM, Python4CPMHandler
 from getpass import getpass
@@ -307,11 +309,7 @@ password = getpass("password: ") # password from account
 logon_password = getpass("logon_password: ") # password from linked logon account
 reconcile_password = getpass("reconcile_password: ") # password from linked reconcile account
 new_password = getpass("new_password: ") # new password for the rotation
-```
 
-#### Set your arguments and secrets:
-
-```python
 NETHelper.set(
     action=Python4CPM.ACTION_LOGON, # use actions from Python4CPM.ACTION_*
     address="myapp.corp.local", # populate with the address from your account properties
