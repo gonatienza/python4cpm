@@ -3,7 +3,7 @@ import sys
 import atexit
 from python4cpm.secrets import Secrets
 from python4cpm.args import Args
-from python4cpm.logger import get_logger
+from python4cpm.logger import Logger
 
 
 class Python4CPM:
@@ -27,15 +27,16 @@ class Python4CPM:
     def __init__(self, name: str) -> None:
         self._name = name
         self._args = self._get_args()
-        self._logger = get_logger(
+        self._logger = Logger.get_logger(
             self._name,
             self._args.logging,
             self._args.logging_level
         )
-        self.log_info("Python4CPM.__init__: initiating...")
-        self._log_args()
+        self.log_debug("Initiating...")
+        self._log_env(self._args, False)
         self._verify_action()
         self._secrets = self._get_secrets()
+        self._log_env(self._secrets)
         self._closed = False
         atexit.register(self._on_exit)
 
@@ -49,19 +50,19 @@ class Python4CPM:
 
     def log_debug(self, message: str) -> None:
         if self._logger is not None:
-            self._logger.debug(message)
+            self._logger.debug(message, stacklevel=2)
 
     def log_info(self, message: str) -> None:
         if self._logger is not None:
-            self._logger.info(message)
+            self._logger.info(message, stacklevel=2)
 
     def log_warning(self, message: str) -> None:
         if self._logger is not None:
-            self._logger.warning(message)
+            self._logger.warning(message, stacklevel=2)
 
     def log_error(self, message: str) -> None:
         if self._logger is not None:
-            self._logger.error(message)
+            self._logger.error(message, stacklevel=2)
 
     @classmethod
     def _get_env_key(cls, key: str) -> str:
@@ -80,46 +81,41 @@ class Python4CPM:
         for secret in Secrets.SECRETS:
             _secret = os.environ.get(self._get_env_key(secret))
             secrets[secret] = _secret if _secret is not None else ""
-            common_message = f"Python4CPM._get_secrets: {secret} ->"
-            if secrets[secret]:
-                self.log_info(f"{common_message} [SET]")
-            else:
-                self.log_info(f"{common_message} [NOT SET]")
         return Secrets(**secrets)
 
     def _verify_action(self) -> None:
         if self._args.action not in self._VALID_ACTIONS:
-            self.log_warning(
-                f"Python4CPM._verify_action: unkonwn action -> {self._args.action}"
-            )
+            self.log_warning(f"Unkonwn action -> '{self._args.action}'")
 
-    def _log_args(self) -> None:
-        for key, value in vars(self._args).items():
-            common_message = f"Python4CPM._log_args: {key.strip('_')} ->"
+    def _log_env(self, obj: object, masked: bool = True) -> None:
+        for key, value in vars(obj).items():
+            _key = key.strip('_')
             if value:
-                self.log_info(f"{common_message} {value}")
+                if masked:
+                    logging_value = "[SET]"
+                else:
+                    logging_value = value
             else:
-                self.log_info(f"{common_message} [NOT SET]")
+                logging_value = "[NOT SET]"
+            self.log_debug(f"{_key} -> '{logging_value}'")
 
     def close_fail(self, unrecoverable: bool = False) -> None:
         if unrecoverable is False:
             code = self._FAILED_RECOVERABLE_CODE
         else:
             code = self._FAILED_UNRECOVERABLE_CODE
-        self.log_error(f"Python4CPM.close_fail: closing with code {code}")
+        self.log_error(f"Closing with code {code}")
         self._closed = True
         sys.exit(code)
 
     def close_success(self) -> None:
-        self.log_info(
-            f"Python4CPM.close_success: closing with code {self._SUCCESS_CODE}"
-        )
+        self.log_debug(f"Closing with code {self._SUCCESS_CODE}")
         self._closed = True
         sys.exit(self._SUCCESS_CODE)
 
     def _on_exit(self):
         if self._closed is False:
-            message = "Python4CPM._on_exit: no close signal called"
+            message = "No close signal called"
             self.log_error(message)
             sys.stderr.write(message)
             sys.stderr.flush()

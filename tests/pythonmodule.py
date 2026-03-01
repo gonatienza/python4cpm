@@ -4,8 +4,7 @@ from python4cpm.secrets import Secrets
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
 from python4cpm.nethelper import NETHelper
-from python4cpm.logger import _LOGGING_ENABLED_VALUE, _LOGGING_LEVELS
-from logger import get_logger
+from python4cpm.logger import Logger
 import json
 import pytest
 import os
@@ -22,7 +21,11 @@ def get_args_and_secrets():
     return args, secrets
 
 
-LOGGER = get_logger(os.path.basename(__file__))
+LOGGER = Logger.get_logger(
+    os.path.basename(__file__),
+    Logger._LOGGING_ENABLED_VALUE,
+    list(Logger._LOGGING_LEVELS.keys())[0]
+)
 ARGS, SECRETS = get_args_and_secrets()
 LOGGING = ["yes", "YES", "bad"]
 LOGGING_LEVELS = ["info", "INFO", "debug", "DEBUG", "bad"]
@@ -90,7 +93,7 @@ def test_main(action, logging, logging_level,  monkeypatch):
         final_env = args | secrets
     for k, v in final_env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM(os.path.basename(__file__))
+    p4cpm = Python4CPM(test_main.__name__)
     for k, v in vars(p4cpm.args).items():
         LOGGER.info(f"{k} -> {v}")
     for k, v in vars(p4cpm.secrets).items():
@@ -106,12 +109,12 @@ def test_main(action, logging, logging_level,  monkeypatch):
     assert p4cpm.secrets.logon_password.get() == SECRETS["logon_password"] # noqa: S101
     assert p4cpm.secrets.reconcile_password.get() == SECRETS["reconcile_password"] # noqa: S101
     assert p4cpm.secrets.new_password.get() == secrets["PYTHON4CPM_NEW_PASSWORD"] # noqa: S101
-    if logging.lower() in _LOGGING_ENABLED_VALUE:
+    if logging.lower() in Logger._LOGGING_ENABLED_VALUE:
         assert p4cpm._logger # noqa: S101
         if logging_level.lower() == LOGGING_LEVELS[2]:
-            assert p4cpm._logger.level == _LOGGING_LEVELS[LOGGING_LEVELS[2]] # noqa: S101
+            assert p4cpm._logger.level == Logger._LOGGING_LEVELS[LOGGING_LEVELS[2]] # noqa: S101
         else:
-            assert p4cpm._logger.level == _LOGGING_LEVELS[LOGGING_LEVELS[0]] # noqa: S101
+            assert p4cpm._logger.level == Logger._LOGGING_LEVELS[LOGGING_LEVELS[0]] # noqa: S101
     else:
             assert p4cpm._logger is None # noqa: S101
     with pytest.raises(SystemExit) as e:
@@ -157,7 +160,7 @@ def test_exit_codes(close, monkeypatch, capsys):
     final_env = args | secrets
     for k, v in final_env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM(os.path.basename(__file__))
+    p4cpm = Python4CPM(test_exit_codes.__name__)
     if close == CLOSE_CODES[0]:
         with pytest.raises(SystemExit) as e:
             p4cpm.close_success()
@@ -183,7 +186,7 @@ def test_on_exit_stderr(monkeypatch, capsys):
     final_env = args | secrets
     for k, v in final_env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM(os.path.basename(__file__))
+    p4cpm = Python4CPM(test_on_exit_stderr.__name__)
     p4cpm._on_exit()
     captured = capsys.readouterr()
     assert captured.err != "" # noqa: S101
@@ -192,7 +195,7 @@ def test_on_exit_stderr(monkeypatch, capsys):
 def test_net_helper():
     action = Python4CPM.ACTION_VERIFY
     logging = LOGGING[0]
-    logging_level = LOGGING_LEVELS[0]
+    logging_level = LOGGING_LEVELS[2]
     NETHelper.set(
         action=action,
         address=ARGS["address"],
