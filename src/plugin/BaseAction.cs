@@ -11,8 +11,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
     abstract public class BaseAction : AbsAction
     {
         private const string ENV_ACTION = "PYTHON4CPM_ACTION";
-        private const string ENV_ADDRESS = "PYTHON4CPM_ADDRESS";
         private const string ENV_USERNAME = "PYTHON4CPM_USERNAME";
+        private const string ENV_ADDRESS = "PYTHON4CPM_ADDRESS";
+        private const string ENV_PORT = "PYTHON4CPM_PORT";
         private const string ENV_LOGON_USERNAME = "PYTHON4CPM_LOGON_USERNAME";
         private const string ENV_RECONCILE_USERNAME = "PYTHON4CPM_RECONCILE_USERNAME";
         private const string ENV_LOGGING = "PYTHON4CPM_LOGGING";
@@ -25,6 +26,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string PARAMS_PYTHON_SCRIPT_PATH = "PythonScriptPath";
         private const string PARAMS_PYTHON_LOGGING = "PythonLogging";
         private const string PARAMS_PYTHON_LOGGING_LEVEL = "PythonLoggingLevel";
+        private const string PROPERTIES_USERNAME = "username";
+        private const string PROPERTIES_ADDRESS = "address";
+        private const string PROPERTIES_PORT = "port";
         protected const int CLOSE_SUCCESS = 0;
         protected const int CLOSE_FAILED_UNRECOVERABLE = 8900;
         protected const int CLOSE_FAILED_RECOVERABLE = 8100;
@@ -33,8 +37,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         public const int PYTHON_CLOSE_FAILED_RECOVERABLE = 81;
         private string PythonExePath = string.Empty;
         private string PythonScriptPath = string.Empty;
-        private string Address = string.Empty;
         private string Username = string.Empty;
+        private string Address = string.Empty;
+        private string Port = string.Empty;
         private string LogonUsername = string.Empty;
         private string ReconcileUsername = string.Empty;
         private string PythonLogging = string.Empty;
@@ -54,7 +59,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             get;
         }
 
-        protected void GetFields()
+        protected void GetParams()
         {
             if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_EXE_PATH) == true)
             {
@@ -84,21 +89,29 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 throw new FileNotFoundException(
                     $"{PARAMS_PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist"
                 );
-            if (TargetAccount?.AccountProp?.ContainsKey("address") == true)
+        }
+
+        protected void GetProperties()
+        {
+            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
             {
-                Address = TargetAccount.AccountProp["address"];
+                Username = TargetAccount.AccountProp[PROPERTIES_USERNAME];
             }
-            if (TargetAccount?.AccountProp?.ContainsKey("username") == true)
+            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_ADDRESS) == true)
             {
-                Username = TargetAccount.AccountProp["username"];
+                Address = TargetAccount.AccountProp[PROPERTIES_ADDRESS];
             }
-            if (LogOnAccount?.AccountProp?.ContainsKey("username") == true)
+            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_PORT) == true)
             {
-                LogonUsername = LogOnAccount.AccountProp["username"];
+                Port = TargetAccount.AccountProp[PROPERTIES_PORT];
             }
-            if (ReconcileAccount?.AccountProp?.ContainsKey("username") == true)
+            if (LogOnAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
             {
-                ReconcileUsername = ReconcileAccount.AccountProp["username"];
+                LogonUsername = LogOnAccount.AccountProp[PROPERTIES_USERNAME];
+            }
+            if (ReconcileAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
+            {
+                ReconcileUsername = ReconcileAccount.AccountProp[PROPERTIES_USERNAME];
             }
             if (TargetAccount?.CurrentPassword != null)
             {
@@ -127,8 +140,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             return new Dictionary<string, string>
             {
                 { ENV_ACTION, action },
-                { ENV_ADDRESS, Address },
                 { ENV_USERNAME, Username },
+                { ENV_ADDRESS, Address },
+                { ENV_PORT, Port },
                 { ENV_LOGON_USERNAME, LogonUsername },
                 { ENV_RECONCILE_USERNAME, ReconcileUsername },
                 { ENV_LOGGING, PythonLogging },
@@ -183,7 +197,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
             try
             {
-                GetFields();
+                GetParams();
+                GetProperties();
             }
             catch (Exception ex)
             {

@@ -1,7 +1,8 @@
 {
     "action": null,
-    "address": "myapp.corp.local",
     "username": "jdoe",
+    "address": "myapp.corp.local",
+    "port": "8443",
     "reconcile_username": "rdoe",
     "logon_username": "ldoe",
     "logging": null,

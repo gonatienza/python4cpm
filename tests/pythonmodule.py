@@ -76,8 +76,8 @@ class BadClassNoMethods(Python4CPMHandler):
 def test_main(action, logging, logging_level,  monkeypatch):
     args = {Python4CPM._get_env_key(k): v for k, v in ARGS.items()}
     args[Python4CPM._get_env_key(Args.ARGS[0])] = action
-    args[Python4CPM._get_env_key(Args.ARGS[5])] = logging
-    args[Python4CPM._get_env_key(Args.ARGS[6])] = logging_level
+    args[Python4CPM._get_env_key(Args.ARGS[6])] = logging
+    args[Python4CPM._get_env_key(Args.ARGS[7])] = logging_level
     LOGGER.info(f"args -> {args}")
     secrets = {Python4CPM._get_env_key(k): v for k, v in SECRETS.items()}
     if action in ACTIONS_WITHOUT_NEW_PASSWORD:
@@ -99,8 +99,9 @@ def test_main(action, logging, logging_level,  monkeypatch):
     for k, v in vars(p4cpm.secrets).items():
         LOGGER.info(f"{k} -> {v.get()}")
     assert p4cpm.args.action == action # noqa: S101
-    assert p4cpm.args.address == ARGS["address"] # noqa: S101
     assert p4cpm.args.username == ARGS["username"] # noqa: S101
+    assert p4cpm.args.address == ARGS["address"] # noqa: S101
+    assert p4cpm.args.port == ARGS["port"] # noqa: S101
     assert p4cpm.args.logon_username == ARGS["logon_username"] # noqa: S101
     assert p4cpm.args.reconcile_username == ARGS["reconcile_username"] # noqa: S101
     assert p4cpm.args.logging == logging # noqa: S101
@@ -129,8 +130,8 @@ def test_main(action, logging, logging_level,  monkeypatch):
 def test_handler_bad_action(monkeypatch):
     args = {Python4CPM._get_env_key(k): v for k, v in ARGS.items()}
     args[Python4CPM._get_env_key(Args.ARGS[0])] = "nonexistent"
-    args[Python4CPM._get_env_key(Args.ARGS[5])] = LOGGING[0]
-    args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING_LEVELS[0]
+    args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING[0]
+    args[Python4CPM._get_env_key(Args.ARGS[7])] = LOGGING_LEVELS[0]
     LOGGER.info(f"args -> {args}")
     secrets = {Python4CPM._get_env_key(k): v for k, v in SECRETS.items()}
     encrypted_secrets = {}
@@ -152,8 +153,8 @@ def test_handler_bad_action(monkeypatch):
 def test_exit_codes(close, monkeypatch, capsys):
     args = {f"PYTHON4CPM_{k.upper()}": v for k, v in ARGS.items()}
     args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_VERIFY
-    args[Python4CPM._get_env_key(Args.ARGS[5])] = LOGGING[0]
-    args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING_LEVELS[0]
+    args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING[0]
+    args[Python4CPM._get_env_key(Args.ARGS[7])] = LOGGING_LEVELS[0]
     LOGGER.info(f"args -> {args}")
     secrets = {f"PYTHON4CPM_{k.upper()}": v for k, v in SECRETS.items()}
     LOGGER.info(f"secrets -> {secrets}")
@@ -178,8 +179,8 @@ def test_exit_codes(close, monkeypatch, capsys):
 def test_on_exit_stderr(monkeypatch, capsys):
     args = {f"PYTHON4CPM_{k.upper()}": v for k, v in ARGS.items()}
     args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_VERIFY
-    args[Python4CPM._get_env_key(Args.ARGS[5])] = LOGGING[0]
-    args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING_LEVELS[0]
+    args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING[0]
+    args[Python4CPM._get_env_key(Args.ARGS[7])] = LOGGING_LEVELS[0]
     LOGGER.info(f"args -> {args}")
     secrets = {f"PYTHON4CPM_{k.upper()}": v for k, v in SECRETS.items()}
     LOGGER.info(f"secrets -> {secrets}")
@@ -200,6 +201,7 @@ def test_net_helper():
         action=action,
         address=ARGS["address"],
         username=ARGS["username"],
+        port=ARGS["port"],
         logon_username=ARGS["logon_username"],
         reconcile_username=ARGS["reconcile_username"],
         logging=logging,
@@ -212,8 +214,9 @@ def test_net_helper():
     p4cpm = NETHelper.get()
     assert isinstance(p4cpm, Python4CPM) # noqa: S101
     assert p4cpm.args.action == action # noqa: S101
-    assert p4cpm.args.address == ARGS["address"] # noqa: S101
     assert p4cpm.args.username == ARGS["username"] # noqa: S101
+    assert p4cpm.args.address == ARGS["address"] # noqa: S101
+    assert p4cpm.args.port == ARGS["port"] # noqa: S101
     assert p4cpm.args.logon_username == ARGS["logon_username"] # noqa: S101
     assert p4cpm.args.reconcile_username == ARGS["reconcile_username"] # noqa: S101
     assert p4cpm.args.logging == logging # noqa: S101

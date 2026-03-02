@@ -57,8 +57,9 @@ class MyRotator(Python4CPMHandler): # create a subclass for the Handler
     These are the usable properties and methods from Python4CPMHandler:
     
         self.args.action # action requested from CPM/SRS
-        self.args.address # address from the account address field
         self.args.username # username from the account username field
+        self.args.address # address from the account address field
+        self.args.port # port from the account port field
         self.args.reconcile_username # reconcile username from the linked reconcile account
         self.args.logon_username # logon username from the linked logon account
         self.args.logging # used to carry the platform logging settings for python
@@ -120,7 +121,7 @@ class MyRotator(Python4CPMHandler): # create a subclass for the Handler
     def _verify(self, from_reconcile=False):
         if from_reconcile is False:
             pass
-            # TODO: use self.args.address, self.args.username, self.secrets.password.get()
+            # TODO: use self.args.username, self.args.address, self.args.port, self.secrets.password.get()
             # for your logic in a verification
         else:
             pass
@@ -136,11 +137,11 @@ class MyRotator(Python4CPMHandler): # create a subclass for the Handler
     def _change(self, from_reconcile=False):
         if from_reconcile is False:
             pass
-            # TODO: use self.args.address, self.args.username, self.secrets.password.get()
+            # TODO: use self.args.username, self.args.address, self.args.port, self.secrets.password.get()
             # and self.secrets.new_password.get() for your logic in a rotation
         else:
             pass
-            # TODO: use self.args.address, self.args.username, self.args.reconcile_username,
+            # TODO: use self.args.username, self.args.address, self.args.port, self.args.reconcile_username,
             # self.secrets.reconcile_password.get() and self.secrets.new_password.get() for your logic in a reconciliation
         result = True
         if result is True:
@@ -176,8 +177,9 @@ p4cpm = Python4CPM("MyApp") # this instantiates the object and grabs all argumen
 
 # These are the usable properties and related methods from the object:
 p4cpm.args.action # action requested from CPM/SRS
-p4cpm.args.address # address from the account address field
 p4cpm.args.username # username from the account username field
+p4cpm.args.address # address from the account address field
+p4cpm.args.port # port from the account port field
 p4cpm.args.reconcile_username # reconcile username from the linked reconcile account
 p4cpm.args.logon_username # logon username from the linked logon account
 p4cpm.args.logging # used to carry the platform logging settings for python
@@ -204,11 +206,11 @@ p4cpm.log_debug("this is an debug message") # logs info into Logs/ThirdParty/MyA
 def verify(from_reconcile=False):
     if from_reconcile is False:
         pass
-        # TODO: use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
+        # TODO: use p4cpm.args.username, p4cpm.args.address, p4cpm.args.port, p4cpm.secrets.password.get()
         # for your logic in a verification
     else:
         pass
-        # TODO: use p4cpm.args.address, p4cpm.args.reconcile_username, p4cpm.secrets.reconcile_password.get()
+        # TODO: use p4cpm.args.address, p4cpm.args.port, p4cpm.args.reconcile_username, p4cpm.secrets.reconcile_password.get()
         # for your logic in a verification
     result = True
     if result is True:
@@ -222,11 +224,11 @@ def verify(from_reconcile=False):
 def change(from_reconcile=False):
     if from_reconcile is False:
         pass
-        # TODO: use p4cpm.args.address, p4cpm.args.username, p4cpm.secrets.password.get()
+        # TODO: use p4cpm.args.username, p4cpm.args.address, p4cpm.args.port, p4cpm.secrets.password.get()
         # and p4cpm.secrets.new_password.get() for your logic in a rotation
     else:
         pass
-        # TODO: use p4cpm.args.address, p4cpm.args.username, p4cpm.args.reconcile_username,
+        # TODO: use p4cpm.args.username, p4cpm.args.address, p4cpm.args.port, p4cpm.args.reconcile_username,
         # p4cpm.secrets.reconcile_password.get() and p4cpm.secrets.new_password.get() for your logic in a reconciliation
     result = True
     if result is True:
@@ -312,8 +314,9 @@ new_password = getpass("new_password: ") # new password for the rotation
 
 NETHelper.set(
     action=Python4CPM.ACTION_LOGON, # use actions from Python4CPM.ACTION_*
-    address="myapp.corp.local", # populate with the address from your account properties
     username="jdoe", # populate with the username from your account properties
+    address="myapp.corp.local", # populate with the address from your account properties
+    port="8443", # populate with the port from your account properties
     logon_username="ldoe", # populate with the logon account username from your linked logon account
     reconcile_username="rdoe", # ppopulate with the reconcile account username from your linked logon account
     logging="yes", # populate with the PythonLogging parameter from the platform: "yes" or "no"
