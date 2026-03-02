@@ -9,10 +9,10 @@ Python4CPM Changelog
 ### Added
 - Support for SRS.
 - `Python4CPMHandler` abstract class.
-- Optional "Port" property to platform.
+- Optional "Port" property for platform.
 
 ### Changed
-- `Python4CPM` logger default directory,file naming convention and formatting.
+- `Python4CPM` logger default directory, file naming convention and formatting.
 - `NETHelper` initialization replaced with `NETHelper.set()` and `NETHelper.get()`.
 
 ## [1.0.20] - 2026-02-26
