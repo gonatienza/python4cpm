@@ -83,11 +83,11 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             Logger.WriteLine($"{PARAMS_PYTHON_LOGGING_LEVEL}: {PythonLoggingLevel}", LogLevel.INFO);
             if (!File.Exists(PythonExePath))
                 throw new FileNotFoundException(
-                    $"{PARAMS_PYTHON_EXE_PATH}: {PythonExePath} does not exist"
+                    $"{PARAMS_PYTHON_EXE_PATH}: {PythonExePath} not found"
                 );
             if (!File.Exists(PythonScriptPath))
                 throw new FileNotFoundException(
-                    $"{PARAMS_PYTHON_SCRIPT_PATH}: {PythonScriptPath} does not exist"
+                    $"{PARAMS_PYTHON_SCRIPT_PATH}: {PythonScriptPath} not found"
                 );
         }
 
@@ -226,9 +226,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 
         private int HandleException(Exception ex, bool unrecoverable, ref PlatformOutput platformOutput)
         {
-            string message = $"{ex.GetType()}: {ex.Message}";
-            platformOutput.Message = message;
-            Logger.WriteLine(message, LogLevel.ERROR);
+            platformOutput.Message = ex.Message;
+            Logger.WriteLine($"{ex.GetType()}: {ex.Message}", LogLevel.ERROR);
             if (unrecoverable)
             {
                 Logger.WriteLine("Closing with failed unrecoverable", LogLevel.ERROR);
