@@ -1,7 +1,7 @@
 import os
 import sys
 import atexit
-from python4cpm.secrets import Secrets
+from python4cpm.secrets import Secret, Secrets
 from python4cpm.args import Args
 from python4cpm.logger import Logger
 
@@ -33,7 +33,7 @@ class Python4CPM:
             self._args.logging_level
         )
         self.log_debug("Initiating...")
-        self._log_env(self._args, False)
+        self._log_env(self._args)
         self._verify_action()
         self._secrets = self._get_secrets()
         self._log_env(self._secrets)
@@ -87,14 +87,14 @@ class Python4CPM:
         if self._args.action not in self._VALID_ACTIONS:
             self.log_warning(f"Unkonwn action -> '{self._args.action}'")
 
-    def _log_env(self, obj: object, masked: bool = True) -> None:
+    def _log_env(self, obj: object) -> None:
         for key, value in vars(obj).items():
             _key = key.strip('_')
             if value:
-                if masked:
-                    logging_value = "[SET]"
-                else:
+                if not isinstance(value, Secret):
                     logging_value = value
+                else:
+                    logging_value = "[SET]"
             else:
                 logging_value = "[NOT SET]"
             self.log_debug(f"{_key} -> '{logging_value}'")
