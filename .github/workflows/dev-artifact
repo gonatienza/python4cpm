@@ -1,4 +1,4 @@
-name: Release Dev
+name: Dev Artifact
 
 on:
   workflow_dispatch:
