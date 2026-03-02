@@ -3,9 +3,6 @@ name: Release Dev
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   dotnet-build:
     runs-on: windows-latest
@@ -36,32 +33,3 @@ jobs:
         with:
           name: platform-artifact
           path: dist/python4cpm-platform.zip
-
-  release:
-    needs: [dotnet-build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set version to dev
-        run: |
-          echo "VERSION=dev" >> $GITHUB_ENV
-      - uses: actions/download-artifact@v4
-        with:
-          name: platform-artifact
-          path: dist
-      - name: Install GitHub CLI
-        run: sudo apt-get update && sudo apt-get install -y gh
-      - name: Delete existing release
-        run: gh release delete v${VERSION} -y || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Delete existing tag
-        run: git push -d origin v${VERSION} || true
-      - name: Create release
-        run: |
-          gh release create ${VERSION} \
-            dist/python4cpm-platform.zip \
-            --title "${VERSION}" \
-            --notes "Release ${VERSION}" \
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
