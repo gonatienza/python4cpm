@@ -3,6 +3,7 @@ import sys
 import atexit
 from python4cpm.secrets import Secret, Secrets
 from python4cpm.args import Args
+from python4cpm.crypto import Crypto
 from python4cpm.logger import Logger
 
 
@@ -92,12 +93,15 @@ class Python4CPM:
             _key = key.strip('_')
             if value:
                 if not isinstance(value, Secret):
-                    logging_value = value
+                    logging_value = f"'{value}'"
                 else:
-                    logging_value = "[SET]"
+                    if Crypto.ENABLED is True:
+                        logging_value = "[ENCRYPTED]"
+                    else:
+                        logging_value = "[SET]"
             else:
                 logging_value = "[NOT SET]"
-            self.log_debug(f"{_key} -> '{logging_value}'")
+            self.log_debug(f"{_key} -> {logging_value}")
 
     def close_fail(self, unrecoverable: bool = False) -> None:
         if unrecoverable is False:

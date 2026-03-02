@@ -7,7 +7,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     public class Crypto
     {
-        public static string Encrypt(SecureString secureStr)
+        public static EncryptedString Encrypt(SecureString secureStr)
         {
             IntPtr unmanagedPtr = IntPtr.Zero;
             try
@@ -22,7 +22,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                         plainBytes,
                         null,
                         DataProtectionScope.CurrentUser);
-                    return Convert.ToBase64String(encrypted);
+                    return new EncryptedString(Convert.ToBase64String(encrypted));
                 }
                 finally
                 {

@@ -44,10 +44,10 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private string ReconcileUsername = string.Empty;
         private string PythonLogging = string.Empty;
         private string PythonLoggingLevel = string.Empty;
-        private string CurrentPassword = string.Empty;
-        private string LogonCurrentPassword = string.Empty;
-        private string ReconcileCurrentPassword = string.Empty;
-        private string NewPassword = string.Empty;
+        private EncryptedString CurrentPassword = new EncryptedString(string.Empty);
+        private EncryptedString LogonCurrentPassword = new EncryptedString(string.Empty);
+        private EncryptedString ReconcileCurrentPassword = new EncryptedString(string.Empty);
+        private EncryptedString NewPassword = new EncryptedString(string.Empty);
 
         public BaseAction(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
@@ -59,7 +59,37 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             get;
         }
 
-        protected void GetParams()
+        private string GetLoggingValue(object obj)
+        {
+            string logValue;
+            if (obj is EncryptedString enc && enc.Secret != string.Empty)
+            {
+                logValue = "[ENCRYPTED]";
+            }
+            else if (obj is string str && str != string.Empty)
+            {
+                logValue = $"'{str}'";
+            }
+            else
+            {
+                logValue = "[NOT SET]";
+            }
+            return logValue;
+        }
+
+        private void LogField(string name, object obj)
+        {
+            string logValue = GetLoggingValue(obj);
+            Logger.WriteLine($"{name} -> {logValue}", LogLevel.INFO);
+        }
+
+        private void LogEnvVar(string name, object obj)
+        {
+            string logValue = GetLoggingValue(obj);
+            Logger.WriteLine($"'{name}' -> {logValue}", LogLevel.INFO);
+        }
+
+        private void GetParams()
         {
             if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_EXE_PATH) == true)
             {
@@ -77,21 +107,17 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             {
                 PythonLoggingLevel = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_LOGGING_LEVEL];
             }
-            Logger.WriteLine($"{PARAMS_PYTHON_EXE_PATH}: {PythonExePath}", LogLevel.INFO);
-            Logger.WriteLine($"{PARAMS_PYTHON_SCRIPT_PATH}: {PythonScriptPath}", LogLevel.INFO);
-            Logger.WriteLine($"{PARAMS_PYTHON_LOGGING}: {PythonLogging}", LogLevel.INFO);
-            Logger.WriteLine($"{PARAMS_PYTHON_LOGGING_LEVEL}: {PythonLoggingLevel}", LogLevel.INFO);
+            LogField(nameof(PythonExePath), PythonExePath);
+            LogField(nameof(PythonScriptPath), PythonScriptPath);
+            LogField(nameof(PythonLogging), PythonLogging);
+            LogField(nameof(PythonLoggingLevel), PythonLoggingLevel);
             if (!File.Exists(PythonExePath))
-                throw new FileNotFoundException(
-                    $"{PARAMS_PYTHON_EXE_PATH}: {PythonExePath} not found"
-                );
+                throw new FileNotFoundException($"{PARAMS_PYTHON_EXE_PATH}: '{PythonExePath}' not found");
             if (!File.Exists(PythonScriptPath))
-                throw new FileNotFoundException(
-                    $"{PARAMS_PYTHON_SCRIPT_PATH}: {PythonScriptPath} not found"
-                );
+                throw new FileNotFoundException($"{PARAMS_PYTHON_SCRIPT_PATH}: '{PythonScriptPath}' not found");
         }
 
-        protected void GetProperties()
+        private void GetProperties()
         {
             if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
             {
@@ -129,13 +155,22 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             {
                 if (TargetAccount?.NewPassword == null)
                 {
-                    throw new InvalidOperationException("Required TargetAccount.NewPassword is null");
+                    throw new InvalidOperationException("Required new password is 'null'");
                 }
                 NewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
             }
+            LogField(nameof(Username), Username);
+            LogField(nameof(Address), Address);
+            LogField(nameof(Port), Port);
+            LogField(nameof(LogonUsername), LogonUsername);
+            LogField(nameof(ReconcileUsername), ReconcileUsername);
+            LogField(nameof(CurrentPassword), CurrentPassword);
+            LogField(nameof(LogonCurrentPassword), LogonCurrentPassword);
+            LogField(nameof(ReconcileCurrentPassword), ReconcileCurrentPassword);
+            LogField(nameof(NewPassword), NewPassword);
         }
 
-        private Dictionary<string, string> GetEnv(string action)
+        private Dictionary<string, string> GetArgs(string action)
         {
             return new Dictionary<string, string>
             {
@@ -146,7 +181,14 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 { ENV_LOGON_USERNAME, LogonUsername },
                 { ENV_RECONCILE_USERNAME, ReconcileUsername },
                 { ENV_LOGGING, PythonLogging },
-                { ENV_LOGGING_LEVEL, PythonLoggingLevel },
+                { ENV_LOGGING_LEVEL, PythonLoggingLevel }
+            };
+        }
+
+        private Dictionary<string, EncryptedString> GetSecrets()
+        {
+            return new Dictionary<string, EncryptedString>
+            {
                 { ENV_PASSWORD, CurrentPassword },
                 { ENV_LOGON_PASSWORD, LogonCurrentPassword },
                 { ENV_RECONCILE_PASSWORD, ReconcileCurrentPassword },
@@ -156,7 +198,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 
         private void RunScript(string action)
         {
-            var envVars = GetEnv(action);
+            var args = GetArgs(action);
+            var secrets = GetSecrets();
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -170,11 +213,15 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                     CreateNoWindow = true
                 }
             };
-
-            foreach (var env in envVars)
+            foreach (var arg in args)
             {
-                Logger.WriteLine($"Setting environment variable: {env.Key}", LogLevel.INFO);
-                process.StartInfo.EnvironmentVariables[env.Key] = env.Value;
+                LogEnvVar(arg.Key, arg.Value);
+                process.StartInfo.EnvironmentVariables[arg.Key] = arg.Value;
+            }
+            foreach (var secret in secrets)
+            {
+                LogEnvVar(secret.Key, secret.Value);
+                process.StartInfo.EnvironmentVariables[secret.Key] = secret.Value.Secret;
             }
             Logger.WriteLine($"Executing: {PythonExePath} {PythonScriptPath}", LogLevel.INFO);
             process.Start();
