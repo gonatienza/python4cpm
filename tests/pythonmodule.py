@@ -152,7 +152,7 @@ def test_handler_bad_action(monkeypatch):
 @pytest.mark.parametrize("close", CLOSE_CODES)
 def test_exit_codes(close, monkeypatch, capsys):
     args = {f"PYTHON4CPM_{k.upper()}": v for k, v in ARGS.items()}
-    args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_VERIFY
+    args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_CHANGE
     args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING[0]
     args[Python4CPM._get_env_key(Args.ARGS[7])] = LOGGING_LEVELS[0]
     LOGGER.info(f"args -> {args}")
@@ -178,7 +178,7 @@ def test_exit_codes(close, monkeypatch, capsys):
 
 def test_on_exit_stderr(monkeypatch, capsys):
     args = {f"PYTHON4CPM_{k.upper()}": v for k, v in ARGS.items()}
-    args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_VERIFY
+    args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_CHANGE
     args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING[0]
     args[Python4CPM._get_env_key(Args.ARGS[7])] = LOGGING_LEVELS[0]
     LOGGER.info(f"args -> {args}")
@@ -194,7 +194,7 @@ def test_on_exit_stderr(monkeypatch, capsys):
 
 
 def test_net_helper():
-    action = Python4CPM.ACTION_VERIFY
+    action = Python4CPM.ACTION_CHANGE
     logging = LOGGING[0]
     logging_level = LOGGING_LEVELS[2]
     NETHelper.set(
