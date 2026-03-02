@@ -109,7 +109,7 @@ def test_python4cpm_dll_returns(python_path, script, action):
 
 
 def test_python4cpm_dll_env_mappings():
-    action = Python4CPM.ACTION_VERIFY
+    action = Python4CPM.ACTION_CHANGE
     script = os.path.join(_SCRIPTS_PATH, "assert_env_mappings.py")
     LOGGER.info(f"action -> {action}")
     LOGGER.info(f"script -> {script}")

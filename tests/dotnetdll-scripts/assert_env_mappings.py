@@ -26,7 +26,7 @@ try:
     p4cpm = Python4CPM(os.path.basename(__file__))
     config = get_config_from_ini()
     assertions = (
-        (p4cpm.args.action, Python4CPM.ACTION_VERIFY),
+        (p4cpm.args.action, Python4CPM.ACTION_CHANGE),
         (p4cpm.args.address, config["DEFAULT"]["address"]),
         (p4cpm.args.username, config["DEFAULT"]["username"]),
         (p4cpm.args.port, config["DEFAULT"]["port"]),
@@ -37,6 +37,7 @@ try:
         (p4cpm.secrets.password.get(), config["DEFAULT"]["password"]),
         (p4cpm.secrets.logon_password.get(), config["extrapass1"]["password"]),
         (p4cpm.secrets.reconcile_password.get(), config["extrapass3"]["password"]),
+        (p4cpm.secrets.new_password.get(), config["DEFAULT"]["newpassword"])
     )
     for a, b in assertions:
         LOGGER.info(f"Asserting '{a}' == '{b}'...")
