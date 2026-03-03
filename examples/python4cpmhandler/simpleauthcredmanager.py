@@ -82,16 +82,15 @@ class SimpleAuth(Python4CPMHandler):
         )
         try:
             with self._opener.open(req, timeout=10) as res:
-                self.log_info(f"_set_cookie: code -> {res.code}")
+                self.log_info(f"code -> {res.code}")
                 pass
         except urllib.error.HTTPError as e:
-            inner_message = f"code -> {e.code}"
-            message = f"_set_cookie: {inner_message}"
+            message = f"code -> {e.code}"
             if e.code != 302:
                 self.log_error(message)
-                raise Exception(inner_message)
+                raise Exception(message)
             self.log_info(message)
-        self.log_info("_set_cookie: cookie set")
+        self.log_info("cookie set")
 
 
     def _get_auth_header(self, from_reconcile=False):
@@ -107,7 +106,7 @@ class SimpleAuth(Python4CPMHandler):
         )
         with self._opener.open(req, timeout=10) as _res:
             res = json.loads(_res.read().decode())
-        self.log_info("get_auth_headaer: got token")
+        self.log_info("got token")
         token = res["token"]
         return {"Authorization": f"Bearer {token}"}
 
@@ -131,7 +130,7 @@ class SimpleAuth(Python4CPMHandler):
             )
             with self._opener.open(req, timeout=10) as _res:
                 res = _res.read()
-            self.log_info(f"verify: {res.decode()}")
+            self.log_info(f"{res.decode()}")
         except Exception as e:
             self.log_error(f"{type(e).__name__}: {e}")
             self.close_fail()
@@ -156,7 +155,7 @@ class SimpleAuth(Python4CPMHandler):
             )
             with self._opener.open(req, timeout=10) as _res:
                 res = _res.read()
-            self.log_info(f"change: {res.decode()}")
+            self.log_info(res.decode())
         except Exception as e:
             self.log_error(f"{type(e).__name__}: {e}")
             self.close_fail()
@@ -184,7 +183,7 @@ class SimpleAuth(Python4CPMHandler):
             )
             with self._opener.open(req, timeout=10) as _res:
                 res = _res.read()
-            self.log_info(f"reconcile: {res.decode()}")
+            self.log_info(res.decode())
         except Exception as e:
             self.log_error(f"{type(e).__name__}: {e}")
             self.close_fail()

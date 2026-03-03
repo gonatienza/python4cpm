@@ -19,7 +19,7 @@ USE_COOKIE = False
 
 class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        P4CPM.log_info(f"NoRedirectHandler: ignoring redirect -> {newurl}")
+        P4CPM.log_info(f"ignoring redirect -> {newurl}")
         return None
 
 
@@ -61,16 +61,15 @@ def set_cookie(opener, from_reconcile=False):
     )
     try:
         with opener.open(req, timeout=10) as res:
-            P4CPM.log_info(f"set_cookie: code -> {res.code}")
+            P4CPM.log_info(f"code -> {res.code}")
             pass
     except urllib.error.HTTPError as e:
-        inner_message = f"code -> {e.code}"
-        message = f"set_cookie: {inner_message}"
+        message = f"code -> {e.code}"
         if e.code != 302:
             P4CPM.log_error(message)
-            raise Exception(inner_message)
+            raise Exception(message)
         P4CPM.log_info(message)
-    P4CPM.log_info("set_cookie: cookie set")
+    P4CPM.log_info("cookie set")
 
 
 def get_auth_header(opener, from_reconcile=False):
@@ -86,7 +85,7 @@ def get_auth_header(opener, from_reconcile=False):
     )
     with opener.open(req, timeout=10) as _res:
         res = json.loads(_res.read().decode())
-    P4CPM.log_info("get_auth_headaer: got token")
+    P4CPM.log_info("got token")
     token = res["token"]
     return {"Authorization": f"Bearer {token}"}
 
@@ -109,7 +108,7 @@ def verify(opener, from_reconcile=False):
     )
     with opener.open(req, timeout=10) as _res:
         res = _res.read()
-    P4CPM.log_info(f"verify: {res.decode()}")
+    P4CPM.log_info(res.decode())
 
 
 def change(opener):
@@ -130,7 +129,7 @@ def change(opener):
     )
     with opener.open(req, timeout=10) as _res:
         res = _res.read()
-    P4CPM.log_info(f"change: {res.decode()}")
+    P4CPM.log_info(res.decode())
 
 
 def reconcile(opener):
@@ -154,7 +153,7 @@ def reconcile(opener):
     )
     with opener.open(req, timeout=10) as _res:
         res = _res.read()
-    P4CPM.log_info(f"reconcile: {res.decode()}")
+    P4CPM.log_info(res.decode())
 
 
 def main():
@@ -177,7 +176,7 @@ def main():
             reconcile(opener)
             P4CPM.close_success()
         else:
-            P4CPM.log_error(f"main: invalid action: '{action}'")
+            P4CPM.log_error(f"invalid action: '{action}'")
             P4CPM.close_fail()
     except Exception as e:
         P4CPM.log_error(f"{type(e).__name__}: {e}")

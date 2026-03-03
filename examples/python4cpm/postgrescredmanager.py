@@ -25,7 +25,7 @@ def verify(from_reconcile=False):
         autocommit=True
     ) as conn:
         with conn.cursor():
-            P4CPM.log_info("verify: Password verified successfully")
+            P4CPM.log_info("Password verified successfully")
 
 
 def change(from_reconcile=False):
@@ -44,7 +44,7 @@ def change(from_reconcile=False):
                     sql.Literal(P4CPM.secrets.new_password.get())
                 )
             )
-            P4CPM.log_info("change: Password changed successfully")
+            P4CPM.log_info("Password changed successfully")
 
 
 def main():
@@ -65,7 +65,7 @@ def main():
             change(from_reconcile=True)
             P4CPM.close_success()
         else:
-            P4CPM.log_error(f"main: invalid action: '{action}'")
+            P4CPM.log_error(f"invalid action: '{action}'")
             P4CPM.close_fail()
     except Exception as e:
         P4CPM.log_error(f"{type(e).__name__}: {e}")
