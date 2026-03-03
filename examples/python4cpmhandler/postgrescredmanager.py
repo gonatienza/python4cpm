@@ -43,7 +43,7 @@ class Postgres(Python4CPMHandler):
                 autocommit=True
             ) as conn:
                 with conn.cursor():
-                    self.log_info("verify: Password verified successfully")
+                    self.log_info("Password verified successfully")
         except Exception as e:
             self.log_error(f"{type(e).__name__}: {e}")
             self.close_fail()
@@ -65,7 +65,7 @@ class Postgres(Python4CPMHandler):
                             sql.Literal(self.secrets.new_password.get())
                         )
                     )
-                    self.log_info("change: Password changed successfully")
+                    self.log_info("Password changed successfully")
         except Exception as e:
             self.log_error(f"{type(e).__name__}: {e}")
             self.close_fail()
