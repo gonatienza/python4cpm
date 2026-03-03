@@ -4,6 +4,12 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.0.27] - 2026-03-03
+
+### Added
+- `EncryptedString` object to contain encrypted blobs in .NET.
+- Verbosity in debug logs for .NET.
+
 ## [1.0.26] - 2026-03-02
 
 ### Added
@@ -40,7 +46,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.0.26...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.0.27...HEAD
+[1.0.27]: https://github.com/gonatienza/python4cpm/compare/v1.0.26...v1.0.27
 [1.0.26]: https://github.com/gonatienza/python4cpm/compare/v1.0.20...v1.0.26
 [1.0.20]: https://github.com/gonatienza/python4cpm/compare/v1.0.19...v1.0.20
 [1.0.19]: https://github.com/gonatienza/python4cpm/compare/v1.0.14...v1.0.19
