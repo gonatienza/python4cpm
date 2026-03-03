@@ -82,12 +82,11 @@ def test_main(action, logging, logging_level,  monkeypatch):
     secrets = {Python4CPM._get_env_key(k): v for k, v in SECRETS.items()}
     if action in ACTIONS_WITHOUT_NEW_PASSWORD:
         secrets[Python4CPM._get_env_key(Secrets.SECRETS[3])] = ""
-    encrypted_secrets = {}
+    LOGGER.info(f"secrets -> {secrets}")
     if Crypto.ENABLED:
+        encrypted_secrets = {}
         for k, v in secrets.items():
             encrypted_secrets[k] = Crypto.encrypt(v)
-    LOGGER.info(f"secrets -> {secrets}")
-    if encrypted_secrets:
         final_env = args | encrypted_secrets
     else:
         final_env = args | secrets
@@ -109,7 +108,8 @@ def test_main(action, logging, logging_level,  monkeypatch):
     assert p4cpm.secrets.password.get() == SECRETS["password"] # noqa: S101
     assert p4cpm.secrets.logon_password.get() == SECRETS["logon_password"] # noqa: S101
     assert p4cpm.secrets.reconcile_password.get() == SECRETS["reconcile_password"] # noqa: S101
-    assert p4cpm.secrets.new_password.get() == secrets["PYTHON4CPM_NEW_PASSWORD"] # noqa: S101
+    new_password_var = f"{Python4CPM._ENV_PREFIX}{Secrets.SECRETS[3].upper()}"
+    assert p4cpm.secrets.new_password.get() == secrets[new_password_var] # noqa: S101
     if logging.lower() in Logger._LOGGING_ENABLED_VALUE:
         assert p4cpm._logger # noqa: S101
         if logging_level.lower() == LOGGING_LEVELS[2]:
@@ -151,12 +151,12 @@ def test_handler_bad_action(monkeypatch):
 
 @pytest.mark.parametrize("close", CLOSE_CODES)
 def test_exit_codes(close, monkeypatch, capsys):
-    args = {f"PYTHON4CPM_{k.upper()}": v for k, v in ARGS.items()}
+    args = {f"{Python4CPM._ENV_PREFIX}{k.upper()}": v for k, v in ARGS.items()}
     args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_CHANGE
     args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING[0]
     args[Python4CPM._get_env_key(Args.ARGS[7])] = LOGGING_LEVELS[0]
     LOGGER.info(f"args -> {args}")
-    secrets = {f"PYTHON4CPM_{k.upper()}": v for k, v in SECRETS.items()}
+    secrets = {f"{Python4CPM._ENV_PREFIX}{k.upper()}": v for k, v in SECRETS.items()}
     LOGGER.info(f"secrets -> {secrets}")
     final_env = args | secrets
     for k, v in final_env.items():
@@ -177,12 +177,12 @@ def test_exit_codes(close, monkeypatch, capsys):
 
 
 def test_on_exit_stderr(monkeypatch, capsys):
-    args = {f"PYTHON4CPM_{k.upper()}": v for k, v in ARGS.items()}
+    args = {f"{Python4CPM._ENV_PREFIX}{k.upper()}": v for k, v in ARGS.items()}
     args[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_CHANGE
     args[Python4CPM._get_env_key(Args.ARGS[6])] = LOGGING[0]
     args[Python4CPM._get_env_key(Args.ARGS[7])] = LOGGING_LEVELS[0]
     LOGGER.info(f"args -> {args}")
-    secrets = {f"PYTHON4CPM_{k.upper()}": v for k, v in SECRETS.items()}
+    secrets = {f"{Python4CPM._ENV_PREFIX}{k.upper()}": v for k, v in SECRETS.items()}
     LOGGER.info(f"secrets -> {secrets}")
     final_env = args | secrets
     for k, v in final_env.items():
