@@ -84,9 +84,7 @@ def test_main(action, logging, logging_level,  monkeypatch):
         secrets[Python4CPM._get_env_key(Secrets.SECRETS[3])] = ""
     LOGGER.info(f"secrets -> {secrets}")
     if Crypto.ENABLED:
-        encrypted_secrets = {}
-        for k, v in secrets.items():
-            encrypted_secrets[k] = Crypto.encrypt(v)
+        encrypted_secrets = {k: Crypto.encrypt(v) for k, v in secrets.items()}
         final_env = args | encrypted_secrets
     else:
         final_env = args | secrets
@@ -134,12 +132,9 @@ def test_handler_bad_action(monkeypatch):
     args[Python4CPM._get_env_key(Args.ARGS[7])] = LOGGING_LEVELS[0]
     LOGGER.info(f"args -> {args}")
     secrets = {Python4CPM._get_env_key(k): v for k, v in SECRETS.items()}
-    encrypted_secrets = {}
-    if Crypto.ENABLED:
-        for k, v in secrets.items():
-            encrypted_secrets[k] = Crypto.encrypt(v)
     LOGGER.info(f"secrets -> {secrets}")
-    if encrypted_secrets:
+    if Crypto.ENABLED:
+        encrypted_secrets = {k: Crypto.encrypt(v) for k, v in secrets.items()}
         final_env = args | encrypted_secrets
     else:
         final_env = args | secrets
