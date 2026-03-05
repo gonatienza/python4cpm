@@ -27,17 +27,17 @@ try:
     config = get_config_from_ini()
     assertions = (
         (p4cpm.args.action, Python4CPM.ACTION_CHANGE),
-        (p4cpm.args.address, config["DEFAULT"]["address"]),
-        (p4cpm.args.username, config["DEFAULT"]["username"]),
-        (p4cpm.args.port, config["DEFAULT"]["port"]),
-        (p4cpm.args.logon_username, config["extrapass1"]["username"]),
-        (p4cpm.args.reconcile_username, config["extrapass3"]["username"]),
         (p4cpm.args.logging, config["extrainfo"]["PythonLogging"]),
         (p4cpm.args.logging_level, config["extrainfo"]["PythonLoggingLevel"]),
-        (p4cpm.secrets.password.get(), config["DEFAULT"]["password"]),
-        (p4cpm.secrets.logon_password.get(), config["extrapass1"]["password"]),
-        (p4cpm.secrets.reconcile_password.get(), config["extrapass3"]["password"]),
-        (p4cpm.secrets.new_password.get(), config["DEFAULT"]["newpassword"])
+        (p4cpm.target_account.username, config["DEFAULT"]["username"]),
+        (p4cpm.target_account.address, config["DEFAULT"]["address"]),
+        (p4cpm.target_account.port, config["DEFAULT"]["port"]),
+        (p4cpm.logon_account.username, config["extrapass1"]["username"]),
+        (p4cpm.reconcile_account.username, config["extrapass3"]["username"]),
+        (p4cpm.target_account.password.get(), config["DEFAULT"]["password"]),
+        (p4cpm.logon_account.password.get(), config["extrapass1"]["password"]),
+        (p4cpm.reconcile_account.password.get(), config["extrapass3"]["password"]),
+        (p4cpm.target_account.new_password.get(), config["DEFAULT"]["newpassword"])
     )
     for a, b in assertions:
         LOGGER.info(f"Asserting '{a}' == '{b}'...")

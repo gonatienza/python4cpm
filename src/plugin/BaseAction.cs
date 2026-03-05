@@ -10,18 +10,19 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     abstract public class BaseAction : AbsAction
     {
-        private const string ENV_ACTION = "PYTHON4CPM_ACTION";
-        private const string ENV_USERNAME = "PYTHON4CPM_USERNAME";
-        private const string ENV_ADDRESS = "PYTHON4CPM_ADDRESS";
-        private const string ENV_PORT = "PYTHON4CPM_PORT";
-        private const string ENV_LOGON_USERNAME = "PYTHON4CPM_LOGON_USERNAME";
-        private const string ENV_RECONCILE_USERNAME = "PYTHON4CPM_RECONCILE_USERNAME";
-        private const string ENV_LOGGING = "PYTHON4CPM_LOGGING";
-        private const string ENV_LOGGING_LEVEL = "PYTHON4CPM_LOGGING_LEVEL";
-        private const string ENV_PASSWORD = "PYTHON4CPM_PASSWORD";
-        private const string ENV_LOGON_PASSWORD = "PYTHON4CPM_LOGON_PASSWORD";
-        private const string ENV_RECONCILE_PASSWORD = "PYTHON4CPM_RECONCILE_PASSWORD";
-        private const string ENV_NEW_PASSWORD = "PYTHON4CPM_NEW_PASSWORD";
+        private const string ENV_PREFIX = "PYTHON4CPM_";
+        private const string ENV_ACTION = $"{ENV_PREFIX}ACTION";
+        private const string ENV_USERNAME = $"{ENV_PREFIX}TARGET_USERNAME";
+        private const string ENV_ADDRESS = $"{ENV_PREFIX}TARGET_ADDRESS";
+        private const string ENV_PORT = $"{ENV_PREFIX}TARGET_PORT";
+        private const string ENV_LOGON_USERNAME = $"{ENV_PREFIX}LOGON_USERNAME";
+        private const string ENV_RECONCILE_USERNAME = $"{ENV_PREFIX}RECONCILE_USERNAME";
+        private const string ENV_LOGGING = $"{ENV_PREFIX}LOGGING";
+        private const string ENV_LOGGING_LEVEL = $"{ENV_PREFIX}LOGGING_LEVEL";
+        private const string ENV_PASSWORD = $"{ENV_PREFIX}PASSWORD";
+        private const string ENV_LOGON_PASSWORD = $"{ENV_PREFIX}LOGON_PASSWORD";
+        private const string ENV_RECONCILE_PASSWORD = $"{ENV_PREFIX}RECONCILE_PASSWORD";
+        private const string ENV_NEW_PASSWORD = $"{ENV_PREFIX}TARGET_NEW_PASSWORD";
         private const string PARAMS_PYTHON_EXE_PATH = "PythonExePath";
         private const string PARAMS_PYTHON_SCRIPT_PATH = "PythonScriptPath";
         private const string PARAMS_PYTHON_LOGGING = "PythonLogging";
@@ -89,24 +90,64 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             Logger.WriteLine($"'{name}' -> {logValue}", LogLevel.INFO);
         }
 
+        private string GetExtraInfoProp(BaseAccount account, string prop)
+        {
+            if (account?.ExtraInfoProp?.ContainsKey(prop) == true)
+            {
+                return account.ExtraInfoProp[prop];
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        private string GetAccountProp(BaseAccount account, string prop)
+        {
+            if (account?.AccountProp?.ContainsKey(prop) == true)
+            {
+                return account.AccountProp[prop];
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        private EncryptedString GetAccountPassword(BaseAccount account)
+        {
+            if (account?.CurrentPassword != null)
+            {
+                return Crypto.Encrypt(account.CurrentPassword);
+            }
+            else
+            {
+                return new EncryptedString(string.Empty);
+            }
+        }
+
+        private EncryptedString GetNewPassword()
+        {
+            if (RequiresNewPassword)
+            {
+                if (TargetAccount?.NewPassword == null)
+                {
+                    throw new InvalidOperationException("Required new password is 'null'");
+                }
+                return Crypto.Encrypt(TargetAccount.NewPassword);
+            }
+            else
+            {
+                return new EncryptedString(string.Empty);
+            }
+        }
+
         private void GetParams()
         {
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_EXE_PATH) == true)
-            {
-                PythonExePath = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_EXE_PATH];
-            }
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_SCRIPT_PATH) == true)
-            {
-                PythonScriptPath = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_SCRIPT_PATH];
-            }
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_LOGGING) == true)
-            {
-                PythonLogging = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_LOGGING];
-            }
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_LOGGING_LEVEL) == true)
-            {
-                PythonLoggingLevel = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_LOGGING_LEVEL];
-            }
+            PythonExePath = GetExtraInfoProp(TargetAccount, PARAMS_PYTHON_EXE_PATH);
+            PythonScriptPath = GetExtraInfoProp(TargetAccount, PARAMS_PYTHON_SCRIPT_PATH);
+            PythonLogging = GetExtraInfoProp(TargetAccount, PARAMS_PYTHON_LOGGING);
+            PythonLoggingLevel = GetExtraInfoProp(TargetAccount, PARAMS_PYTHON_LOGGING_LEVEL);
             LogField(nameof(PythonExePath), PythonExePath);
             LogField(nameof(PythonScriptPath), PythonScriptPath);
             LogField(nameof(PythonLogging), PythonLogging);
@@ -117,48 +158,17 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 throw new FileNotFoundException($"{PARAMS_PYTHON_SCRIPT_PATH}: '{PythonScriptPath}' not found");
         }
 
-        private void GetProperties()
+        private void GetAccountData()
         {
-            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
-            {
-                Username = TargetAccount.AccountProp[PROPERTIES_USERNAME];
-            }
-            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_ADDRESS) == true)
-            {
-                Address = TargetAccount.AccountProp[PROPERTIES_ADDRESS];
-            }
-            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_PORT) == true)
-            {
-                Port = TargetAccount.AccountProp[PROPERTIES_PORT];
-            }
-            if (LogOnAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
-            {
-                LogonUsername = LogOnAccount.AccountProp[PROPERTIES_USERNAME];
-            }
-            if (ReconcileAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
-            {
-                ReconcileUsername = ReconcileAccount.AccountProp[PROPERTIES_USERNAME];
-            }
-            if (TargetAccount?.CurrentPassword != null)
-            {
-                CurrentPassword = Crypto.Encrypt(TargetAccount.CurrentPassword);
-            }
-            if (LogOnAccount?.CurrentPassword != null)
-            {
-                LogonCurrentPassword = Crypto.Encrypt(LogOnAccount.CurrentPassword);
-            }
-            if (ReconcileAccount?.CurrentPassword != null)
-            {
-                ReconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
-            }
-            if (RequiresNewPassword)
-            {
-                if (TargetAccount?.NewPassword == null)
-                {
-                    throw new InvalidOperationException("Required new password is 'null'");
-                }
-                NewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
-            }
+            Username = GetAccountProp(TargetAccount, PROPERTIES_USERNAME);
+            Address = GetAccountProp(TargetAccount, PROPERTIES_ADDRESS);
+            Port = GetAccountProp(TargetAccount, PROPERTIES_PORT);
+            LogonUsername = GetAccountProp(LogOnAccount, PROPERTIES_USERNAME);
+            ReconcileUsername = GetAccountProp(ReconcileAccount, PROPERTIES_USERNAME);
+            CurrentPassword = GetAccountPassword(TargetAccount);
+            LogonCurrentPassword = GetAccountPassword(LogOnAccount);
+            ReconcileCurrentPassword = GetAccountPassword(ReconcileAccount);
+            NewPassword = GetNewPassword();
             LogField(nameof(Username), Username);
             LogField(nameof(Address), Address);
             LogField(nameof(Port), Port);
@@ -245,7 +255,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             try
             {
                 GetParams();
-                GetProperties();
+                GetAccountData();
             }
             catch (Exception ex)
             {

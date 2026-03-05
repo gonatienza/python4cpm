@@ -1,11 +1,11 @@
 import os
 import sys
 import atexit
-from python4cpm.secrets import Secret, Secrets
+from python4cpm.secrets import Secret
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
 from python4cpm.logger import Logger
-
+from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
 
 class Python4CPM:
     ACTION_VERIFY = "verifypass"
@@ -36,8 +36,12 @@ class Python4CPM:
         self.log_debug("Initiating...")
         self._log_env(self._args)
         self._verify_action()
-        self._secrets = self._get_secrets()
-        self._log_env(self._secrets)
+        self._target_account = self._get_account(TargetAccount)
+        self._logon_account = self._get_account(LogonAccount)
+        self._reconcile_account = self._get_account(ReconcileAccount)
+        self._log_env(self._target_account)
+        self._log_env(self._logon_account)
+        self._log_env(self._reconcile_account)
         self._closed = False
         atexit.register(self._on_exit)
 
@@ -46,8 +50,16 @@ class Python4CPM:
         return self._args
 
     @property
-    def secrets(self) -> Secrets:
-        return self._secrets
+    def target_account(self) -> TargetAccount:
+        return self._target_account
+
+    @property
+    def logon_account(self) -> LogonAccount:
+        return self._logon_account
+
+    @property
+    def reconcile_account(self) -> ReconcileAccount:
+        return self._reconcile_account
 
     def log_debug(self, message: str) -> None:
         if self._logger is not None:
@@ -70,19 +82,19 @@ class Python4CPM:
         return f"{cls._ENV_PREFIX}{key.upper()}"
 
     @classmethod
-    def _get_args(cls) -> dict:
-        args = {}
-        for arg in Args.ARGS:
-            _arg = os.environ.get(cls._get_env_key(arg))
-            args[arg] = _arg if _arg is not None else ""
-        return Args(**args)
+    def _get_args(cls) -> Args:
+        kwargs = {}
+        for kwarg in Args.ARGS:
+            _kwarg = os.environ.get(cls._get_env_key(kwarg))
+            kwargs[kwarg] = _kwarg if _kwarg is not None else ""
+        return Args(**kwargs)
 
-    def _get_secrets(self) -> dict:
-        secrets = {}
-        for secret in Secrets.SECRETS:
-            _secret = os.environ.get(self._get_env_key(secret))
-            secrets[secret] = _secret if _secret is not None else ""
-        return Secrets(**secrets)
+    def _get_account(self, account_class):
+        args = []
+        for arg in account_class.ENV_VARS:
+            _arg = os.environ.get(self._get_env_key(arg))
+            args.append(_arg if _arg is not None else "")
+        return account_class(*args)
 
     def _verify_action(self) -> None:
         if self._args.action not in self._VALID_ACTIONS:
@@ -90,7 +102,7 @@ class Python4CPM:
 
     def _log_env(self, obj: object) -> None:
         for key, value in vars(obj).items():
-            _key = key.strip('_')
+            _key = f"{obj.__class__.__name__}.{key.strip('_')}"
             if value:
                 if not isinstance(value, Secret):
                     logging_value = f"'{value}'"
