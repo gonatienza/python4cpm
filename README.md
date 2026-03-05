@@ -23,7 +23,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 
 #### If you are using CPM (SaaS or Self-Hosted):
 1. Download the latest [Credential Management .NET SDK](https://community.cyberark.com/marketplace/s/#a3550000000EkA0AAK-a3950000000jjoOAAQ) and place its content in the bin folder of CPM (`C:\Program Files (x86)\CyberArk\Password Manager\bin`).  The files for this may already be present.
-2. Download the `python4cpm-platform-*.zip` asset from the [release](https://github.com/gonatienza/python4cpm/releases).
+2. Download the `python4cpm-platform-*.zip` asset from the latest  [release](https://github.com/gonatienza/python4cpm/releases).
 3. Import the platform zip file into Privilege Cloud/PVWA `(Administration -> Platform Management -> Import platform)`.
 4. Craft your python script and place it within a folder in CPM (e.g., `C:\python4cpm-scripts`).
 5. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
@@ -34,7 +34,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 10. For new applications repeat steps from 4 to 9.
 
 #### If you are using SRS (SaaS only):
-1. Download the `python4cpm-platform-*.zip` asset from the [release](https://github.com/gonatienza/python4cpm/releases).
+1. Download the `python4cpm-platform-*.zip` asset from the latest  [release](https://github.com/gonatienza/python4cpm/releases).
 2. Import the platform zip file into Privilege Cloud `(Administration -> Platform Management -> Import platform)`.
 3. Craft your python script and place it within a folder in the Cloud Connector (where the SRS Management Agent runs) (e.g., `C:\python4cpm-scripts`).
 4. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
