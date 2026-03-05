@@ -1,7 +1,7 @@
 from python4cpm.python4cpm import Python4CPM
 from python4cpm.python4cpmhandler import Python4CPMHandler
 from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
-from python4cpm.secrets import Secret
+from python4cpm.secret import Secret
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
 from python4cpm.nethelper import NETHelper
@@ -21,15 +21,12 @@ def get_env():
 
 LOGGER = Logger.get_logger(
     os.path.basename(__file__),
-    Logger._LOGGING_ENABLED_VALUE,
     list(Logger._LOGGING_LEVELS.keys())[0]
 )
 ENV = get_env()
-LOGGING = ["yes", "YES", "bad"]
-LOGGING_LEVELS = ["info", "INFO", "debug", "DEBUG", "bad"]
+LOGGING_LEVELS = ["ERROR", "debug", "bad"]
 ARGS_PARAMS = [
-    (action, logging, logging_level)
-    for logging in LOGGING
+    (action, logging_level)
     for logging_level in LOGGING_LEVELS
     for action in Python4CPM._VALID_ACTIONS
 ]
@@ -70,15 +67,14 @@ class BadClassNoMethods(Python4CPMHandler):
     pass
 
 
-@pytest.mark.parametrize("action,logging,logging_level", ARGS_PARAMS)
-def test_main(action, logging, logging_level,  monkeypatch):
+@pytest.mark.parametrize("action,logging_level", ARGS_PARAMS)
+def test_main(action, logging_level,  monkeypatch):
     env = {
-        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value 
+        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value
         for key, value in ENV.items()
     }
     env[Python4CPM._get_env_key(Args.ARGS[0])] = action
-    env[Python4CPM._get_env_key(Args.ARGS[1])] = logging
-    env[Python4CPM._get_env_key(Args.ARGS[2])] = logging_level
+    env[Python4CPM._get_env_key(Args.ARGS[1])] = logging_level
     if Crypto.ENABLED:
         env_keys = (
             Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
@@ -103,7 +99,6 @@ def test_main(action, logging, logging_level,  monkeypatch):
                 v = v.get()
             LOGGER.info(f"{k} -> {v}")
     assert p4cpm.args.action == action # noqa: S101
-    assert p4cpm.args.logging == logging # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
     assert p4cpm.target_account.username == ENV["target_username"] # noqa: S101
     assert p4cpm.target_account.address == ENV["target_address"] # noqa: S101
@@ -117,14 +112,11 @@ def test_main(action, logging, logging_level,  monkeypatch):
         assert p4cpm.target_account.new_password.get() == "" # noqa: S101
     else:
         assert p4cpm.target_account.new_password.get() == ENV["target_new_password"] # noqa: S101
-    if logging.lower() in Logger._LOGGING_ENABLED_VALUE:
-        assert p4cpm._logger # noqa: S101
-        if logging_level.lower() == LOGGING_LEVELS[2]:
-            assert p4cpm._logger.level == Logger._LOGGING_LEVELS[LOGGING_LEVELS[2]] # noqa: S101
-        else:
-            assert p4cpm._logger.level == Logger._LOGGING_LEVELS[LOGGING_LEVELS[0]] # noqa: S101
+    assert p4cpm._logger # noqa: S101
+    if logging_level.lower() == LOGGING_LEVELS[1]:
+        assert p4cpm._logger.level == Logger._LOGGING_LEVELS[LOGGING_LEVELS[1]] # noqa: S101
     else:
-            assert p4cpm._logger is None # noqa: S101
+        assert p4cpm._logger.level == Logger._DEFAULT_LEVEL # noqa: S101
     with pytest.raises(SystemExit) as e:
         p4cpm.close_success() # avoiding stderr output
     assert e.value.code == CLOSE_CODES[0] # noqa: S101
@@ -136,12 +128,11 @@ def test_main(action, logging, logging_level,  monkeypatch):
 
 def test_handler_bad_action(monkeypatch):
     env = {
-        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value 
+        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value
         for key, value in ENV.items()
     }
     env[Python4CPM._get_env_key(Args.ARGS[0])] = "nonexistent"
-    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING[0]
-    env[Python4CPM._get_env_key(Args.ARGS[2])] = LOGGING_LEVELS[2]
+    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING_LEVELS[1]
     if Crypto.ENABLED:
         env_keys = (
             Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
@@ -161,12 +152,11 @@ def test_handler_bad_action(monkeypatch):
 @pytest.mark.parametrize("close", CLOSE_CODES)
 def test_exit_codes(close, monkeypatch, capsys):
     env = {
-        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value 
+        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value
         for key, value in ENV.items()
     }
     env[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_CHANGE
-    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING[0]
-    env[Python4CPM._get_env_key(Args.ARGS[2])] = LOGGING_LEVELS[2]
+    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING_LEVELS[1]
     if Crypto.ENABLED:
         env_keys = (
             Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
@@ -196,12 +186,11 @@ def test_exit_codes(close, monkeypatch, capsys):
 
 def test_on_exit_stderr(monkeypatch, capsys):
     env = {
-        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value 
+        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value
         for key, value in ENV.items()
     }
     env[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_CHANGE
-    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING[0]
-    env[Python4CPM._get_env_key(Args.ARGS[2])] = LOGGING_LEVELS[2]
+    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING_LEVELS[1]
     if Crypto.ENABLED:
         env_keys = (
             Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
@@ -222,8 +211,7 @@ def test_on_exit_stderr(monkeypatch, capsys):
 
 def test_net_helper():
     action = Python4CPM.ACTION_CHANGE
-    logging = LOGGING[0]
-    logging_level = LOGGING_LEVELS[2]
+    logging_level = LOGGING_LEVELS[1]
     NETHelper.set(
         action=action,
         target_address=ENV["target_address"],
@@ -231,7 +219,6 @@ def test_net_helper():
         target_port=ENV["target_port"],
         logon_username=ENV["logon_username"],
         reconcile_username=ENV["reconcile_username"],
-        logging=logging,
         logging_level=logging_level,
         target_password=ENV["target_password"],
         logon_password=ENV["logon_password"],
@@ -241,7 +228,6 @@ def test_net_helper():
     p4cpm = NETHelper.get()
     assert isinstance(p4cpm, Python4CPM) # noqa: S101
     assert p4cpm.args.action == action # noqa: S101
-    assert p4cpm.args.logging == logging # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
     assert p4cpm.target_account.username == ENV["target_username"] # noqa: S101
     assert p4cpm.target_account.address == ENV["target_address"] # noqa: S101

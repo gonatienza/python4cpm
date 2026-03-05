@@ -39,7 +39,6 @@ def get_scripts_path():
 
 LOGGER = Logger.get_logger(
     os.path.basename(__file__),
-    Logger._LOGGING_ENABLED_VALUE,
     list(Logger._LOGGING_LEVELS.keys())[0]
 )
 PLUGIN_INVOKER_PATH, PYTHON4CPM_DLL_PATH = get_framework_paths()

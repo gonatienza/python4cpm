@@ -1,11 +1,17 @@
 import os
 import sys
 import atexit
-from python4cpm.secrets import Secret
+import logging
+from python4cpm.secret import Secret
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
 from python4cpm.logger import Logger
-from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
+from python4cpm.accounts import (
+    BaseAccount,
+    TargetAccount,
+    LogonAccount,
+    ReconcileAccount
+)
 
 class Python4CPM:
     ACTION_VERIFY = "verifypass"
@@ -28,26 +34,26 @@ class Python4CPM:
     def __init__(self, name: str) -> None:
         self._name = name
         self._args = self._get_args()
-        self._logger = Logger.get_logger(
-            self._name,
-            self._args.logging,
-            self._args.logging_level
-        )
-        self.log_debug("Initiating...")
-        self._log_env(self._args)
+        self._logger = Logger.get_logger(self._name, self._args.logging_level)
+        self._logger.debug("Initiating...")
+        self._log_obj(self._args)
         self._verify_action()
         self._target_account = self._get_account(TargetAccount)
         self._logon_account = self._get_account(LogonAccount)
         self._reconcile_account = self._get_account(ReconcileAccount)
-        self._log_env(self._target_account)
-        self._log_env(self._logon_account)
-        self._log_env(self._reconcile_account)
+        self._log_obj(self._target_account)
+        self._log_obj(self._logon_account)
+        self._log_obj(self._reconcile_account)
         self._closed = False
         atexit.register(self._on_exit)
 
     @property
     def args(self) -> Args:
         return self._args
+
+    @property
+    def logger(self) -> logging.Logger:
+        return self._logger
 
     @property
     def target_account(self) -> TargetAccount:
@@ -61,22 +67,6 @@ class Python4CPM:
     def reconcile_account(self) -> ReconcileAccount:
         return self._reconcile_account
 
-    def log_debug(self, message: str) -> None:
-        if self._logger is not None:
-            self._logger.debug(message, stacklevel=2)
-
-    def log_info(self, message: str) -> None:
-        if self._logger is not None:
-            self._logger.info(message, stacklevel=2)
-
-    def log_warning(self, message: str) -> None:
-        if self._logger is not None:
-            self._logger.warning(message, stacklevel=2)
-
-    def log_error(self, message: str) -> None:
-        if self._logger is not None:
-            self._logger.error(message, stacklevel=2)
-
     @classmethod
     def _get_env_key(cls, key: str) -> str:
         return f"{cls._ENV_PREFIX}{key.upper()}"
@@ -89,7 +79,7 @@ class Python4CPM:
             kwargs[kwarg] = _kwarg if _kwarg is not None else ""
         return Args(**kwargs)
 
-    def _get_account(self, account_class):
+    def _get_account(self, account_class: BaseAccount) -> BaseAccount:
         args = []
         for arg in account_class.ENV_VARS:
             _arg = os.environ.get(self._get_env_key(arg))
@@ -98,9 +88,9 @@ class Python4CPM:
 
     def _verify_action(self) -> None:
         if self._args.action not in self._VALID_ACTIONS:
-            self.log_warning(f"Unkonwn action -> '{self._args.action}'")
+            self._logger.warning(f"Unkonwn action -> '{self._args.action}'")
 
-    def _log_env(self, obj: object) -> None:
+    def _log_obj(self, obj: object) -> None:
         for key, value in vars(obj).items():
             _key = f"{obj.__class__.__name__}.{key.strip('_')}"
             if value:
@@ -113,25 +103,25 @@ class Python4CPM:
                         logging_value = "[SET]"
             else:
                 logging_value = "[NOT SET]"
-            self.log_debug(f"{_key} -> {logging_value}")
+            self._logger.debug(f"{_key} -> {logging_value}")
 
     def close_fail(self, unrecoverable: bool = False) -> None:
         if unrecoverable is False:
             code = self._FAILED_RECOVERABLE_CODE
         else:
             code = self._FAILED_UNRECOVERABLE_CODE
-        self.log_error(f"Closing with code {code}")
+        self._logger.error(f"Closing with code {code}")
         self._closed = True
         sys.exit(code)
 
     def close_success(self) -> None:
-        self.log_debug(f"Closing with code {self._SUCCESS_CODE}")
+        self._logger.debug(f"Closing with code {self._SUCCESS_CODE}")
         self._closed = True
         sys.exit(self._SUCCESS_CODE)
 
     def _on_exit(self):
         if self._closed is False:
             message = "No close signal called"
-            self.log_error(message)
+            self._logger.error(message)
             sys.stderr.write(message)
             sys.stderr.flush()

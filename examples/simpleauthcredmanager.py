@@ -8,7 +8,7 @@ import json
 
 class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        self.log_info(f"NoRedirectHandler: ignoring redirect -> {newurl}")
+        self.logger.info(f"NoRedirectHandler: ignoring redirect -> {newurl}")
         return None
 
 
@@ -58,11 +58,11 @@ class SimpleAuth(Python4CPMHandler):
 
     def _get_payload(self, from_reconcile):
         if not from_reconcile:
-            username = self.args.username
-            password = self.secrets.password.get()
+            username = self.target_account.username
+            password = self.target_account.password.get()
         else:
-            username = self.args.reconcile_username
-            password = self.secrets.reconcile_password.get()
+            username = self.reconcile_account.username
+            password = self.reconcile_account.password.get()
         return {
             "username": username,
             "password": password
@@ -74,23 +74,27 @@ class SimpleAuth(Python4CPMHandler):
         data = urllib.parse.urlencode(payload).encode()
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         method = "POST"
+        url = self.ROOT_URL_FORMAT.format(
+            self.target_account.address,
+            self.target_account.port
+        )
         req = urllib.request.Request( # noqa S310
-            self.ROOT_URL_FORMAT.format(self.args.address, self.args.port),
+            url,
             data=data,
             headers=headers,
             method=method
         )
         try:
             with self._opener.open(req, timeout=10) as res:
-                self.log_info(f"code -> {res.code}")
+                self.logger.info(f"code -> {res.code}")
                 pass
         except urllib.error.HTTPError as e:
             message = f"code -> {e.code}"
             if e.code != 302:
-                self.log_error(message)
+                self.logger.error(message)
                 raise Exception(message)
-            self.log_info(message)
-        self.log_info("cookie set")
+            self.logger.info(message)
+        self.logger.info("cookie set")
 
 
     def _get_auth_header(self, from_reconcile=False):
@@ -98,15 +102,19 @@ class SimpleAuth(Python4CPMHandler):
         data = json.dumps(payload).encode()
         headers = {"Content-Type": "application/json"}
         method = "POST"
+        url = self.TOKEN_URL_FORMAT.format(
+            self.target_account.address,
+            self.target_account.port
+        )
         req = urllib.request.Request( # noqa S310
-            self.TOKEN_URL_FORMAT.format(self.args.address, self.args.port),
+            url,
             data=data,
             headers=headers,
             method=method
         )
         with self._opener.open(req, timeout=10) as _res:
             res = json.loads(_res.read().decode())
-        self.log_info("got token")
+        self.logger.info("got token")
         token = res["token"]
         return {"Authorization": f"Bearer {token}"}
 
@@ -122,17 +130,21 @@ class SimpleAuth(Python4CPMHandler):
             else:
                 auth_header = self._get_auth_header(from_reconcile)
                 headers.update(auth_header)
+            url = self.VERIFY_URL_FORMAT.format(
+                self.target_account.address,
+                self.target_account.port
+            )
             req = urllib.request.Request( # noqa S310
-                self.VERIFY_URL_FORMAT.format(self.args.address, self.args.port),
+                url,
                 data=data,
                 headers=headers,
                 method=method
             )
             with self._opener.open(req, timeout=10) as _res:
                 res = _res.read()
-            self.log_info(f"{res.decode()}")
+            self.logger.info(f"{res.decode()}")
         except Exception as e:
-            self.log_error(f"{type(e).__name__}: {e}")
+            self.logger.error(f"{type(e).__name__}: {e}")
             self.close_fail()
 
 
@@ -147,25 +159,29 @@ class SimpleAuth(Python4CPMHandler):
             else:
                 auth_header = self._get_auth_header()
                 headers.update(auth_header)
+            url = self.CHANGE_URL_FORMAT.format(
+                self.target_account.address,
+                self.target_account.port
+            )
             req = urllib.request.Request( # noqa S310
-                self.CHANGE_URL_FORMAT.format(self.args.address, self.args.port),
+                url,
                 data=data,
                 headers=headers,
                 method=method
             )
             with self._opener.open(req, timeout=10) as _res:
                 res = _res.read()
-            self.log_info(res.decode())
+            self.logger.info(res.decode())
         except Exception as e:
-            self.log_error(f"{type(e).__name__}: {e}")
+            self.logger.error(f"{type(e).__name__}: {e}")
             self.close_fail()
 
 
     def _reconcile(self):
         try:
             payload = {
-                "username": self.args.username,
-                "new_password": self.secrets.new_password.get()
+                "username": self.target_account.username,
+                "new_password": self.target_account.new_password.get()
             }
             data = json.dumps(payload).encode()
             headers = {"Content-Type": "application/json"}
@@ -175,17 +191,21 @@ class SimpleAuth(Python4CPMHandler):
             else:
                 auth_header = self._get_auth_header(from_reconcile=True)
                 headers.update(auth_header)
+            url = self.RECONCILE_URL_FORMAT.format(
+                self.target_account.address,
+                self.target_account.port
+            )
             req = urllib.request.Request( # noqa S310
-                self.RECONCILE_URL_FORMAT.format(self.args.address, self.args.port),
+                url,
                 data=data,
                 headers=headers,
                 method=method
             )
             with self._opener.open(req, timeout=10) as _res:
                 res = _res.read()
-            self.log_info(res.decode())
+            self.logger.info(res.decode())
         except Exception as e:
-            self.log_error(f"{type(e).__name__}: {e}")
+            self.logger.error(f"{type(e).__name__}: {e}")
             self.close_fail()
 
 if __name__ == "__main__":

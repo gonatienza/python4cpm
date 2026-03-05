@@ -4,6 +4,18 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-05
+
+### Added
+- `python4cpm.accounts.TargetAccount`, `python4cpm.accounts.LogonAccount` and `python4cpm.accounts.ReconcileAccount` objects to contain all account data in python module.
+
+### Changed
+- Moved some `python4cpm.args.Args` properties to the newly added account objects.
+- Moved all `python4cpm.secrets.Secrets` properties to the newly added account objects.
+
+### Removed
+- `python4cpm.secrets.Secrets` object.
+
 ## [1.0.27] - 2026-03-03
 
 ### Added
@@ -46,7 +58,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.0.27...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/gonatienza/python4cpm/compare/v1.1.27...v1.1.0
 [1.0.27]: https://github.com/gonatienza/python4cpm/compare/v1.0.26...v1.0.27
 [1.0.26]: https://github.com/gonatienza/python4cpm/compare/v1.0.20...v1.0.26
 [1.0.20]: https://github.com/gonatienza/python4cpm/compare/v1.0.19...v1.0.20

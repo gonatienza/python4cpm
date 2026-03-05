@@ -46,8 +46,6 @@ This platform allows you to duplicate it multiple times, simply changing its set
 
 ## Python Script
 
-### Using the handler (recommended):
-
 ```python
 from python4cpm import Python4CPMHandler
 
@@ -55,39 +53,61 @@ from python4cpm import Python4CPMHandler
 class MyRotator(Python4CPMHandler): # create a subclass for the Handler
     """
     These are the usable properties and methods from Python4CPMHandler:
-    
-        self.args.action # action requested from CPM/SRS
-        self.args.username # username from the account username field
-        self.args.address # address from the account address field
-        self.args.port # port from the account port field
-        self.args.reconcile_username # reconcile username from the linked reconcile account
-        self.args.logon_username # logon username from the linked logon account
-        self.args.logging # used to carry the platform logging settings for python
-        self.secrets.password.get() # get str from password received from the vault
-        self.secrets.new_password.get() # get str from new password in case of a rotation
-        self.secrets.logon_password.get() # get str from linked logon account password
-        self.secrets.reconcile_password.get() # get str from linked reconcile account password
 
-    Logging methods -> Will only log if PythonLogging (platform parameters) is set to yes (default is yes)
-    
-        self.log_error("this is an error message") # logs error into Logs/ThirdParty/MyRotator.log
-        self.log_warning("this is a warning message") # logs warning into Logs/ThirdParty/MyRotator.log
-        self.log_info("this is an info message") # logs info into Logs/ThirdParty/MyRotator.log
-    
-    Logging level -> Will only log debug messages if PythonLoggingLevel (platform parameters) is set to debug (default is info)
-    
-        self.log_debug("this is an debug message") # logs info into Logs/ThirdParty/MyRotator.log if logging level is set to debug
+        self.args.action
+        # action requested from CPM/SRS
+
+        ## Target Account
+
+        self.target_account.username
+        # address from account
+
+        self.target_account.address
+        # address from account
+
+        self.target_account.port
+        # port from account
+
+        self.target_account.password.get()
+        # get plaintext str from password object
+
+        ## Logon Account
+        self.logon_account.username
+        self.logon_account.password.get()
+
+        ## Reconcile Account
+        self.reconcile_account.username
+        self.reconcile_account.password.get()
+
+        ## Logging
+
+        self.logger.critical("this is critical message")
+        self.logger.error("this is an error message")
+        self.logger.warning("this is a warning message")
+        self.logger.info("this is an info message")
+        self.logger.debug("this is a debug message")
+
+        # logs are placed in Logs/ThirdParty/MyRotator.log
+
+        ## The logging level comes from PythonLoggingLevel (platform parameters) (default is error)
 
     =============================
     REQUIRED TERMINATION SIGNALS
     =============================
     Terminate signals -> MUST use one of the following three signals to terminate the script:
 
-        self.close_success() # terminate with success state
-        self.close_fail() # terminate with recoverable failed state
-        self.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
+        self.close_success()
+        # terminate with success state
 
-    When calling a signal sys.exit is invoked and the script is terminated.  If no signal is called, and the script finishes without any exception, it will behave like p4cpm.close_fail(unrecoverable=True) and log an error message.
+        self.close_fail()
+        # terminate with recoverable failed state
+        
+        self.close_fail(unrecoverable=True)
+        # terminate with unrecoverable failed state
+
+    When calling a signal sys.exit is invoked and the script is terminated.
+    If no signal is called, and the script finishes without any exception,
+    it will behave like p4cpm.close_fail(unrecoverable=True) and log an error message.
     =============================
     =============================
     """
@@ -103,7 +123,7 @@ class MyRotator(Python4CPMHandler): # create a subclass for the Handler
         self.close_success()
 
     def logon(self):
-        self.close_success() # terminate with success state if nothing needs to be done with a given action.
+        self.close_success()
 
     def change(self):
         self._change()
@@ -121,40 +141,36 @@ class MyRotator(Python4CPMHandler): # create a subclass for the Handler
     def _verify(self, from_reconcile=False):
         if from_reconcile is False:
             pass
-            # TODO: use self.args.username, self.args.address, self.args.port, self.secrets.password.get()
-            # for your logic in a verification
+            # TODO: use account objects for your logic
         else:
             pass
-            # TODO: use self.args.address, self.args.reconcile_username, self.secrets.reconcile_password.get()
-            # for your logic in a verification
+            # TODO: use account objects for your logic
         result = True
         if result is True:
-            self.log_info("verification successful") # logs info message into Logs/ThirdParty/MyRotator.log
+            self.log_info("verification successful")
         else:
-            self.log_error("something went wrong") # logs error message Logs/ThirdParty/MyRotator.log
+            self.log_error("something went wrong")
             self.close_fail()
 
     def _change(self, from_reconcile=False):
         if from_reconcile is False:
             pass
-            # TODO: use self.args.username, self.args.address, self.args.port, self.secrets.password.get()
-            # and self.secrets.new_password.get() for your logic in a rotation
+            # TODO: use account objects for your logic
         else:
             pass
-            # TODO: use self.args.username, self.args.address, self.args.port, self.args.reconcile_username,
-            # self.secrets.reconcile_password.get() and self.secrets.new_password.get() for your logic in a reconciliation
+            # TODO: use account objects for your logic
         result = True
         if result is True:
-            self.log_info("rotation successful") # logs info message into Logs/ThirdParty/MyRotator.log
+            self.log_info("rotation successful")
         else:
-            self.log_error("something went wrong") # logs error message Logs/ThirdParty/MyRotator.log
+            self.log_error("something went wrong")
             self.close_fail()
 
 
 if __name__ == "__main__":
     MyRotator().run() # initializes the class and calls the action that was requested from CPM/SRS.
 ```
-(*) More realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/python4cpmhandler).
+(*) More realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples).
 
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 1. Verify -> the sciprt will be executed once running the `MyRotator.verify()` method.
@@ -165,116 +181,6 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 4. When calling `MyRotator.verify()`, `MyRotator.logon()` or `MyRotator.prereconcile()`: `self.secrets.new_password.get()` will always return an empty string.
 5. If a logon account is not linked, `self.args.logon_username` and `self.secrets.logon_password.get()` will return empty strings.
 6. If a reconcile account is not linked, `self.args.reconcile_username` and `self.secrets.reconcile_password.get()` will return empty strings.
-
-
-### Using Python4CPM properties and methods directly (for low level controls):
-
-```python
-from python4cpm import Python4CPM
-
-
-p4cpm = Python4CPM("MyApp") # this instantiates the object and grabs all arguments and secrets shared by the .NET SDK
-
-# These are the usable properties and related methods from the object:
-p4cpm.args.action # action requested from CPM/SRS
-p4cpm.args.username # username from the account username field
-p4cpm.args.address # address from the account address field
-p4cpm.args.port # port from the account port field
-p4cpm.args.reconcile_username # reconcile username from the linked reconcile account
-p4cpm.args.logon_username # logon username from the linked logon account
-p4cpm.args.logging # used to carry the platform logging settings for python
-p4cpm.secrets.password.get() # get str from password received from the vault
-p4cpm.secrets.new_password.get() # get str from new password in case of a rotation
-p4cpm.secrets.logon_password.get() # get str from linked logon account password
-p4cpm.secrets.reconcile_password.get() # get str from linked reconcile account password
-
-# Logging methods -> Will only log if PythonLogging (platform parameters) is set to yes (default is yes)
-p4cpm.log_error("this is an error message") # logs error into Logs/ThirdParty/MyApp.log
-p4cpm.log_warning("this is a warning message") # logs warning into Logs/ThirdParty/MyApp.log
-p4cpm.log_info("this is an info message") # logs info into Logs/ThirdParty/MyApp.log
-# Logging level -> Will only log debug messages if PythonLoggingLevel (platform parameters) is set to debug (default is info)
-p4cpm.log_debug("this is an debug message") # logs info into Logs/ThirdParty/MyApp.log if logging level is set to debug
-
-# Terminate signals -> MUST use one of the following three signals to terminate the script:
-## p4cpm.close_success() # terminate with success state
-## p4cpm.close_fail() # terminate with recoverable failed state
-## p4cpm.close_fail(unrecoverable=True) # terminate with unrecoverable failed state
-# When calling a signal sys.exit is invoked and the script is terminated.  If no signal is called, and the script finishes without any exception, it will behave like p4cpm.close_fail(unrecoverable=True) and log an error message.
-
-
-# Verification example -> verify the username and password are valid
-def verify(from_reconcile=False):
-    if from_reconcile is False:
-        pass
-        # TODO: use p4cpm.args.username, p4cpm.args.address, p4cpm.args.port, p4cpm.secrets.password.get()
-        # for your logic in a verification
-    else:
-        pass
-        # TODO: use p4cpm.args.address, p4cpm.args.port, p4cpm.args.reconcile_username, p4cpm.secrets.reconcile_password.get()
-        # for your logic in a verification
-    result = True
-    if result is True:
-        p4cpm.log_info("verification successful")
-    else:
-        p4cpm.log_error("something went wrong")
-        raise Exception("verify failed") # raise to trigger failed termination signal
-
-
-# Rotation example -> rotate the password of the account
-def change(from_reconcile=False):
-    if from_reconcile is False:
-        pass
-        # TODO: use p4cpm.args.username, p4cpm.args.address, p4cpm.args.port, p4cpm.secrets.password.get()
-        # and p4cpm.secrets.new_password.get() for your logic in a rotation
-    else:
-        pass
-        # TODO: use p4cpm.args.username, p4cpm.args.address, p4cpm.args.port, p4cpm.args.reconcile_username,
-        # p4cpm.secrets.reconcile_password.get() and p4cpm.secrets.new_password.get() for your logic in a reconciliation
-    result = True
-    if result is True:
-        p4cpm.log_info("rotation successful")
-    else:
-        p4cpm.log_error("something went wrong")
-        raise Exception("change failed") # raise to trigger failed termination signal
-
-
-if __name__ == "__main__":
-    try:
-        if p4cpm.args.action == Python4CPM.ACTION_VERIFY: # class attribute ACTION_VERIFY holds the verify action value
-            verify()
-            p4cpm.close_success()
-        elif p4cpm.args.action == Python4CPM.ACTION_LOGON: # class attribute ACTION_LOGON holds the logon action value
-            p4cpm.close_success() # terminate with success state if nothing needs to be done with a given action.
-        elif p4cpm.args.action == Python4CPM.ACTION_CHANGE: # class attribute ACTION_CHANGE holds the password change action value
-            change()
-            p4cpm.close_success()
-        elif p4cpm.args.action == Python4CPM.ACTION_PRERECONCILE: # class attribute ACTION_PRERECONCILE holds the pre-reconcile action value
-            verify(from_reconcile=True)
-            p4cpm.close_success()
-            # Alternatively ->
-            ## p4cpm.log_error("reconciliation is not supported") # let the logs know that reconciliation is not supported
-            ## p4cpm.close_fail() # let CPM/SRS know to check the logs
-        elif p4cpm.args.action == Python4CPM.ACTION_RECONCILE: # class attribute ACTION_RECONCILE holds the reconcile action value
-            change(from_reconcile=True)
-            p4cpm.close_success()
-            # Alternatively ->
-            ## p4cpm.log_error("reconciliation is not supported") # let the logs know that reconciliation is not supported
-            ## p4cpm.close_fail() # let CPM/SRS know to check the logs
-    except Exception as e:
-        p4cpm.log_error(f"{type(e).__name__}: {e}")
-        raise e # CPM/SRS will see any Exception as a p4cpm.close_fail(unrecoverable=True)
-```
-(*) More realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples/python4cpm).
-
-When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
-1. Verify -> the sciprt will be executed once with the `p4cpm.args.action` as `Python4CPM.ACTION_VERIFY`.
-2. Change -> the sciprt will be executed twice, once with the action `p4cpm.args.action` as `Python4CPM.ACTION_LOGON` and once as `Python4CPM.ACTION_CHANGE`.
-    - If both actions are not terminated with `p4cpm.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `p4cpm.close_fail(unrecoverable=True)`.
-3. Reconcile -> the sciprt will be executed twice, once with the `p4cpm.args.action` as `Python4CPM.ACTION_PRERECONCILE` and once as `Python4CPM.ACTION_RECONCILE`.
-    - If both actions are not terminated with `p4cpm.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `p4cpm.close_fail(unrecoverable=True)`.
-4. When `p4cpm.args.action` comes as `Python4CPM.ACTION_VERIFY`, `Python4CPM.ACTION_LOGON` or `Python4CPM.ACTION_PRERECONCILE`: `p4cpm.secrets.new_password.get()` will always return an empty string.
-5. If a logon account is not linked, `p4cpm.args.logon_username` and `p4cpm.secrets.logon_password.get()` will return empty strings.
-6. If a reconcile account is not linked, `p4cpm.args.reconcile_username` and `p4cpm.secrets.reconcile_password.get()` will return empty strings.
 
 
 ### Installing dependencies in python venv
@@ -307,30 +213,25 @@ from getpass import getpass
 
 # Get secrets for your password, logon account password, reconcile account password and new password
 # You can use an empty string if it does not apply
-password = getpass("password: ") # password from account
+target_password = getpass("password: ") # password from account
 logon_password = getpass("logon_password: ") # password from linked logon account
 reconcile_password = getpass("reconcile_password: ") # password from linked reconcile account
-new_password = getpass("new_password: ") # new password for the rotation
+target_new_password = getpass("new_password: ") # new password for the rotation
 
 NETHelper.set(
-    action=Python4CPM.ACTION_LOGON, # use actions from Python4CPM.ACTION_*
-    username="jdoe", # populate with the username from your account properties
-    address="myapp.corp.local", # populate with the address from your account properties
-    port="8443", # populate with the port from your account properties
-    logon_username="ldoe", # populate with the logon account username from your linked logon account
-    reconcile_username="rdoe", # ppopulate with the reconcile account username from your linked logon account
-    logging="yes", # populate with the PythonLogging parameter from the platform: "yes" or "no"
-    logging_level="info", # populate with the PythonLoggingLevel parameter from the platform: "info" or "debug"
-    password=password,
+    action=Python4CPM.ACTION_CHANGE, # use actions from Python4CPM.ACTION_*
+    target_username="jdoe",
+    target_address="myapp.corp.local",
+    target_port="8443",
+    logon_username="ldoe",
+    reconcile_username="rdoe",
+    logging_level="debug", # "critical", "error", "warning", "info" or "debug"
+    target_password=target_password,
     logon_password=logon_password,
     reconcile_password=reconcile_password,
-    new_password=new_password
+    target_new_password=target_new_password
 )
-```
 
-#### Using the handler (recommended):
-
-```python
 class MyRotator(Python4CPMHandler):
     def verify(self):
         # TODO: Add your logic here
@@ -353,17 +254,6 @@ class MyRotator(Python4CPMHandler):
         self.close_success()
 
 MyRotator().run()
-```
-
-#### Using Python4CPM properties and methods directly:
-
-```python
-p4cpm = NETHelper.get()
-
-# TODO: use the p4cpm object during dev to build your script logic
-assert password == p4cpm.secrets.password.get()
-p4cpm.log_info("success!")
-p4cpm.close_success()
 ```
 
 #### Remember for your final script:

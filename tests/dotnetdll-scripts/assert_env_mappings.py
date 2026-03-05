@@ -6,7 +6,6 @@ import os
 
 LOGGER = Logger.get_logger(
     os.path.basename(__file__),
-    Logger._LOGGING_ENABLED_VALUE,
     list(Logger._LOGGING_LEVELS.keys())[0]
 )
 
@@ -27,7 +26,6 @@ try:
     config = get_config_from_ini()
     assertions = (
         (p4cpm.args.action, Python4CPM.ACTION_CHANGE),
-        (p4cpm.args.logging, config["extrainfo"]["PythonLogging"]),
         (p4cpm.args.logging_level, config["extrainfo"]["PythonLoggingLevel"]),
         (p4cpm.target_account.username, config["DEFAULT"]["username"]),
         (p4cpm.target_account.address, config["DEFAULT"]["address"]),

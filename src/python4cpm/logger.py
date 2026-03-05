@@ -5,21 +5,21 @@ from logging.handlers import RotatingFileHandler
 
 class Logger:
     _LOGS_DIR = os.path.join("Logs", "ThirdParty")
-    _LOGGING_ENABLED_VALUE = "yes"
     _LOGGING_LEVELS = {
+        "critical": logging.CRITICAL,
+        "error": logging.ERROR,
+        "warning": logging.WARNING,
         "info": logging.INFO,
         "debug": logging.DEBUG
     }
+    _DEFAULT_LEVEL = _LOGGING_LEVELS["error"]
 
     @classmethod
     def get_logger(
         cls,
         name: str,
-        args_logging: str,
         args_logging_level: str
     ) -> logging.Logger:
-        if args_logging.lower() != cls._LOGGING_ENABLED_VALUE:
-            return None
         os.makedirs(cls._LOGS_DIR, exist_ok=True)
         logs_file = os.path.join(cls._LOGS_DIR, f"{__name__}-{name}.log")
         _id = os.urandom(4).hex()
@@ -27,7 +27,7 @@ class Logger:
         if args_logging_level.lower() in cls._LOGGING_LEVELS:
             logger.setLevel(cls._LOGGING_LEVELS[args_logging_level.lower()])
         else:
-            logger.setLevel(cls._LOGGING_LEVELS["info"])
+            logger.setLevel(cls._DEFAULT_LEVEL)
         handler = RotatingFileHandler(
             filename=logs_file,
             maxBytes=1024 ** 2,
