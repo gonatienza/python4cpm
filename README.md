@@ -194,7 +194,7 @@ As with any python venv, you can install dependencies in your venv.
 
 ## Dev Helper:
 
-For dev purposes, `NETHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin passes arguments and secrets to the modules.
+For dev purposes, `NETHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin passes objects to the module.
 Install this module (in a dev workstation) with:
 
 ```bash
