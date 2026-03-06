@@ -19,10 +19,7 @@ def get_env():
     return env
 
 
-LOGGER = Logger.get_logger(
-    os.path.basename(__file__),
-    list(Logger._LOGGING_LEVELS.keys())[0]
-)
+LOGGER = Logger.get_logger(os.path.basename(__file__), "debug")
 ENV = get_env()
 LOGGING_LEVELS = ["ERROR", "debug", "bad"]
 ARGS_PARAMS = [

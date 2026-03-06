@@ -37,10 +37,7 @@ def get_scripts_path():
     return os.path.join(file_dir, "dotnetdll-scripts")
 
 
-LOGGER = Logger.get_logger(
-    os.path.basename(__file__),
-    list(Logger._LOGGING_LEVELS.keys())[0]
-)
+LOGGER = Logger.get_logger(os.path.basename(__file__), "debug")
 PLUGIN_INVOKER_PATH, PYTHON4CPM_DLL_PATH = get_framework_paths()
 SUCCESS_CODE = 0
 FAILED_RECOVERABLE_CODE = 8100
