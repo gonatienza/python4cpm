@@ -24,11 +24,11 @@ class Postgres(Python4CPMHandler):
 
     def _get_creds(self, from_reconcile=False):
         if from_reconcile is False:
-            username = self.args.username
-            password = self.secrets.password.get()
+            username = self.target_account.username
+            password = self.target_account.password.get()
         else:
-            username = self.args.reconcile_username
-            password = self.secrets.reconcile_username.get()
+            username = self.reconcile_username.username
+            password = self.reconcile_account.password.get()
         return username, password
 
 
@@ -36,23 +36,23 @@ class Postgres(Python4CPMHandler):
         username, password = self._get_creds(from_reconcile)
         try:
             with connect(
-                host=self.args.address,
+                host=self.target_account.address,
                 dbname="postgres",
                 user=username,
                 password=password,
                 autocommit=True
             ) as conn:
                 with conn.cursor():
-                    self.log_info("Password verified successfully")
+                    self.logger.info("Password verified successfully")
         except Exception as e:
-            self.log_error(f"{type(e).__name__}: {e}")
+            self.logger.error(f"{type(e).__name__}: {e}")
             self.close_fail()
 
     def _change(self, from_reconcile=False):
         username, password = self._get_creds(from_reconcile)
         try:
             with connect(
-                host=self.args.address,
+                host=self.target_account.address,
                 dbname="postgres",
                 user=username,
                 password=password,
@@ -61,13 +61,13 @@ class Postgres(Python4CPMHandler):
                 with conn.cursor() as cursor:
                     cursor.execute(
                         sql.SQL("ALTER USER {} WITH PASSWORD {}").format(
-                            sql.Identifier(self.args.username),
-                            sql.Literal(self.secrets.new_password.get())
+                            sql.Identifier(self.target_account.username),
+                            sql.Literal(self.target_account.new_password.get())
                         )
                     )
-                    self.log_info("Password changed successfully")
+                    self.logger.info("Password changed successfully")
         except Exception as e:
-            self.log_error(f"{type(e).__name__}: {e}")
+            self.logger.error(f"{type(e).__name__}: {e}")
             self.close_fail()
 
 if __name__ == "__main__":
