@@ -150,7 +150,7 @@ class SimpleAuth(Python4CPMHandler):
 
     def _change(self):
         try:
-            payload = {"new_password": self.secrets.new_password.get()}
+            payload = {"new_password": self.target_account.new_password.get()}
             data = json.dumps(payload).encode()
             headers = {"Content-Type": "application/json"}
             method = "POST"
