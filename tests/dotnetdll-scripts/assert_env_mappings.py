@@ -4,10 +4,7 @@ from configparser import ConfigParser
 import os
 
 
-LOGGER = Logger.get_logger(
-    os.path.basename(__file__),
-    list(Logger._LOGGING_LEVELS.keys())[0]
-)
+LOGGER = Logger.get_logger(os.path.basename(__file__), "debug")
 
 
 def get_config_from_ini():
