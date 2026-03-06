@@ -4,6 +4,11 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-03-06
+
+### Added
+- Zeroing of plaintext buffers in python.
+
 ## [1.1.0] - 2026-03-05
 
 ### Added
@@ -58,7 +63,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/gonatienza/python4cpm/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/gonatienza/python4cpm/compare/v1.0.27...v1.1.0
 [1.0.27]: https://github.com/gonatienza/python4cpm/compare/v1.0.26...v1.0.27
 [1.0.26]: https://github.com/gonatienza/python4cpm/compare/v1.0.20...v1.0.26
