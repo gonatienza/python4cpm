@@ -178,9 +178,9 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
     - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
 3. Reconcile -> the sciprt will be executed twice, running first the `MyRotator.prereconcile()` method and secondly the `MyRotator.reconcile()` method.
     - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-4. When calling `MyRotator.verify()`, `MyRotator.logon()` or `MyRotator.prereconcile()`: `self.secrets.new_password.get()` will always return an empty string.
-5. If a logon account is not linked, `self.args.logon_username` and `self.secrets.logon_password.get()` will return empty strings.
-6. If a reconcile account is not linked, `self.args.reconcile_username` and `self.secrets.reconcile_password.get()` will return empty strings.
+4. When calling `MyRotator.verify()`, `MyRotator.logon()` or `MyRotator.prereconcile()`: `self.target_account.new_password.get()` will always return an empty string.
+5. If a logon account is not linked, `self.logon_account.username` and `self.logon_account.password.get()` will return empty strings.
+6. If a reconcile account is not linked, `self.reconcile_account.username` and `self.reconcile_account.password.get()` will return empty strings.
 
 
 ### Installing dependencies in python venv
