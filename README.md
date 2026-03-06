@@ -1,8 +1,14 @@
 # Python4CPM
 
-A simple way of using python scripts with CyberArk CPM/SRS rotations.  This module leverages the [Credential Management .NET SDK](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-netinvoker.htm) from CyberArk to securely offload a password rotation logic into a python script.
+A simple and secure way of using python scripts with CyberArk CPM/SRS password rotations.
 
-This platform allows you to duplicate it multiple times, simply changing its settings from Privilege Cloud/PVWA to point to different python scripts leveraging the module `python4cpm`.
+## How it works
+
+This module leverages the [Credential Management .NET SDK](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-netinvoker.htm) from CyberArk to securely offload a password rotation logic into Python.
+
+All objects are collected from the SDK and serialized as environment variables to be picked up by the subprocess execution of Python, by the `python4cpm` module. Any secrets are protected and encrypted by [DPAPI](https://learn.microsoft.com/en-us/dotnet/standard/security/how-to-use-data-protection), until they are explicitely retrieved in your python script during the python runtime execution (invoking the `Secret.get()` method).  Lastly, you can control the termination signal to be passed back to the SDK, which is consequently used as the return code to CPM/SRS.  Such as a successful or failed (recoverable or not) result of the requested action.
+
+This platform allows you to duplicate it multiple times, simply changing its settings from Privilege Cloud/PVWA to point to different venvs and/or python scripts.
 
 ## Installation
 
@@ -87,9 +93,7 @@ class MyRotator(Python4CPMHandler): # create a subclass for the Handler
         self.logger.info("this is an info message")
         self.logger.debug("this is a debug message")
 
-        # logs are placed in Logs/ThirdParty/MyRotator.log
-
-        ## The logging level comes from PythonLoggingLevel (platform parameters) (default is error)
+        # The logging level comes from PythonLoggingLevel (platform parameters) (default is error)
 
     =============================
     REQUIRED TERMINATION SIGNALS
@@ -97,13 +101,13 @@ class MyRotator(Python4CPMHandler): # create a subclass for the Handler
     Terminate signals -> MUST use one of the following three signals to terminate the script:
 
         self.close_success()
-        # terminate with success state
+        # terminate and provide CPM/SRS with a success state
 
         self.close_fail()
-        # terminate with recoverable failed state
+        # terminate and provide CPM/SRS with a failed recoverable state
         
         self.close_fail(unrecoverable=True)
-        # terminate with unrecoverable failed state
+        # terminate and provide CPM/SRS with a failed unrecoverable state
 
     When calling a signal sys.exit is invoked and the script is terminated.
     If no signal is called, and the script finishes without any exception,
@@ -181,6 +185,7 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 4. When calling `MyRotator.verify()`, `MyRotator.logon()` or `MyRotator.prereconcile()`: `self.target_account.new_password.get()` will always return an empty string.
 5. If a logon account is not linked, `self.logon_account.username` and `self.logon_account.password.get()` will return empty strings.
 6. If a reconcile account is not linked, `self.reconcile_account.username` and `self.reconcile_account.password.get()` will return empty strings.
+7. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on the name of the subclass created (e.g., `MyRotator`).
 
 
 ### Installing dependencies in python venv
@@ -194,7 +199,7 @@ As with any python venv, you can install dependencies in your venv.
 
 ## Dev Helper:
 
-For dev purposes, `NETHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin passes objects to the module.
+For dev purposes, `NETHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin serializes objects as environment variables for the python module.
 Install this module (in a dev workstation) with:
 
 ```bash
@@ -220,16 +225,16 @@ target_new_password = getpass("new_password: ") # new password for the rotation
 
 NETHelper.set(
     action=Python4CPM.ACTION_CHANGE, # use actions from Python4CPM.ACTION_*
-    target_username="jdoe",
-    target_address="myapp.corp.local",
-    target_port="8443",
-    logon_username="ldoe",
-    reconcile_username="rdoe",
+    target_username="jdoe", # -> will fall under MyRotator.target_account.username
+    target_address="myapp.corp.local", # -> will fall under MyRotator.target_account.address
+    target_port="8443", # -> will fall under MyRotator.target_account.port
+    logon_username="ldoe", # -> will fall under MyRotator.logon_account.username
+    reconcile_username="rdoe", # -> will fall under MyRotator.reconcile_account.username
     logging_level="debug", # "critical", "error", "warning", "info" or "debug"
-    target_password=target_password,
-    logon_password=logon_password,
-    reconcile_password=reconcile_password,
-    target_new_password=target_new_password
+    target_password=target_password, # -> will fall under MyRotator.target_account.password.get()
+    logon_password=logon_password, # -> will fall under MyRotator.logon_account.password.get()
+    reconcile_password=reconcile_password, # -> will fall under MyRotator.reconcile_account.password.get()
+    target_new_password=target_new_password # -> will fall under MyRotator.target_account.new_password.get()
 )
 
 class MyRotator(Python4CPMHandler):
