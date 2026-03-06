@@ -40,12 +40,12 @@ class Crypto:
             0,
             ctypes.byref(output_blob)
         )
-        if crypt_res:
-            plaintext = ctypes.string_at(output_blob.pbData, output_blob.cbData)
-            ctypes.windll.kernel32.LocalFree(output_blob.pbData)
-            return plaintext.decode("utf-16-le")
-        else:
+        if not crypt_res:
             raise ctypes.WinError()
+        plaintext = ctypes.string_at(output_blob.pbData, output_blob.cbData)
+        ctypes.windll.kernel32.RtlZeroMemory(output_blob.pbData, output_blob.cbData)
+        ctypes.windll.kernel32.LocalFree(output_blob.pbData)
+        return plaintext.decode("utf-16-le")
 
     @classmethod
     def encrypt(cls, plaintext: str) -> str:
@@ -66,9 +66,9 @@ class Crypto:
             0,
             ctypes.byref(output_blob)
         )
-        if crypt_res:
-            encrypted = ctypes.string_at(output_blob.pbData, output_blob.cbData)
-            ctypes.windll.kernel32.LocalFree(output_blob.pbData)
-            return base64.b64encode(encrypted).decode()
-        else:
+        if not crypt_res:
             raise ctypes.WinError()
+        ctypes.windll.kernel32.RtlZeroMemory(buffer, len(buffer))
+        encrypted = ctypes.string_at(output_blob.pbData, output_blob.cbData)
+        ctypes.windll.kernel32.LocalFree(output_blob.pbData)
+        return base64.b64encode(encrypted).decode()
