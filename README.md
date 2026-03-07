@@ -6,7 +6,7 @@ A simple and secure way of using python scripts with CyberArk CPM/SRS password r
 
 This module leverages the [Credential Management .NET SDK](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-netinvoker.htm) from CyberArk to securely offload a password rotation logic into Python.
 
-All objects are collected from the SDK and sent as environment context to be picked up by the `python4cpm` module during the subprocess execution of python. Any secrets are protected and encrypted by [Data Protection API (DPAPI)](https://learn.microsoft.com/en-us/dotnet/standard/security/how-to-use-data-protection), until they are explicitely retrieved in your python script runtime, invoking the `Secret.get()` method.  Finally, python controls the termination signal sent back to the SDK, which is consequently used as the return code to CPM/SRS.  Such as a successful or failed (recoverable or not) result of the requested action.
+All objects are collected from the SDK and sent as environment context to be picked up by the `python4cpm` module during the subprocess execution of python. All secrets of such environment are protected and encrypted by [Data Protection API (DPAPI)](https://learn.microsoft.com/en-us/dotnet/standard/security/how-to-use-data-protection), until they are explicitely retrieved in your python script runtime, invoking the `Secret.get()` method.  Finally, python controls the termination signal sent back to the SDK, which is consequently used as the return code to CPM/SRS.  Such as a successful or failed (recoverable or not) result of the requested action.
 
 This platform allows you to duplicate it multiple times, simply changing its settings from Privilege Cloud/PVWA to point to different venvs and/or python scripts.
 
