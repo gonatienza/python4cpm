@@ -6,7 +6,7 @@ A simple and secure way of using python scripts with CyberArk CPM/SRS password r
 
 This module leverages the [Credential Management .NET SDK](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-netinvoker.htm) from CyberArk to securely offload a password rotation logic into Python.
 
-All objects are collected from the SDK and serialized as environment variables to be picked up by the subprocess execution of Python, by the `python4cpm` module. Any secrets are protected and encrypted by [DPAPI](https://learn.microsoft.com/en-us/dotnet/standard/security/how-to-use-data-protection), until they are explicitely retrieved in your python script during the python runtime execution (invoking the `Secret.get()` method).  Lastly, you can control the termination signal to be passed back to the SDK, which is consequently used as the return code to CPM/SRS.  Such as a successful or failed (recoverable or not) result of the requested action.
+All objects are collected from the SDK and sent as environment context to be picked up by the `python4cpm` module during the subprocess execution of python. Any secrets are protected and encrypted by [Data Protection API (DPAPI)](https://learn.microsoft.com/en-us/dotnet/standard/security/how-to-use-data-protection), until they are explicitely retrieved in your python script runtime, invoking the `Secret.get()` method.  Finally, python controls the termination signal sent back to the SDK, which is consequently used as the return code to CPM/SRS.  Such as a successful or failed (recoverable or not) result of the requested action.
 
 This platform allows you to duplicate it multiple times, simply changing its settings from Privilege Cloud/PVWA to point to different venvs and/or python scripts.
 
@@ -199,14 +199,9 @@ As with any python venv, you can install dependencies in your venv.
 
 ## Dev Helper:
 
-For dev purposes, `NETHelper` is a companion helper that simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin serializes objects as environment variables for the python module.
-Install this module (in a dev workstation) with:
+For dev purposes, `NETHelper` is a companion helper to test your scripts before shipping to CPM/SRS.  It simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin creates the environment context for the python module.
 
-```bash
-pip install python4cpm
-```
-
-**Note**: As CPM runs in Windows, the plugin was built to pass secrets securely to the `Python4CPM.crypto` module using the Data Protection API (DPAPI).  For dev purposes in Linux/Mac dev workstations, those secrets will appear as plaintext in the environment of the process.  This is informational only, the module will use its encryption/decryption capabilities automatically in Windows and you do not have to do anything specific to enable it.
+**Note**: As CPM/SRS agent runs in Windows, the plugin was built to encrypt secrets to be picked up by the `Python4CPM.crypto` module using DPAPI (a windows only library).  For dev purposes in Linux/Mac dev workstations, those secrets will be in plaintext in the environment of the process.  This is informational only, the module will use its encryption/decryption capabilities automatically in Windows and you do not have to do anything specific to enable it.
 
 ### Example:
 
