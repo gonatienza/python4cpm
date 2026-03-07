@@ -201,7 +201,7 @@ As with any python venv, you can install dependencies in your venv.
 
 For dev purposes, `NETHelper` is a companion helper to test your scripts before shipping to CPM/SRS.  It simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin creates the environment context for the python module.
 
-**Note**: As CPM/SRS agent runs in Windows, the plugin was built to encrypt secrets to be picked up by the `Python4CPM.crypto` module using DPAPI (a windows only library).  For dev purposes in Linux/Mac dev workstations, those secrets will be in plaintext in the environment of the process.  This is informational only, the module will use its encryption/decryption capabilities automatically in Windows and you do not have to do anything specific to enable it.
+**Note**: As CPM and the SRS management agent run in Windows, the plugin was built to encrypt secrets using DPAPI (a windows only library).  For dev purposes in Linux/Mac dev workstations, those secrets put in the environment context by `NETHelper` will be in plaintext.  In windows dev workstations, `NETHelper` encrypts the secrets as the .NET plugin does.  This is informational only, **the module will use its encryption/decryption capabilities automatically based on the platform** it is running on and you do not have to do anything specific to enable it.
 
 ### Example:
 
