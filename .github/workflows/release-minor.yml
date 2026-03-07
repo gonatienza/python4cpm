@@ -48,7 +48,7 @@ jobs:
           echo "MAJOR_VERSION=$MAJOR_VERSION" >> $GITHUB_ENV
           MINOR_VERSION=$(grep 'AssemblyFileVersion' src/plugin/Properties/AssemblyInfo.cs | sed -E 's/.*"([^"]+)".*/\1/')
           echo "MINOR_VERSION=$MINOR_VERSION" >> $GITHUB_ENV
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: platform-artifact
           path: dist
