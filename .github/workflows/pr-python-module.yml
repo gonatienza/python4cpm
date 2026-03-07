@@ -25,7 +25,7 @@ jobs:
           pytest tests/pythonmodule.py
       - name: Upload Logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Logs Linux Python ${{ matrix.python-version }}
           path: Logs/ThirdParty
@@ -48,7 +48,7 @@ jobs:
           pytest tests/pythonmodule.py
       - name: Upload Logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Logs MacOs Python ${{ matrix.python-version }}
           path: Logs/ThirdParty
@@ -71,7 +71,7 @@ jobs:
           pytest tests/pythonmodule.py
       - name: Upload Logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Logs Windows Python ${{ matrix.python-version }}
           path: Logs/ThirdParty
