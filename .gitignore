@@ -162,3 +162,8 @@ desktop.ini
 
 # Dev
 Logs/
+_python4cpm/
+src/plugin/.vs/
+src/plugin/bin/
+src/plugin/lib/
+src/plugin/obj/

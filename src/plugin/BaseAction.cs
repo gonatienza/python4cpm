@@ -1,6 +1,5 @@
 using CyberArk.Extensions.Plugins.Models;
 using CyberArk.Extensions.Utilties.Logger;
-using CyberArk.Extensions.Utilties.Reader;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +15,6 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string ENV_TARGET_PORT = "PYTHON4CPM_TARGET_PORT";
         private const string ENV_LOGON_USERNAME = "PYTHON4CPM_LOGON_USERNAME";
         private const string ENV_RECONCILE_USERNAME = "PYTHON4CPM_RECONCILE_USERNAME";
-        private const string ENV_LOGGING = "PYTHON4CPM_LOGGING";
         private const string ENV_LOGGING_LEVEL = "PYTHON4CPM_LOGGING_LEVEL";
         private const string ENV_TARGET_PASSWORD = "PYTHON4CPM_TARGET_PASSWORD";
         private const string ENV_LOGON_PASSWORD = "PYTHON4CPM_LOGON_PASSWORD";
