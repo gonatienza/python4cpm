@@ -7,6 +7,7 @@ Python4CPM Changelog
 ## [1.1.2] - 2026-03-08
 
 ### Added
+- `python4cpm.envhandler.EnvHandler` as the environment context handler base modeling class.
 - `python4cpm.accounts.TargetAccount`, `python4cpm.accounts.LogonAccount` and `python4cpm.accounts.ReconcileAccount` objects to contain all account data in python module.
 - Zeroing of plaintext buffers in python.
 

@@ -1,11 +1,12 @@
-class Args:
-    ARGS = (
-        "action",
-        "logging_level"
-    )
+from python4cpm.envhandler import EnvHandler, Props
+
+
+class Args(EnvHandler):
+    OBJ_PREFIX = "args_"
+    PROPS = Props("action", "logging_level")
 
     def __init__(
-        self: str,
+        self,
         action: str,
         logging_level: str
     ) -> None:

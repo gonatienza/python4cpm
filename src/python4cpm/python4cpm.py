@@ -1,4 +1,3 @@
-import os
 import sys
 import atexit
 import logging
@@ -6,12 +5,8 @@ from python4cpm.secret import Secret
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
 from python4cpm.logger import Logger
-from python4cpm.accounts import (
-    BaseAccount,
-    TargetAccount,
-    LogonAccount,
-    ReconcileAccount
-)
+from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
+
 
 class Python4CPM:
     ACTION_VERIFY = "verifypass"
@@ -29,18 +24,17 @@ class Python4CPM:
     _SUCCESS_CODE = 10
     _FAILED_RECOVERABLE_CODE = 81
     _FAILED_UNRECOVERABLE_CODE = 89
-    _ENV_PREFIX = "PYTHON4CPM_"
 
     def __init__(self, name: str) -> None:
         self._name = name
-        self._args = self._get_args()
+        self._args = Args.get()
+        self._target_account = TargetAccount.get()
+        self._logon_account = LogonAccount.get()
+        self._reconcile_account = ReconcileAccount.get()
         self._logger = Logger.get_logger(self._name, self._args.logging_level)
         self._logger.debug("Initiating...")
         self._log_obj(self._args)
         self._verify_action()
-        self._target_account = self._get_account(TargetAccount)
-        self._logon_account = self._get_account(LogonAccount)
-        self._reconcile_account = self._get_account(ReconcileAccount)
         self._log_obj(self._target_account)
         self._log_obj(self._logon_account)
         self._log_obj(self._reconcile_account)
@@ -66,25 +60,6 @@ class Python4CPM:
     @property
     def reconcile_account(self) -> ReconcileAccount:
         return self._reconcile_account
-
-    @classmethod
-    def _get_env_key(cls, key: str) -> str:
-        return f"{cls._ENV_PREFIX}{key.upper()}"
-
-    @classmethod
-    def _get_args(cls) -> Args:
-        kwargs = {}
-        for kwarg in Args.ARGS:
-            _kwarg = os.environ.get(cls._get_env_key(kwarg))
-            kwargs[kwarg] = _kwarg if _kwarg is not None else ""
-        return Args(**kwargs)
-
-    def _get_account(self, account_class: BaseAccount) -> BaseAccount:
-        args = []
-        for arg in account_class.ENV_VARS:
-            _arg = os.environ.get(self._get_env_key(arg))
-            args.append(_arg if _arg is not None else "")
-        return account_class(*args)
 
     def _verify_action(self) -> None:
         if self._args.action not in self._VALID_ACTIONS:
