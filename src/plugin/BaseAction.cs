@@ -9,13 +9,13 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     abstract public class BaseAction : AbsAction
     {
-        private const string ENV_ACTION = "PYTHON4CPM_ACTION";
+        private const string ENV_ACTION = "PYTHON4CPM_ARGS_ACTION";
+        private const string ENV_LOGGING_LEVEL = "PYTHON4CPM_ARGS_LOGGING_LEVEL";
         private const string ENV_TARGET_USERNAME = "PYTHON4CPM_TARGET_USERNAME";
         private const string ENV_TARGET_ADDRESS = "PYTHON4CPM_TARGET_ADDRESS";
         private const string ENV_TARGET_PORT = "PYTHON4CPM_TARGET_PORT";
         private const string ENV_LOGON_USERNAME = "PYTHON4CPM_LOGON_USERNAME";
         private const string ENV_RECONCILE_USERNAME = "PYTHON4CPM_RECONCILE_USERNAME";
-        private const string ENV_LOGGING_LEVEL = "PYTHON4CPM_LOGGING_LEVEL";
         private const string ENV_TARGET_PASSWORD = "PYTHON4CPM_TARGET_PASSWORD";
         private const string ENV_LOGON_PASSWORD = "PYTHON4CPM_LOGON_PASSWORD";
         private const string ENV_RECONCILE_PASSWORD = "PYTHON4CPM_RECONCILE_PASSWORD";
@@ -34,12 +34,12 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         public const int PYTHON_CLOSE_FAILED_RECOVERABLE = 81;
         private string PythonExePath = string.Empty;
         private string PythonScriptPath = string.Empty;
+        private string PythonLoggingLevel = string.Empty;
         private string TargetUsername = string.Empty;
         private string TargetAddress = string.Empty;
         private string TargetPort = string.Empty;
         private string LogonUsername = string.Empty;
         private string ReconcileUsername = string.Empty;
-        private string PythonLoggingLevel = string.Empty;
         private EncryptedString TargetCurrentPassword = new EncryptedString(string.Empty);
         private EncryptedString LogonCurrentPassword = new EncryptedString(string.Empty);
         private EncryptedString ReconcileCurrentPassword = new EncryptedString(string.Empty);

@@ -1,9 +1,12 @@
+from python4cpm.envhandler import EnvHandler, Props
 from python4cpm.secret import Secret
 
 
-class BaseAccount:
+class BaseAccount(EnvHandler):
+    PROPS = Props("username", "password")
+
     def __init__(
-        self: str,
+        self,
         username: str,
         password: str
     ) -> None:
@@ -20,15 +23,11 @@ class BaseAccount:
 
 
 class TargetAccount(BaseAccount):
-    ENV_VARS = (
-        "target_username",
-        "target_password",
-        "target_address",
-        "target_port",
-        "target_new_password"
-    )
+    OBJ_PREFIX = "target_"
+    PROPS = Props("username", "password", "address", "port", "new_password")
+
     def __init__(
-        self: str,
+        self,
         username: str,
         password: str,
         address: str,
@@ -57,14 +56,8 @@ class TargetAccount(BaseAccount):
 
 
 class LogonAccount(BaseAccount):
-    ENV_VARS = (
-        "logon_username",
-        "logon_password"
-    )
+    OBJ_PREFIX = "logon_"
 
 
 class ReconcileAccount(BaseAccount):
-    ENV_VARS = (
-        "reconcile_username",
-        "reconcile_password"
-    )
+    OBJ_PREFIX = "reconcile_"

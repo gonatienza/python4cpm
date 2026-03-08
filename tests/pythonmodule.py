@@ -66,23 +66,20 @@ class BadClassNoMethods(Python4CPMHandler):
 
 @pytest.mark.parametrize("action,logging_level", ARGS_PARAMS)
 def test_main(action, logging_level,  monkeypatch):
-    env = {
-        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value
-        for key, value in ENV.items()
-    }
-    env[Python4CPM._get_env_key(Args.ARGS[0])] = action
-    env[Python4CPM._get_env_key(Args.ARGS[1])] = logging_level
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = action
+    env[Args.get_key(Args.PROPS.logging_level)] = logging_level
     if Crypto.ENABLED:
         env_keys = (
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(LogonAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(ReconcileAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[4]),
+            TargetAccount.get_key(TargetAccount.PROPS.password),
+            LogonAccount.get_key(LogonAccount.PROPS.password),
+            ReconcileAccount.get_key(ReconcileAccount.PROPS.password),
+            TargetAccount.get_key(TargetAccount.PROPS.new_password)
         )
         for k in env_keys:
             env[k] = Crypto.encrypt(env[k])
     if action in ACTIONS_WITHOUT_NEW_PASSWORD:
-        env[Python4CPM._get_env_key(TargetAccount.ENV_VARS[4])] = ""
+        env[TargetAccount.get_key("new_password")] = ""
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
@@ -97,18 +94,18 @@ def test_main(action, logging_level,  monkeypatch):
             LOGGER.info(f"{k} -> {v}")
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
-    assert p4cpm.target_account.username == ENV["target_username"] # noqa: S101
-    assert p4cpm.target_account.address == ENV["target_address"] # noqa: S101
-    assert p4cpm.target_account.port == ENV["target_port"] # noqa: S101
-    assert p4cpm.logon_account.username == ENV["logon_username"] # noqa: S101
-    assert p4cpm.reconcile_account.username == ENV["reconcile_username"] # noqa: S101
-    assert p4cpm.target_account.password.get() == ENV["target_password"] # noqa: S101
-    assert p4cpm.logon_account.password.get() == ENV["logon_password"] # noqa: S101
-    assert p4cpm.reconcile_account.password.get() == ENV["reconcile_password"] # noqa: S101
+    assert p4cpm.target_account.username == ENV["PYTHON4CPM_TARGET_USERNAME"] # noqa: S101
+    assert p4cpm.target_account.address == ENV["PYTHON4CPM_TARGET_ADDRESS"] # noqa: S101
+    assert p4cpm.target_account.port == ENV["PYTHON4CPM_TARGET_PORT"] # noqa: S101
+    assert p4cpm.logon_account.username == ENV["PYTHON4CPM_LOGON_USERNAME"] # noqa: S101
+    assert p4cpm.reconcile_account.username == ENV["PYTHON4CPM_RECONCILE_USERNAME"] # noqa: S101
+    assert p4cpm.target_account.password.get() == ENV["PYTHON4CPM_TARGET_PASSWORD"] # noqa: S101
+    assert p4cpm.logon_account.password.get() == ENV["PYTHON4CPM_LOGON_PASSWORD"] # noqa: S101
+    assert p4cpm.reconcile_account.password.get() == ENV["PYTHON4CPM_RECONCILE_PASSWORD"] # noqa: S101 E501
     if action in ACTIONS_WITHOUT_NEW_PASSWORD:
         assert p4cpm.target_account.new_password.get() == "" # noqa: S101
     else:
-        assert p4cpm.target_account.new_password.get() == ENV["target_new_password"] # noqa: S101
+        assert p4cpm.target_account.new_password.get() == ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"] # noqa: S101 E501
     assert p4cpm._logger # noqa: S101
     if logging_level.lower() == LOGGING_LEVELS[1]:
         assert p4cpm._logger.level == Logger._LOGGING_LEVELS[LOGGING_LEVELS[1]] # noqa: S101
@@ -124,18 +121,15 @@ def test_main(action, logging_level,  monkeypatch):
 
 
 def test_handler_bad_action(monkeypatch):
-    env = {
-        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value
-        for key, value in ENV.items()
-    }
-    env[Python4CPM._get_env_key(Args.ARGS[0])] = "nonexistent"
-    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING_LEVELS[1]
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = "nonexistent"
+    env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
     if Crypto.ENABLED:
         env_keys = (
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(LogonAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(ReconcileAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[4]),
+            TargetAccount.get_key(TargetAccount.PROPS.password),
+            LogonAccount.get_key(LogonAccount.PROPS.password),
+            ReconcileAccount.get_key(ReconcileAccount.PROPS.password),
+            TargetAccount.get_key(TargetAccount.PROPS.new_password)
         )
         for k in env_keys:
             env[k] = Crypto.encrypt(env[k])
@@ -148,18 +142,15 @@ def test_handler_bad_action(monkeypatch):
 
 @pytest.mark.parametrize("close", CLOSE_CODES)
 def test_exit_codes(close, monkeypatch, capsys):
-    env = {
-        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value
-        for key, value in ENV.items()
-    }
-    env[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_CHANGE
-    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING_LEVELS[1]
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
+    env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
     if Crypto.ENABLED:
         env_keys = (
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(LogonAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(ReconcileAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[4]),
+            TargetAccount.get_key(TargetAccount.PROPS.password),
+            LogonAccount.get_key(LogonAccount.PROPS.password),
+            ReconcileAccount.get_key(ReconcileAccount.PROPS.password),
+            TargetAccount.get_key(TargetAccount.PROPS.new_password)
         )
         for k in env_keys:
             env[k] = Crypto.encrypt(env[k])
@@ -182,18 +173,15 @@ def test_exit_codes(close, monkeypatch, capsys):
 
 
 def test_on_exit_stderr(monkeypatch, capsys):
-    env = {
-        f"{Python4CPM._ENV_PREFIX}{key.upper()}": value
-        for key, value in ENV.items()
-    }
-    env[Python4CPM._get_env_key(Args.ARGS[0])] = Python4CPM.ACTION_CHANGE
-    env[Python4CPM._get_env_key(Args.ARGS[1])] = LOGGING_LEVELS[1]
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
+    env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
     if Crypto.ENABLED:
         env_keys = (
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(LogonAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[1]),
-            Python4CPM._get_env_key(TargetAccount.ENV_VARS[4]),
+            TargetAccount.get_key(TargetAccount.PROPS.password),
+            LogonAccount.get_key(LogonAccount.PROPS.password),
+            ReconcileAccount.get_key(ReconcileAccount.PROPS.password),
+            TargetAccount.get_key(TargetAccount.PROPS.new_password)
         )
         for k in env_keys:
             env[k] = Crypto.encrypt(env[k])
@@ -211,30 +199,30 @@ def test_net_helper():
     logging_level = LOGGING_LEVELS[1]
     NETHelper.set(
         action=action,
-        target_address=ENV["target_address"],
-        target_username=ENV["target_username"],
-        target_port=ENV["target_port"],
-        logon_username=ENV["logon_username"],
-        reconcile_username=ENV["reconcile_username"],
+        target_address=ENV["PYTHON4CPM_TARGET_ADDRESS"],
+        target_username=ENV["PYTHON4CPM_TARGET_USERNAME"],
+        target_port=ENV["PYTHON4CPM_TARGET_PORT"],
+        logon_username=ENV["PYTHON4CPM_LOGON_USERNAME"],
+        reconcile_username=ENV["PYTHON4CPM_RECONCILE_USERNAME"],
         logging_level=logging_level,
-        target_password=ENV["target_password"],
-        logon_password=ENV["logon_password"],
-        reconcile_password=ENV["reconcile_password"],
-        target_new_password=ENV["target_new_password"]
+        target_password=ENV["PYTHON4CPM_TARGET_PASSWORD"],
+        logon_password=ENV["PYTHON4CPM_LOGON_PASSWORD"],
+        reconcile_password=ENV["PYTHON4CPM_RECONCILE_PASSWORD"],
+        target_new_password=ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"]
     )
     p4cpm = NETHelper.get()
     assert isinstance(p4cpm, Python4CPM) # noqa: S101
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
-    assert p4cpm.target_account.username == ENV["target_username"] # noqa: S101
-    assert p4cpm.target_account.address == ENV["target_address"] # noqa: S101
-    assert p4cpm.target_account.port == ENV["target_port"] # noqa: S101
-    assert p4cpm.logon_account.username == ENV["logon_username"] # noqa: S101
-    assert p4cpm.reconcile_account.username == ENV["reconcile_username"] # noqa: S101
-    assert p4cpm.target_account.password.get() == ENV["target_password"] # noqa: S101
-    assert p4cpm.logon_account.password.get() == ENV["logon_password"] # noqa: S101
-    assert p4cpm.reconcile_account.password.get() == ENV["reconcile_password"] # noqa: S101
-    assert p4cpm.target_account.new_password.get() == ENV["target_new_password"] # noqa: S101
+    assert p4cpm.target_account.username == ENV["PYTHON4CPM_TARGET_USERNAME"] # noqa: S101
+    assert p4cpm.target_account.address == ENV["PYTHON4CPM_TARGET_ADDRESS"] # noqa: S101
+    assert p4cpm.target_account.port == ENV["PYTHON4CPM_TARGET_PORT"] # noqa: S101
+    assert p4cpm.logon_account.username == ENV["PYTHON4CPM_LOGON_USERNAME"] # noqa: S101
+    assert p4cpm.reconcile_account.username == ENV["PYTHON4CPM_RECONCILE_USERNAME"] # noqa: S101
+    assert p4cpm.target_account.password.get() == ENV["PYTHON4CPM_TARGET_PASSWORD"] # noqa: S101
+    assert p4cpm.logon_account.password.get() == ENV["PYTHON4CPM_LOGON_PASSWORD"] # noqa: S101
+    assert p4cpm.reconcile_account.password.get() == ENV["PYTHON4CPM_RECONCILE_PASSWORD"] # noqa: S101 E501
+    assert p4cpm.target_account.new_password.get() == ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"] # noqa: S101 E501
     with pytest.raises(SystemExit) as e:
         p4cpm.close_success()
         assert e.value.code == CLOSE_CODES[0] # noqa: S101
