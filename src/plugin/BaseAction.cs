@@ -9,17 +9,6 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     abstract public class BaseAction : AbsAction
     {
-        private const string ENV_ACTION = "PYTHON4CPM_ARGS_ACTION";
-        private const string ENV_LOGGING_LEVEL = "PYTHON4CPM_ARGS_LOGGING_LEVEL";
-        private const string ENV_TARGET_USERNAME = "PYTHON4CPM_TARGET_USERNAME";
-        private const string ENV_TARGET_ADDRESS = "PYTHON4CPM_TARGET_ADDRESS";
-        private const string ENV_TARGET_PORT = "PYTHON4CPM_TARGET_PORT";
-        private const string ENV_LOGON_USERNAME = "PYTHON4CPM_LOGON_USERNAME";
-        private const string ENV_RECONCILE_USERNAME = "PYTHON4CPM_RECONCILE_USERNAME";
-        private const string ENV_TARGET_PASSWORD = "PYTHON4CPM_TARGET_PASSWORD";
-        private const string ENV_LOGON_PASSWORD = "PYTHON4CPM_LOGON_PASSWORD";
-        private const string ENV_RECONCILE_PASSWORD = "PYTHON4CPM_RECONCILE_PASSWORD";
-        private const string ENV_TARGET_NEW_PASSWORD = "PYTHON4CPM_TARGET_NEW_PASSWORD";
         private const string PARAMS_PYTHON_EXE_PATH = "PythonExePath";
         private const string PARAMS_PYTHON_SCRIPT_PATH = "PythonScriptPath";
         private const string PARAMS_PYTHON_LOGGING_LEVEL = "PythonLoggingLevel";
@@ -139,35 +128,21 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             LogField(nameof(TargetNewPassword), TargetNewPassword);
         }
 
-        private Dictionary<string, string> GetArgs(string action)
-        {
-            return new Dictionary<string, string>
-            {
-                { ENV_ACTION, action },
-                { ENV_TARGET_USERNAME, TargetUsername },
-                { ENV_TARGET_ADDRESS, TargetAddress },
-                { ENV_TARGET_PORT, TargetPort },
-                { ENV_LOGON_USERNAME, LogonUsername },
-                { ENV_RECONCILE_USERNAME, ReconcileUsername },
-                { ENV_LOGGING_LEVEL, PythonLoggingLevel }
-            };
-        }
-
-        private Dictionary<string, EncryptedString> GetSecrets()
-        {
-            return new Dictionary<string, EncryptedString>
-            {
-                { ENV_TARGET_PASSWORD, TargetCurrentPassword },
-                { ENV_LOGON_PASSWORD, LogonCurrentPassword },
-                { ENV_RECONCILE_PASSWORD, ReconcileCurrentPassword },
-                { ENV_TARGET_NEW_PASSWORD, TargetNewPassword }
-            };
-        }
-
         private void RunScript(string action)
         {
-            var args = GetArgs(action);
-            var secrets = GetSecrets();
+            var args = EnvHandler.GetArgs(
+                action,
+                TargetUsername,
+                TargetAddress,
+                TargetPort,
+                LogonUsername,
+                ReconcileUsername,
+                PythonLoggingLevel);
+            var secrets = EnvHandler.GetSecrets(
+                TargetCurrentPassword,
+                LogonCurrentPassword,
+                ReconcileCurrentPassword,
+                TargetNewPassword);
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
