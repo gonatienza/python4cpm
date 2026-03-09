@@ -30,6 +30,7 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="EncryptedString.cs" />
+    <Compile Include="EnvHandler.cs" />
     <Compile Include="BaseAction.cs" />
     <Compile Include="Verify.cs" />
     <Compile Include="Logon.cs" />
