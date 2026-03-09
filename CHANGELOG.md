@@ -4,6 +4,11 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.2.1] - 2026-03-08
+
+### Added
+- `EnvHandler` to .NET.
+
 ## [1.1.2] - 2026-03-08
 
 ### Added
@@ -60,7 +65,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/e05c8966ea4ed7250bc80f1774c75048f92a110d...HEAD
+[1.1.2.1]: https://github.com/gonatienza/python4cpm/compare/v1.1.2...e05c8966ea4ed7250bc80f1774c75048f92a110d
 [1.1.2]: https://github.com/gonatienza/python4cpm/compare/v1.0.27...v1.1.2
 [1.0.27]: https://github.com/gonatienza/python4cpm/compare/v1.0.26...v1.0.27
 [1.0.26]: https://github.com/gonatienza/python4cpm/compare/v1.0.20...v1.0.26
