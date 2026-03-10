@@ -4,6 +4,12 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-03-11
+
+### Modified
+- Properties from `python4cpm.accounts.TargetAccount`, `python4cpm.accounts.LogonAccount`, `python4cpm.accounts.ReconcileAccount` and `python4cpm.args.Args` return `None` if not set instead of and empty string.
+- If all properties of either `python4cpm.accounts.TargetAccount`, `python4cpm.accounts.LogonAccount` or `python4cpm.accounts.ReconcileAccount` return None, the object itself returns None.
+
 ## [1.1.2.1] - 2026-03-08
 
 ### Added
@@ -65,7 +71,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/2935b9e...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.3...HEAD
+[1.1.3]: https://github.com/gonatienza/python4cpm/compare/2935b9e...v1.1.3
 [1.1.2.1]: https://github.com/gonatienza/python4cpm/compare/v1.1.2...2935b9e
 [1.1.2]: https://github.com/gonatienza/python4cpm/compare/v1.0.27...v1.1.2
 [1.0.27]: https://github.com/gonatienza/python4cpm/compare/v1.0.26...v1.0.27

@@ -31,11 +31,6 @@ ACTIONS_WITH_NEW_PASSWORD = (
     Python4CPM.ACTION_CHANGE,
     Python4CPM.ACTION_RECONCILE
 )
-ACTIONS_WITHOUT_NEW_PASSWORD = (
-    Python4CPM.ACTION_VERIFY,
-    Python4CPM.ACTION_LOGON,
-    Python4CPM.ACTION_PRERECONCILE
-)
 CLOSE_CODES = [
     Python4CPM._SUCCESS_CODE,
     Python4CPM._FAILED_RECOVERABLE_CODE,
@@ -64,11 +59,7 @@ class BadClassNoMethods(Python4CPMHandler):
     pass
 
 
-@pytest.mark.parametrize("action,logging_level", ARGS_PARAMS)
-def test_main(action, logging_level,  monkeypatch):
-    env = ENV.copy()
-    env[Args.get_key(Args.PROPS.action)] = action
-    env[Args.get_key(Args.PROPS.logging_level)] = logging_level
+def encrypt_env_keys(env):
     if Crypto.ENABLED:
         env_keys = (
             TargetAccount.get_key(TargetAccount.PROPS.password),
@@ -78,8 +69,16 @@ def test_main(action, logging_level,  monkeypatch):
         )
         for k in env_keys:
             env[k] = Crypto.encrypt(env[k])
-    if action in ACTIONS_WITHOUT_NEW_PASSWORD:
-        env[TargetAccount.get_key("new_password")] = ""
+
+
+@pytest.mark.parametrize("action,logging_level", ARGS_PARAMS)
+def test_main(action, logging_level,  monkeypatch):
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = action
+    env[Args.get_key(Args.PROPS.logging_level)] = logging_level
+    encrypt_env_keys(env)
+    if action not in ACTIONS_WITH_NEW_PASSWORD:
+        del env[TargetAccount.get_key(TargetAccount.PROPS.new_password)]
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
@@ -102,8 +101,8 @@ def test_main(action, logging_level,  monkeypatch):
     assert p4cpm.target_account.password.get() == ENV["PYTHON4CPM_TARGET_PASSWORD"] # noqa: S101
     assert p4cpm.logon_account.password.get() == ENV["PYTHON4CPM_LOGON_PASSWORD"] # noqa: S101
     assert p4cpm.reconcile_account.password.get() == ENV["PYTHON4CPM_RECONCILE_PASSWORD"] # noqa: S101 E501
-    if action in ACTIONS_WITHOUT_NEW_PASSWORD:
-        assert p4cpm.target_account.new_password.get() == "" # noqa: S101
+    if action not in ACTIONS_WITH_NEW_PASSWORD:
+        assert p4cpm.target_account.new_password is None # noqa: S101
     else:
         assert p4cpm.target_account.new_password.get() == ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"] # noqa: S101 E501
     assert p4cpm._logger # noqa: S101
@@ -120,19 +119,39 @@ def test_main(action, logging_level,  monkeypatch):
         BadClassNoMethods().run()
 
 
+def test_no_logon_account(monkeypatch):
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
+    env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
+    encrypt_env_keys(env)
+    del env[LogonAccount.get_key(LogonAccount.PROPS.username)]
+    del env[LogonAccount.get_key(LogonAccount.PROPS.password)]
+    LOGGER.info(f"env -> {env}")
+    for k, v in env.items():
+        monkeypatch.setenv(k, v)
+    p4cpm = Python4CPM(test_no_logon_account.__name__)
+    assert p4cpm.logon_account is None # noqa: S101
+
+
+def test_no_reconcile_account(monkeypatch):
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
+    env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
+    encrypt_env_keys(env)
+    del env[ReconcileAccount.get_key(ReconcileAccount.PROPS.username)]
+    del env[ReconcileAccount.get_key(ReconcileAccount.PROPS.password)]
+    LOGGER.info(f"env -> {env}")
+    for k, v in env.items():
+        monkeypatch.setenv(k, v)
+    p4cpm = Python4CPM(test_no_reconcile_account.__name__)
+    assert p4cpm.reconcile_account is None # noqa: S101
+
+
 def test_handler_bad_action(monkeypatch):
     env = ENV.copy()
     env[Args.get_key(Args.PROPS.action)] = "nonexistent"
     env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
-    if Crypto.ENABLED:
-        env_keys = (
-            TargetAccount.get_key(TargetAccount.PROPS.password),
-            LogonAccount.get_key(LogonAccount.PROPS.password),
-            ReconcileAccount.get_key(ReconcileAccount.PROPS.password),
-            TargetAccount.get_key(TargetAccount.PROPS.new_password)
-        )
-        for k in env_keys:
-            env[k] = Crypto.encrypt(env[k])
+    encrypt_env_keys(env)
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
@@ -145,15 +164,7 @@ def test_exit_codes(close, monkeypatch, capsys):
     env = ENV.copy()
     env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
     env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
-    if Crypto.ENABLED:
-        env_keys = (
-            TargetAccount.get_key(TargetAccount.PROPS.password),
-            LogonAccount.get_key(LogonAccount.PROPS.password),
-            ReconcileAccount.get_key(ReconcileAccount.PROPS.password),
-            TargetAccount.get_key(TargetAccount.PROPS.new_password)
-        )
-        for k in env_keys:
-            env[k] = Crypto.encrypt(env[k])
+    encrypt_env_keys(env)
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
@@ -176,15 +187,7 @@ def test_on_exit_stderr(monkeypatch, capsys):
     env = ENV.copy()
     env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
     env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
-    if Crypto.ENABLED:
-        env_keys = (
-            TargetAccount.get_key(TargetAccount.PROPS.password),
-            LogonAccount.get_key(LogonAccount.PROPS.password),
-            ReconcileAccount.get_key(ReconcileAccount.PROPS.password),
-            TargetAccount.get_key(TargetAccount.PROPS.new_password)
-        )
-        for k in env_keys:
-            env[k] = Crypto.encrypt(env[k])
+    encrypt_env_keys(env)
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)

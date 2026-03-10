@@ -6,16 +6,11 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     public class Reconcile : BaseAction
     {
-        private const string ACTION = "reconcilepass";
+        private const string Action = "reconcilepass";
 
         public Reconcile(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
         {
-        }
-
-        protected override bool RequiresNewPassword
-        {
-            get { return true; }
         }
 
         override public CPMAction ActionName
@@ -26,8 +21,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         override public int run(ref PlatformOutput platformOutput)
         {
             Logger.MethodStart();
-            Logger.WriteLine($"Running action: {ACTION}", LogLevel.INFO);
-            return RunAction(ACTION, ref platformOutput);
+            Logger.WriteLine($"Running action: {Action}", LogLevel.INFO);
+            return RunAction(Action, ref platformOutput);
         }
     }
 }

@@ -35,10 +35,10 @@ try:
         (p4cpm.target_account.new_password.get(), config["DEFAULT"]["newpassword"])
     )
     for a, b in assertions:
-        LOGGER.info(f"Asserting '{a}' == '{b}'...")
         if a != b:
-            LOGGER.error("Assertion failed")
+            LOGGER.error(f"Assertion failed '{a}' == '{b}'")
             raise AssertionError
+        LOGGER.info(f"Asserted '{a}' == '{b}'")
     p4cpm.close_success()
 except Exception as e:
     LOGGER.error(f"{type(e).__name__}: {e}")

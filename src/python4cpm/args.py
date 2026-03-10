@@ -7,8 +7,8 @@ class Args(EnvHandler):
 
     def __init__(
         self,
-        action: str,
-        logging_level: str
+        action: str | None,
+        logging_level: str | None
     ) -> None:
         self._action = action
         self._logging_level = logging_level
@@ -18,5 +18,5 @@ class Args(EnvHandler):
         return self._action
 
     @property
-    def logging_level(self) -> str:
+    def logging_level(self) -> str | None:
         return self._logging_level

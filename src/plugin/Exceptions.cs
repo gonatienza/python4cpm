@@ -12,9 +12,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             {
                 switch (ExitCode)
                 {
-                    case BaseAction.PYTHON_CLOSE_FAILED_UNRECOVERABLE:
+                    case BaseAction.PythonCloseFailedUnrecoverable:
                         return "Python closed with failed unrecoverable";
-                    case BaseAction.PYTHON_CLOSE_FAILED_RECOVERABLE:
+                    case BaseAction.PythonCloseFailedRecoverable:
                         return "Python closed with failed recoverable";
                     default:
                         return "Python closed unexpectedly";

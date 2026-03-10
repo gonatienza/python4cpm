@@ -4,11 +4,18 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     public class EncryptedString
     {
-        public string Secret { get; }
+        public string Value { get; }
 
-        public EncryptedString(string secret)
+        public EncryptedString(string value)
         {
-            Secret = secret;
+            Value = value;
+        }
+
+        public override string ToString()
+        {
+            if (Value != null)
+                return "[ENCRYPTED]";
+            return "[NOT SET]";
         }
     }
 }

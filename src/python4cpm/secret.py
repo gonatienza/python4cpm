@@ -5,11 +5,20 @@ class Secret:
     def __init__(self, secret: str) -> None:
         self._secret = secret
 
-    def __bool__(self) -> bool:
-        return bool(self._secret)
+    @classmethod
+    def from_env_var(cls, secret: str | None) -> object | None:
+        if secret is not None:
+            return cls(secret)
+        return None
+
+    def __str__(self) -> str:
+        if Crypto.ENABLED:
+            return "[ENCRYPTED]"
+        else:
+            return "[SET]"
 
     def get(self) -> str:
-        if Crypto.ENABLED and self._secret:
+        if Crypto.ENABLED:
             return Crypto.decrypt(self._secret)
         else:
             return self._secret
