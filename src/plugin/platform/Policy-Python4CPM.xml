@@ -1,4 +1,4 @@
-<Device Name="Python">
+<Device Name="Python Extensibility">
   <Policies>
     <Policy ID="Python4CPM" PlatformBaseID="Python4CPM" PlatformBaseType="Python4CPM" PlatformBaseProtocol="python" AutoChangeOnAdd="No" AutoVerifyOnAdd="No">
       <Properties>
