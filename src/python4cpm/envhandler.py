@@ -21,9 +21,12 @@ class EnvHandler:
         return env_key.upper()
 
     @classmethod
+    def get_kwargs(cls) -> dict:
+        return {
+            prop: os.environ.get(cls.get_key(prop))
+            for prop in cls.PROPS
+        }
+
+    @classmethod
     def get(cls) -> object:
-        kwargs = {}
-        for prop in cls.PROPS:
-            value = os.environ.get(cls.get_key(prop))
-            kwargs[prop] = value if value is not None else ""
-        return cls(**kwargs)
+        return cls(**cls.get_kwargs())

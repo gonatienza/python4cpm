@@ -9,57 +9,43 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     abstract public class BaseAction : AbsAction
     {
-        private const string PARAMS_PYTHON_EXE_PATH = "PythonExePath";
-        private const string PARAMS_PYTHON_SCRIPT_PATH = "PythonScriptPath";
-        private const string PARAMS_PYTHON_LOGGING_LEVEL = "PythonLoggingLevel";
-        private const string PROPERTIES_USERNAME = "username";
-        private const string PROPERTIES_ADDRESS = "address";
-        private const string PROPERTIES_PORT = "port";
-        protected const int CLOSE_SUCCESS = 0;
-        protected const int CLOSE_FAILED_UNRECOVERABLE = 8900;
-        protected const int CLOSE_FAILED_RECOVERABLE = 8100;
-        private const int PYTHON_CLOSE_SUCCESS = 10;
-        public const int PYTHON_CLOSE_FAILED_UNRECOVERABLE = 89;
-        public const int PYTHON_CLOSE_FAILED_RECOVERABLE = 81;
-        private string PythonExePath = string.Empty;
-        private string PythonScriptPath = string.Empty;
-        private string PythonLoggingLevel = string.Empty;
-        private string TargetUsername = string.Empty;
-        private string TargetAddress = string.Empty;
-        private string TargetPort = string.Empty;
-        private string LogonUsername = string.Empty;
-        private string ReconcileUsername = string.Empty;
-        private EncryptedString TargetCurrentPassword = new EncryptedString(string.Empty);
-        private EncryptedString LogonCurrentPassword = new EncryptedString(string.Empty);
-        private EncryptedString ReconcileCurrentPassword = new EncryptedString(string.Empty);
-        private EncryptedString TargetNewPassword = new EncryptedString(string.Empty);
+        private const string ParamsPythonExePath = "PythonExePath";
+        private const string ParamsPythonScriptPath = "PythonScriptPath";
+        private const string ParamsPythonLoggingLevel = "PythonLoggingLevel";
+        private const string PropertiesUsername = "username";
+        private const string PropertiesAddress = "address";
+        private const string PropertiesPort = "port";
+        protected const int CloseSuccess = 0;
+        protected const int CloseFailedUnrecoverable = 8900;
+        protected const int CloseFailedRecoverable = 8100;
+        private const int PythonCloseSuccess = 10;
+        public const int PythonCloseFailedUnrecoverable = 89;
+        public const int PythonCloseFailedRecoverable = 81;
+        private string PythonExePath;
+        private string PythonScriptPath;
+        private string PythonLoggingLevel;
+        private string TargetUsername;
+        private string TargetAddress;
+        private string TargetPort;
+        private string LogonUsername;
+        private string ReconcileUsername;
+        private EncryptedString TargetCurrentPassword;
+        private EncryptedString LogonCurrentPassword;
+        private EncryptedString ReconcileCurrentPassword;
+        private EncryptedString TargetNewPassword;
 
         public BaseAction(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
         {
         }
 
-        protected abstract bool RequiresNewPassword
-        {
-            get;
-        }
-
         private string GetLoggingValue(object obj)
         {
-            string logValue;
-            if (obj is EncryptedString enc && enc.Secret != string.Empty)
-            {
-                logValue = "[ENCRYPTED]";
-            }
-            else if (obj is string str && str != string.Empty)
-            {
-                logValue = $"'{str}'";
-            }
-            else
-            {
-                logValue = "[NOT SET]";
-            }
-            return logValue;
+            if (obj == null)
+                return $"[NOT SET]";
+            if (obj is EncryptedString)
+                return $"{obj}";
+            return $"'{obj}'";
         }
 
         private void LogField(string name, object obj)
@@ -76,47 +62,41 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 
         private void GetParams()
         {
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_EXE_PATH) == true)
-                PythonExePath = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_EXE_PATH];
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_SCRIPT_PATH) == true)
-                PythonScriptPath = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_SCRIPT_PATH];
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PARAMS_PYTHON_LOGGING_LEVEL) == true)
-                PythonLoggingLevel = TargetAccount.ExtraInfoProp[PARAMS_PYTHON_LOGGING_LEVEL];
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(ParamsPythonExePath) == true)
+                PythonExePath = TargetAccount.ExtraInfoProp[ParamsPythonExePath];
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(ParamsPythonScriptPath) == true)
+                PythonScriptPath = TargetAccount.ExtraInfoProp[ParamsPythonScriptPath];
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(ParamsPythonLoggingLevel) == true)
+                PythonLoggingLevel = TargetAccount.ExtraInfoProp[ParamsPythonLoggingLevel];
             LogField(nameof(PythonExePath), PythonExePath);
             LogField(nameof(PythonScriptPath), PythonScriptPath);
             LogField(nameof(PythonLoggingLevel), PythonLoggingLevel);
             if (!File.Exists(PythonExePath))
-                throw new FileNotFoundException($"{PARAMS_PYTHON_EXE_PATH}: '{PythonExePath}' not found");
+                throw new FileNotFoundException($"{ParamsPythonExePath}: '{PythonExePath}' not found");
             if (!File.Exists(PythonScriptPath))
-                throw new FileNotFoundException($"{PARAMS_PYTHON_SCRIPT_PATH}: '{PythonScriptPath}' not found");
+                throw new FileNotFoundException($"{ParamsPythonScriptPath}: '{PythonScriptPath}' not found");
         }
 
         private void GetAccounts()
         {
-            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
-                TargetUsername = TargetAccount.AccountProp[PROPERTIES_USERNAME];
-            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_ADDRESS) == true)
-                TargetAddress = TargetAccount.AccountProp[PROPERTIES_ADDRESS];
-            if (TargetAccount?.AccountProp?.ContainsKey(PROPERTIES_PORT) == true)
-                TargetPort = TargetAccount.AccountProp[PROPERTIES_PORT];
-            if (LogOnAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
-                LogonUsername = LogOnAccount.AccountProp[PROPERTIES_USERNAME];
-            if (ReconcileAccount?.AccountProp?.ContainsKey(PROPERTIES_USERNAME) == true)
-                ReconcileUsername = ReconcileAccount.AccountProp[PROPERTIES_USERNAME];
-            if (TargetAccount?.CurrentPassword != null)
+            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesUsername) == true)
+                TargetUsername = TargetAccount.AccountProp[PropertiesUsername];
+            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesAddress) == true)
+                TargetAddress = TargetAccount.AccountProp[PropertiesAddress];
+            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesPort) == true)
+                TargetPort = TargetAccount.AccountProp[PropertiesPort];
+            if (LogOnAccount?.AccountProp?.ContainsKey(PropertiesUsername) == true)
+                LogonUsername = LogOnAccount.AccountProp[PropertiesUsername];
+            if (ReconcileAccount?.AccountProp?.ContainsKey(PropertiesUsername) == true)
+                ReconcileUsername = ReconcileAccount.AccountProp[PropertiesUsername];
+            if (TargetAccount?.CurrentPassword?.Length > 0)
                 TargetCurrentPassword = Crypto.Encrypt(TargetAccount.CurrentPassword);
-            if (LogOnAccount?.CurrentPassword != null)
+            if (LogOnAccount?.CurrentPassword?.Length > 0)
                 LogonCurrentPassword = Crypto.Encrypt(LogOnAccount.CurrentPassword);
-            if (ReconcileAccount?.CurrentPassword != null)
+            if (ReconcileAccount?.CurrentPassword?.Length > 0)
                 ReconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
-            if (RequiresNewPassword)
-            {
-                if (TargetAccount?.NewPassword == null)
-                {
-                    throw new InvalidOperationException("Required new password is 'null'");
-                }
+            if (TargetAccount?.NewPassword?.Length > 0)
                 TargetNewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
-            }
             LogField(nameof(TargetUsername), TargetUsername);
             LogField(nameof(TargetAddress), TargetAddress);
             LogField(nameof(TargetPort), TargetPort);
@@ -164,14 +144,14 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             foreach (var secret in secrets)
             {
                 LogEnvVar(secret.Key, secret.Value);
-                process.StartInfo.EnvironmentVariables[secret.Key] = secret.Value.Secret;
+                process.StartInfo.EnvironmentVariables[secret.Key] = secret.Value.Value;
             }
             Logger.WriteLine($"Executing: {PythonExePath} {PythonScriptPath}", LogLevel.INFO);
             process.Start();
             string stderr = process.StandardError.ReadToEnd();
             process.WaitForExit();
             string message = $"Python closed with exit code: {process.ExitCode}";
-            if (process.ExitCode != PYTHON_CLOSE_SUCCESS)
+            if (process.ExitCode != PythonCloseSuccess)
             {
                 Logger.WriteLine(message, LogLevel.ERROR);
                 if (!string.IsNullOrWhiteSpace(stderr))
@@ -198,11 +178,11 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             {
                 RunScript(action);
                 Logger.WriteLine("Closing with success", LogLevel.INFO);
-                return CLOSE_SUCCESS;
+                return CloseSuccess;
             }
             catch (PythonExecutionException ex)
             {
-                if (ex.ExitCode == PYTHON_CLOSE_FAILED_RECOVERABLE)
+                if (ex.ExitCode == PythonCloseFailedRecoverable)
                 {
                     return HandleException(ex, false, ref platformOutput);
                 }
@@ -221,10 +201,10 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             if (unrecoverable)
             {
                 Logger.WriteLine("Closing with failed unrecoverable", LogLevel.ERROR);
-                return CLOSE_FAILED_UNRECOVERABLE;
+                return CloseFailedUnrecoverable;
             }
             Logger.WriteLine("Closing with failed recoverable", LogLevel.ERROR);
-            return CLOSE_FAILED_RECOVERABLE;
+            return CloseFailedRecoverable;
         }
     }
 }

@@ -9,17 +9,17 @@ class NETHelper:
     @classmethod
     def set(
         cls,
-        action: str = "",
-        logging_level: str = "",
-        target_username: str = "",
-        target_address: str = "",
-        target_port: str = "",
-        logon_username: str = "",
-        reconcile_username: str = "",
-        target_password: str = "",
-        logon_password: str = "",
-        reconcile_password: str = "",
-        target_new_password: str = ""
+        action: str | None = None,
+        logging_level: str | None = None,
+        target_username: str | None = None,
+        target_address: str | None = None,
+        target_port: str | None = None,
+        logon_username: str | None = None,
+        reconcile_username: str | None = None,
+        target_password: str | None = None,
+        logon_password: str | None = None,
+        reconcile_password: str | None = None,
+        target_new_password: str | None = None
     ) -> None:
         if Crypto.ENABLED:
             target_password = Crypto.encrypt(target_password)
@@ -53,7 +53,8 @@ class NETHelper:
             target_new_password
         )
         for i, key in enumerate(keys):
-            os.environ.update({key: values[i]})
+            if values[i] is not None:
+                os.environ.update({key: values[i]})
 
     @classmethod
     def get(cls) -> Python4CPM:

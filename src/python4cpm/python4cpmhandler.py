@@ -18,7 +18,7 @@ class Python4CPMHandler(ABC, Python4CPM):
         if action is not None:
             action()
         else:
-            raise ValueError(f"Unknown action: {self._args.action}")
+            raise ValueError(f"Unknown action: '{self._args.action}'")
 
     @abstractmethod
     def verify(self) -> None:

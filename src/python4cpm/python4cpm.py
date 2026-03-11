@@ -3,7 +3,6 @@ import atexit
 import logging
 from python4cpm.secret import Secret
 from python4cpm.args import Args
-from python4cpm.crypto import Crypto
 from python4cpm.logger import Logger
 from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
 
@@ -65,20 +64,18 @@ class Python4CPM:
         if self._args.action not in self._VALID_ACTIONS:
             self._logger.warning(f"Unkonwn action -> '{self._args.action}'")
 
-    def _log_obj(self, obj: object) -> None:
-        for key, value in vars(obj).items():
-            _key = f"{obj.__class__.__name__}.{key.strip('_')}"
-            if value:
-                if not isinstance(value, Secret):
-                    logging_value = f"'{value}'"
-                else:
-                    if Crypto.ENABLED is True:
-                        logging_value = "[ENCRYPTED]"
+    def _log_obj(self, obj: object | None) -> None:
+        if obj is not None:
+            for key, value in vars(obj).items():
+                _key = f"{obj.__class__.__name__}.{key.removeprefix('_')}"
+                if value is not None:
+                    if not isinstance(value, Secret):
+                        logging_value = f"'{value}'"
                     else:
-                        logging_value = "[SET]"
-            else:
-                logging_value = "[NOT SET]"
-            self._logger.debug(f"{_key} -> {logging_value}")
+                        logging_value = str(value)
+                else:
+                    logging_value = "[NOT SET]"
+                self._logger.debug(f"{_key} -> {logging_value}")
 
     def close_fail(self, unrecoverable: bool = False) -> None:
         if unrecoverable is False:

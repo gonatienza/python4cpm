@@ -7,11 +7,18 @@ class BaseAccount(EnvHandler):
 
     def __init__(
         self,
-        username: str,
-        password: str
+        username: str | None,
+        password: str | None
     ) -> None:
         self._username = username
-        self._password = Secret(password)
+        self._password = Secret.from_env_var(password)
+
+    @classmethod
+    def get(cls) -> object | None:
+        kwargs = cls.get_kwargs()
+        if all(value is None for value in kwargs.values()):
+            return None
+        return cls(**kwargs)
 
     @property
     def username(self) -> str:
@@ -28,11 +35,11 @@ class TargetAccount(BaseAccount):
 
     def __init__(
         self,
-        username: str,
-        password: str,
-        address: str,
-        port: str,
-        new_password: str
+        username: str | None,
+        password: str | None,
+        address: str | None,
+        port: str | None,
+        new_password: str | None
     ) -> None:
         super().__init__(
             username,
@@ -40,14 +47,14 @@ class TargetAccount(BaseAccount):
         )
         self._address = address
         self._port = port
-        self._new_password = Secret(new_password)
+        self._new_password = Secret.from_env_var(new_password)
 
     @property
-    def address(self) -> str:
+    def address(self) -> str | None:
         return self._address
 
     @property
-    def port(self) -> str:
+    def port(self) -> str | None:
         return self._port
 
     @property

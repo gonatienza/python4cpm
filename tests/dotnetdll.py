@@ -66,6 +66,10 @@ ACTIONS = (
     Python4CPM.ACTION_RECONCILE,
     Python4CPM.ACTION_PRERECONCILE
 )
+ACTIONS_WITH_NEW_PASSWORD = (
+    Python4CPM.ACTION_CHANGE,
+    Python4CPM.ACTION_RECONCILE
+)
 PARAMS = [
     (python_path, script, action)
     for action in ACTIONS
@@ -81,6 +85,8 @@ def test_python4cpm_dll_returns(python_path, script, action):
     config = get_config_from_ini()
     config.set("extrainfo", "PythonExePath", python_path)
     config.set("extrainfo", "PythonScriptPath", script)
+    if action not in ACTIONS_WITH_NEW_PASSWORD:
+        config.remove_option("DEFAULT", "newpassword")
     buffer = StringIO()
     config.write(buffer)
     _config = buffer.getvalue().split("\n", 1)[1]

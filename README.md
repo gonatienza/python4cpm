@@ -56,7 +56,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 from python4cpm import Python4CPMHandler
 
 
-class MyRotator(Python4CPMHandler): # create a subclass for the Handler
+class MyRotator(Python4CPMHandler):
     """
     These are the usable properties and methods from Python4CPMHandler:
 
@@ -112,63 +112,32 @@ class MyRotator(Python4CPMHandler): # create a subclass for the Handler
     When calling a signal sys.exit is invoked and the script is terminated.
     If no signal is called, and the script finishes without any exception,
     it will behave like p4cpm.close_fail(unrecoverable=True) and log an error message.
+
     =============================
+    REQUIRED METHODS
     =============================
+    verify(), logon(), change(), prereconcile(), reconcile()
     """
 
-    # =============================
-    # REQUIRED METHODS (MUST DEFINE)
-    # =============================
-    # verify(), logon(), change(), prereconcile(), reconcile()
-
     def verify(self):
-        self._verify()
-        self.log_info("verification successful")
+        # TODO: use account objects for your logic
         self.close_success()
 
     def logon(self):
+        # TODO: use account objects for your logic
         self.close_success()
 
     def change(self):
-        self._change()
-        self.log_error("something went wrong")
-        self.close_fail()
+        # TODO: use account objects for your logic
+        self.close_success()
 
     def prereconcile(self):
-        self._verify(from_reconcile=True)
+        # TODO: use account objects for your logic
         self.close_success()
 
     def reconcile(self):
-        self._change(from_reconcile=True)
+        # TODO: use account objects for your logic
         self.close_success()
-
-    def _verify(self, from_reconcile=False):
-        if from_reconcile is False:
-            pass
-            # TODO: use account objects for your logic
-        else:
-            pass
-            # TODO: use account objects for your logic
-        result = True
-        if result is True:
-            self.log_info("verification successful")
-        else:
-            self.log_error("something went wrong")
-            self.close_fail()
-
-    def _change(self, from_reconcile=False):
-        if from_reconcile is False:
-            pass
-            # TODO: use account objects for your logic
-        else:
-            pass
-            # TODO: use account objects for your logic
-        result = True
-        if result is True:
-            self.log_info("rotation successful")
-        else:
-            self.log_error("something went wrong")
-            self.close_fail()
 
 
 if __name__ == "__main__":
@@ -182,9 +151,9 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
     - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
 3. Reconcile -> the sciprt will be executed twice, running first the `MyRotator.prereconcile()` method and secondly the `MyRotator.reconcile()` method.
     - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-4. When calling `MyRotator.verify()`, `MyRotator.logon()` or `MyRotator.prereconcile()`: `self.target_account.new_password.get()` will always return an empty string.
-5. If a logon account is not linked, `self.logon_account.username` and `self.logon_account.password.get()` will return empty strings.
-6. If a reconcile account is not linked, `self.reconcile_account.username` and `self.reconcile_account.password.get()` will return empty strings.
+4. When calling `MyRotator.verify()`, `MyRotator.logon()` or `MyRotator.prereconcile()`: `self.target_account.new_password` will always return `None`.
+5. If a logon account is not linked, `self.logon_account` will return `None`.
+6. If a reconcile account is not linked, `self.reconcile_account` will return `None`.
 7. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on the name of the subclass created (e.g., `MyRotator`).
 
 
@@ -212,7 +181,7 @@ from python4cpm import NETHelper, Python4CPM, Python4CPMHandler
 from getpass import getpass
 
 # Get secrets for your password, logon account password, reconcile account password and new password
-# You can use an empty string if it does not apply
+# You may set to None any argument that does not apply or simply leaving it to its default None value.
 target_password = getpass("password: ") # password from account
 logon_password = getpass("logon_password: ") # password from linked logon account
 reconcile_password = getpass("reconcile_password: ") # password from linked reconcile account
@@ -260,5 +229,4 @@ MyRotator().run()
 
 - Remove the import of `NETHelper`.
 - Remove the `NETHelper.set()` call.
-- If applicable, change the definition of `p4cpm` from `p4cpm = NETHelper.get()` to `p4cpm = Python4CPM("MyApp")`.
 - Remove any secrets prompting or interactive interruptions.
