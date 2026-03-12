@@ -4,6 +4,11 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.3.1] - 2026-03-12
+
+### Added
+- `RequiresNewPassword` abstract property in .NET.
+
 ## [1.1.3] - 2026-03-11
 
 ### Modified
@@ -71,7 +76,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/f127687...HEAD
+[1.1.3.1]: https://github.com/gonatienza/python4cpm/compare/v1.1.3...f127687
 [1.1.3]: https://github.com/gonatienza/python4cpm/compare/2935b9e...v1.1.3
 [1.1.2.1]: https://github.com/gonatienza/python4cpm/compare/v1.1.2...2935b9e
 [1.1.2]: https://github.com/gonatienza/python4cpm/compare/v1.0.27...v1.1.2
