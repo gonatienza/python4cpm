@@ -13,16 +13,22 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
         }
 
-        override public CPMAction ActionName
+        protected override bool RequiresNewPassword
+        {
+            get { return true; }
+        }
+
+        public override CPMAction ActionName
         {
             get { return CPMAction.reconcilepass; }
         }
 
-        override public int run(ref PlatformOutput platformOutput)
+        public override int run(ref PlatformOutput platformOutput)
         {
             Logger.MethodStart();
-            Logger.WriteLine($"Running action: {Action}", LogLevel.INFO);
-            return RunAction(Action, ref platformOutput);
+            int rc = RunAction(Action, ref platformOutput);
+            Logger.MethodEnd();
+            return rc;
         }
     }
 }
