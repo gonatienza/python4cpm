@@ -39,6 +39,11 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
         }
 
+        protected abstract bool RequiresNewPassword
+        {
+            get;
+        }
+
         private string GetLoggingValue(object obj)
         {
             if (obj == null)
@@ -95,7 +100,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 LogonCurrentPassword = Crypto.Encrypt(LogOnAccount.CurrentPassword);
             if (ReconcileAccount?.CurrentPassword?.Length > 0)
                 ReconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
-            if (TargetAccount?.NewPassword?.Length > 0)
+            if (RequiresNewPassword && TargetAccount?.NewPassword?.Length > 0)
                 TargetNewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
             LogField(nameof(TargetUsername), TargetUsername);
             LogField(nameof(TargetAddress), TargetAddress);
@@ -165,6 +170,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 
         protected int RunAction(string action, ref PlatformOutput platformOutput)
         {
+            Logger.WriteLine($"Running action: {action}", LogLevel.INFO);
             try
             {
                 GetParams();
