@@ -29,7 +29,7 @@ jobs:
       - name: Copy build to framework
         run: |
           Copy-Item -Path "src\plugin\bin\Release\CyberArk.Extensions.Plugin.Python4CPM.dll" "_python4cpm\framework"
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v6
         with:
           python-version: 3.14
       - name: Install and test
