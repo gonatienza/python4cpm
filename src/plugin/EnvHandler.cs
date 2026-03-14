@@ -4,17 +4,44 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     public class EnvHandler
     {
-        private const string Action = "PYTHON4CPM_ARGS_ACTION";
-        private const string LoggingLevel = "PYTHON4CPM_ARGS_LOGGING_LEVEL";
-        private const string TargetUsername = "PYTHON4CPM_TARGET_USERNAME";
-        private const string TargetAddress = "PYTHON4CPM_TARGET_ADDRESS";
-        private const string TargetPort = "PYTHON4CPM_TARGET_PORT";
-        private const string LogonUsername = "PYTHON4CPM_LOGON_USERNAME";
-        private const string ReconcileUsername = "PYTHON4CPM_RECONCILE_USERNAME";
-        private const string TargetPassword = "PYTHON4CPM_TARGET_PASSWORD";
-        private const string LogonPassword = "PYTHON4CPM_LOGON_PASSWORD";
-        private const string ReconcilePassword = "PYTHON4CPM_RECONCILE_PASSWORD";
-        private const string TargetNewPassword = "PYTHON4CPM_TARGET_NEW_PASSWORD";
+        private const string Prefix = "python4cpm_";
+        private const string ArgsObjPrefix = "args_";
+        private const string TargetAccountObjPrefix = "target_";
+        private const string LogonAccountObjPrefix = "logon_";
+        private const string ReconcileAccountObjPrefix = "reconcile_";
+        private const string ActionKey = "action";
+        private const string LoggingLevelKey = "logging_level";
+        private const string UsernameKey = "username";
+        private const string AddressKey = "address";
+        private const string PortKey = "port";
+        private const string PasswordKey = "password";
+        private const string NewPasswordKey = "new_password";
+
+        private static string GetEnvKey(string objPrefix, string key)
+        {
+            string env_key = $"{Prefix}{objPrefix}{key}";
+            return env_key.ToUpper();
+        }
+
+        private static string GetArgsKey(string key)
+        {
+            return GetEnvKey(ArgsObjPrefix, key);
+        }
+
+        private static string GetTargetAccountKey(string key)
+        {
+            return GetEnvKey(TargetAccountObjPrefix, key);
+        }
+
+        private static string GetLogonAccountKey(string key)
+        {
+            return GetEnvKey(LogonAccountObjPrefix, key);
+        }
+
+        private static string GetReconcileAccountKey(string key)
+        {
+            return GetEnvKey(ReconcileAccountObjPrefix, key);
+        }
 
         public static Dictionary<string, string> GetArgs(
             string action,
@@ -26,19 +53,19 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             string pythonLoggingLevel)
         {
             var args = new Dictionary<string, string>();
-            args[Action] = action;
+            args[GetArgsKey(ActionKey)] = action;
             if (targetUsername != null)
-                args[TargetUsername] = targetUsername;
+                args[GetTargetAccountKey(UsernameKey)] = targetUsername;
             if (targetAddress != null)
-                args[TargetAddress] = targetAddress;
+                args[GetTargetAccountKey(AddressKey)] = targetAddress;
             if (targetPort != null)
-                args[TargetPort] = targetPort;
+                args[GetTargetAccountKey(PortKey)] = targetPort;
             if (logonUsername != null)
-                args[LogonUsername] = logonUsername;
+                args[GetLogonAccountKey(UsernameKey)] = logonUsername;
             if (reconcileUsername != null)
-                args[ReconcileUsername] = reconcileUsername;
+                args[GetReconcileAccountKey(UsernameKey)] = reconcileUsername;
             if (pythonLoggingLevel != null)
-                args[LoggingLevel] = pythonLoggingLevel;
+                args[GetArgsKey(LoggingLevelKey)] = pythonLoggingLevel;
             return args;
         }
 
@@ -50,13 +77,13 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
             var secrets = new Dictionary<string, EncryptedString>();
             if (targetCurrentPassword != null)
-                secrets[TargetPassword] = targetCurrentPassword;
+                secrets[GetTargetAccountKey(PasswordKey)] = targetCurrentPassword;
             if (logonCurrentPassword != null)
-                secrets[LogonPassword] = logonCurrentPassword;
+                secrets[GetLogonAccountKey(PasswordKey)] = logonCurrentPassword;
             if (reconcileCurrentPassword != null)
-                secrets[ReconcilePassword] = reconcileCurrentPassword;
+                secrets[GetReconcileAccountKey(PasswordKey)] = reconcileCurrentPassword;
             if (targetNewPassword != null)
-                secrets[TargetNewPassword] = targetNewPassword;
+                secrets[GetTargetAccountKey(NewPasswordKey)] = targetNewPassword;
             return secrets;
         }
     }
