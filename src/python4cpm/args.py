@@ -14,7 +14,7 @@ class Args(EnvHandler):
         self._logging_level = logging_level
 
     @property
-    def action(self) -> str:
+    def action(self) -> str | None:
         return self._action
 
     @property
