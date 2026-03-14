@@ -98,7 +98,7 @@ class MyRotator(Python4CPMHandler):
     =============================
     REQUIRED TERMINATION SIGNALS
     =============================
-    Termination signals -> MUST use one of the following three signals to terminate the script:
+    Terminate signals -> MUST use one of the following three signals to terminate the script:
 
         self.close_success()
         # terminate and provide CPM/SRS with a success state
