@@ -4,6 +4,11 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.3.2] - 2026-03-13
+
+### Added
+- `EnvHandler` enhancements in dotnet.
+
 ## [1.1.3.1] - 2026-03-12
 
 ### Added
@@ -11,7 +16,7 @@ Python4CPM Changelog
 
 ## [1.1.3] - 2026-03-11
 
-### Modified
+### Changed
 - Properties from `python4cpm.accounts.TargetAccount`, `python4cpm.accounts.LogonAccount`, `python4cpm.accounts.ReconcileAccount` and `python4cpm.args.Args` return `None` if not set instead of and empty string.
 - If all properties of either `python4cpm.accounts.TargetAccount`, `python4cpm.accounts.LogonAccount` or `python4cpm.accounts.ReconcileAccount` return None, the object itself returns None.
 
@@ -76,7 +81,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/f127687...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/9f647e8...HEAD
+[1.1.3.2]: https://github.com/gonatienza/python4cpm/compare/f127687...9f647e8
 [1.1.3.1]: https://github.com/gonatienza/python4cpm/compare/v1.1.3...f127687
 [1.1.3]: https://github.com/gonatienza/python4cpm/compare/2935b9e...v1.1.3
 [1.1.2.1]: https://github.com/gonatienza/python4cpm/compare/v1.1.2...2935b9e
