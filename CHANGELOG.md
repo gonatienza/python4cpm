@@ -7,7 +7,7 @@ Python4CPM Changelog
 ## [1.1.3.2] - 2026-03-13
 
 ### Added
-- `EnvHandler` enhancements in dotnet.
+- `EnvHandler` enhancements in .NET.
 
 ## [1.1.3.1] - 2026-03-12
 
