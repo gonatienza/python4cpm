@@ -160,9 +160,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             {
                 Logger.WriteLine(message, LogLevel.ERROR);
                 if (!string.IsNullOrWhiteSpace(stderr))
-                {
                     Logger.WriteLine($"StdErr Output: {stderr}", LogLevel.ERROR);
-                }
                 throw new PythonExecutionException(process.ExitCode);
             }
             Logger.WriteLine(message, LogLevel.INFO);
@@ -189,9 +187,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             catch (PythonExecutionException ex)
             {
                 if (ex.ExitCode == PythonCloseFailedRecoverable)
-                {
                     return HandleException(ex, false, ref platformOutput);
-                }
                 return HandleException(ex, true, ref platformOutput);
             }
             catch (Exception ex)
