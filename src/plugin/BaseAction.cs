@@ -15,9 +15,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string PropertiesUsername = "username";
         private const string PropertiesAddress = "address";
         private const string PropertiesPort = "port";
-        protected const int CloseSuccess = 0;
-        protected const int CloseFailedUnrecoverable = 8900;
-        protected const int CloseFailedRecoverable = 8100;
+        private const int CloseSuccess = 0;
+        private const int CloseFailedUnrecoverable = 8900;
+        private const int CloseFailedRecoverable = 8100;
         private const int PythonCloseSuccess = 10;
         public const int PythonCloseFailedUnrecoverable = 89;
         public const int PythonCloseFailedRecoverable = 81;
