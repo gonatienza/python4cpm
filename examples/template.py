@@ -3,27 +3,27 @@ from python4cpm import Python4CPMHandler
 
 class CredManager(Python4CPMHandler):
     """
-    Accounts:
-        self.target_account.username
-        self.target_account.address
-        self.target_account.port
-        self.target_account.password.get()
-        self.logon_account.username
-        self.logon_account.password.get()
-        self.reconcile_account.username
-        self.reconcile_account.password.get()
+    Properties:
+        target_account (TargetAccount): Account being managed.
+            .username (str): Account username.
+            .address (str): Target address.
+            .port (str): Target port.
+            .password (Secret): Current password. Call .get() to retrieve value.
+            .new_password (Secret): Replacement password. Call .get() to retrieve value.
 
-    Logging:
-        self.logger.critical("this is critical message")
-        self.logger.error("this is an error message")
-        self.logger.warning("this is a warning message")
-        self.logger.info("this is an info message")
-        self.logger.debug("this is a debug message")
+        logon_account (LogonAccount): Linked Logon Account.
+            .username (str): Account username.
+            .password (Secret): Logon password. Call .get() to retrieve value.
 
-    Termination signals:
-        self.close_success()
-        self.close_fail()
-        self.close_fail(unrecoverable=True)
+        reconcile_account (ReconcileAccount): Linked Reconcile Account.
+            .username (str): Account username.
+            .password (Secret): Reconcile password. Call .get() to retrieve value.
+
+        logger (logging.Logger): Logger instance.
+
+    Methods:
+        close_success(): Signal successful completion and terminate.
+        close_fail(): Signal failed completion and terminate.
     """
 
     def verify(self):
@@ -31,19 +31,19 @@ class CredManager(Python4CPMHandler):
         self.close_success()
 
     def logon(self):
-        # TODO: add verify logic
+        # TODO: add logon logic
         self.close_success()
 
     def change(self):
-        # TODO: add verify logic
+        # TODO: add change logic
         self.close_success()
 
     def prereconcile(self):
-        # TODO: add verify logic
+        # TODO: add prereconcile logic
         self.close_success()
 
     def reconcile(self):
-        # TODO: add verify logic
+        # TODO: add reconcile logic
         self.close_success()
 
 
