@@ -110,12 +110,13 @@ def test_python4cpm_dll_returns(python_path, script, action):
         assert result.returncode == FAILED_UNRECOVERABLE_CODE # noqa: S101
 
 
-def test_python4cpm_dll_env_mappings():
-    action = Python4CPM.ACTION_CHANGE
+@pytest.mark.parametrize("action", ACTIONS)
+def test_python4cpm_dll_env_mappings(action, monkeypatch):
     script = os.path.join(_SCRIPTS_PATH, "assert_env_mappings.py")
     LOGGER.info(f"action -> {action}")
     LOGGER.info(f"script -> {script}")
     config = get_config_from_ini()
+    monkeypatch.setenv("PYTHON4CPM_PYTEST_ACTION", action)
     config.set("extrainfo", "PythonExePath", PYTHON_PATHS[0])
     config.set("extrainfo", "PythonScriptPath", script)
     buffer = StringIO()

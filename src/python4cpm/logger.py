@@ -17,18 +17,18 @@ class Logger:
     @classmethod
     def get_logger(
         cls,
-        name: str,
+        policy_id: str | None,
         logging_level: str | None
     ) -> logging.Logger:
         os.makedirs(cls._LOGS_DIR, exist_ok=True)
-        logs_file = os.path.join(cls._LOGS_DIR, f"{__name__}-{name}.log")
-        _id = os.urandom(4).hex()
-        logger = logging.getLogger(_id)
+        uid = os.urandom(4).hex()
+        logger = logging.getLogger(uid)
         is_logging_level_str = isinstance(logging_level, str)
         if is_logging_level_str and logging_level.lower() in cls._LOGGING_LEVELS:
             logger.setLevel(cls._LOGGING_LEVELS[logging_level.lower()])
         else:
             logger.setLevel(cls._DEFAULT_LEVEL)
+        logs_file = os.path.join(cls._LOGS_DIR, f"{__name__}-{policy_id}.log")
         handler = RotatingFileHandler(
             filename=logs_file,
             maxBytes=1024 ** 2,

@@ -24,13 +24,15 @@ class Python4CPM:
     _FAILED_RECOVERABLE_CODE = 81
     _FAILED_UNRECOVERABLE_CODE = 89
 
-    def __init__(self, name: str) -> None:
-        self._name = name
+    def __init__(self) -> None:
         self._args = Args.get()
         self._target_account = TargetAccount.get()
         self._logon_account = LogonAccount.get()
         self._reconcile_account = ReconcileAccount.get()
-        self._logger = Logger.get_logger(self._name, self._args.logging_level)
+        self._logger = Logger.get_logger(
+            self._target_account.policy_id,
+            self._args.logging_level
+        )
         self._logger.debug("Initiating...")
         self._log_obj(self._args)
         self._verify_action()

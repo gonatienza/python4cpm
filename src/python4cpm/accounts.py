@@ -31,10 +31,18 @@ class BaseAccount(EnvHandler):
 
 class TargetAccount(BaseAccount):
     OBJ_PREFIX = "target_"
-    PROPS = Props("username", "password", "address", "port", "new_password")
+    PROPS = Props(
+        "policy_id",
+        "username",
+        "password",
+        "address",
+        "port",
+        "new_password"
+    )
 
     def __init__(
         self,
+        policy_id: str | None,
         username: str | None,
         password: str | None,
         address: str | None,
@@ -45,9 +53,14 @@ class TargetAccount(BaseAccount):
             username,
             password
         )
+        self._policy_id = policy_id
         self._address = address
         self._port = port
         self._new_password = Secret.from_env_var(new_password)
+
+    @property
+    def policy_id(self) -> str | None:
+        return self._policy_id
 
     @property
     def address(self) -> str | None:

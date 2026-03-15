@@ -1,7 +1,7 @@
 from python4cpm import Python4CPMHandler
 
 
-class MyRotator(Python4CPMHandler):
+class CredManager(Python4CPMHandler):
     """
     Accounts:
         self.target_account.username
@@ -48,4 +48,4 @@ class MyRotator(Python4CPMHandler):
 
 
 if __name__ == "__main__":
-    MyRotator().run()
+    CredManager().run()
