@@ -61,6 +61,7 @@ class CredManager(Python4CPMHandler):
     Properties:
         target_account (TargetAccount): Account being managed.
             .policy_id (str): Platform name.
+            .object_name (str): Account name.
             .username (str): Account username.
             .address (str): Target address.
             .port (str): Target port.
@@ -133,7 +134,7 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 6. If a reconcile account is not linked, `reconcile_account` will return `None`.
 7. Always use the `close_success` or `close_fail` methods to signal the proper termination for all actions.
     - If any action is not terminated with a termination method, CPM/SRS will see this as a `close_fail(unrecoverable=True)`, even if no exceptions are raised.
-8. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on `target_account.policy_id`.
+8. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on `target_account.policy_id` and `target_account.object_name`.
 
 
 ### Installing dependencies in python venv
@@ -162,6 +163,7 @@ NETHelper.set(
     action=Python4CPM.ACTION_CHANGE, # use actions from Python4CPM.ACTION_*
     logging_level="debug",
     target_policy_id="NETHelper",
+    target_object_name="Objectname",
     target_username="jdoe",
     target_address="myapp.corp.local",
     target_port="8443",

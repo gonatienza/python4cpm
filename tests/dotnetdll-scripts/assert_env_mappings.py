@@ -30,6 +30,7 @@ try:
         (p4cpm.args.action, action),
         (p4cpm.args.logging_level, config["extrainfo"]["PythonLoggingLevel"]),
         (p4cpm.target_account.policy_id, config["DEFAULT"]["PolicyID"]),
+        (p4cpm.target_account.object_name, config["DEFAULT"]["objectname"]),
         (p4cpm.target_account.username, config["DEFAULT"]["username"]),
         (p4cpm.target_account.address, config["DEFAULT"]["address"]),
         (p4cpm.target_account.port, config["DEFAULT"]["port"]),
@@ -53,7 +54,7 @@ try:
         if p4cpm.target_account.new_password is not None:
             LOGGER.error("target_account.new_password is not None")
             raise AssertionError
-        LOGGER.info(f"Asserted '{p4cpm.target_account.new_password}' is not 'None'")
+        LOGGER.info(f"Asserted '{p4cpm.target_account.new_password}' is 'None'")
     p4cpm.close_success()
 except Exception as e:
     LOGGER.error(f"{type(e).__name__}: {e}")
