@@ -60,16 +60,9 @@ class CredManager(Python4CPMHandler):
     """
     These are the usable properties and methods from Python4CPMHandler:
 
-        self.args.action
-        # action requested from CPM/SRS
-
         ## Target Account
-
-        self.target_account.policy_id
-        # policy id from account
-
         self.target_account.username
-        # address from account
+        # username from account
 
         self.target_account.address
         # address from account
