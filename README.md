@@ -58,80 +58,62 @@ from python4cpm import Python4CPMHandler
 
 class CredManager(Python4CPMHandler):
     """
-    These are the usable properties and methods from Python4CPMHandler:
+    Properties:
+        target_account (TargetAccount): Account being managed.
+            .username (str): Account username.
+            .address (str): Target address.
+            .port (str): Target port.
+            .password (Secret): Current password. Call .get() to retrieve value.
+            .new_password (Secret): Replacement password. Call .get() to retrieve value.
 
-        ## Target Account
-        self.target_account.username
-        # username from account
+        logon_account (LogonAccount): Linked Logon Account.
+            .username (str): Account username.
+            .password (Secret): Logon password. Call .get() to retrieve value.
 
-        self.target_account.address
-        # address from account
+        reconcile_account (ReconcileAccount): Linked Reconcile Account.
+            .username (str): Account username.
+            .password (Secret): Reconcile password. Call .get() to retrieve value.
 
-        self.target_account.port
-        # port from account
+        logger (logging.Logger): Logger instance.
 
-        self.target_account.password.get()
-        # get plaintext str from password object
-
-        ## Logon Account
-        self.logon_account.username
-        self.logon_account.password.get()
-
-        ## Reconcile Account
-        self.reconcile_account.username
-        self.reconcile_account.password.get()
-
-        ## Logging
-
-        self.logger.critical("this is critical message")
-        self.logger.error("this is an error message")
-        self.logger.warning("this is a warning message")
-        self.logger.info("this is an info message")
-        self.logger.debug("this is a debug message")
-
-        # The logging level comes from PythonLoggingLevel (platform parameters) (default is error)
-
-    =============================
-    REQUIRED TERMINATION SIGNALS
-    =============================
-    Termination signals -> MUST use one of the following three signals to terminate the script:
-
-        self.close_success()
-        # terminate and provide CPM/SRS with a success state
-
-        self.close_fail()
-        # terminate and provide CPM/SRS with a failed recoverable state
-        
-        self.close_fail(unrecoverable=True)
-        # terminate and provide CPM/SRS with a failed unrecoverable state
-
-    When calling a signal sys.exit is invoked and the script is terminated.
-    If no signal is called, and the script finishes without any exception,
-    it will behave like p4cpm.close_fail(unrecoverable=True) and log an error message.
-
-    =============================
-    REQUIRED METHODS
-    =============================
-    verify(), logon(), change(), prereconcile(), reconcile()
+    Methods:
+        close_success(): Signal successful completion and terminate.
+        close_fail(): Signal failed completion and terminate.
     """
 
+
     def verify(self):
+        """
+        REQUIRED METHOD
+        """
         # TODO: use account objects for your logic
         self.close_success()
 
     def logon(self):
+        """
+        REQUIRED METHOD
+        """
         # TODO: use account objects for your logic
         self.close_success()
 
     def change(self):
+        """
+        REQUIRED METHOD
+        """
         # TODO: use account objects for your logic
         self.close_success()
 
     def prereconcile(self):
+        """
+        REQUIRED METHOD
+        """
         # TODO: use account objects for your logic
         self.close_success()
 
     def reconcile(self):
+        """
+        REQUIRED METHOD
+        """
         # TODO: use account objects for your logic
         self.close_success()
 
@@ -142,15 +124,15 @@ if __name__ == "__main__":
 (*) More realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples).
 
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
-1. Verify -> the sciprt will be executed once running the `self.verify()` method.
-2. Change -> the sciprt will be executed twice, running first the `self.logon()` method and secondly the `self.change()` method.
-    - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-3. Reconcile -> the sciprt will be executed twice, running first the `self.prereconcile()` method and secondly the `self.reconcile()` method.
-    - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-4. When calling `self.verify()`, `self.logon()` or `self.prereconcile()`: `self.target_account.new_password` will always return `None`.
-5. If a logon account is not linked, `self.logon_account` will return `None`.
-6. If a reconcile account is not linked, `self.reconcile_account` will return `None`.
-7. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on `self.target_account.policy_id`.
+1. Verify -> the script will be executed once running the `verify()` method.
+2. Change -> the script will be executed twice: first `logon()`, then `change()`.
+3. Reconcile -> the script will be executed twice: first `prereconcile()`, then `reconcile()`.
+4. When calling `verify()`, `logon()` or `prereconcile()`: `target_account.new_password` will always return `None`.
+5. If a logon account is not linked, `logon_account` will return `None`.
+6. If a reconcile account is not linked, `reconcile_account` will return `None`.
+7. Always use the `close_success` or `close_fail` methods to signal the proper termination for all actions.
+    - If any action is not terminated with a termination method, CPM/SRS will see this as a `close_fail(unrecoverable=True)`, even if no exceptions are raised.
+8. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on `target_account.policy_id`.
 
 
 ### Installing dependencies in python venv
