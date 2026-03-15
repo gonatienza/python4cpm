@@ -12,23 +12,23 @@ class Logger:
         "info": logging.INFO,
         "debug": logging.DEBUG
     }
-    _DEFAULT_LEVEL = _LOGGING_LEVELS["error"]
+    _DEFAULT_LEVEL = "error"
 
     @classmethod
     def get_logger(
         cls,
-        policy_id: str | None,
+        name: str,
         logging_level: str | None
     ) -> logging.Logger:
         os.makedirs(cls._LOGS_DIR, exist_ok=True)
         uid = os.urandom(4).hex()
         logger = logging.getLogger(uid)
-        is_logging_level_str = isinstance(logging_level, str)
-        if is_logging_level_str and logging_level.lower() in cls._LOGGING_LEVELS:
-            logger.setLevel(cls._LOGGING_LEVELS[logging_level.lower()])
-        else:
-            logger.setLevel(cls._DEFAULT_LEVEL)
-        logs_file = os.path.join(cls._LOGS_DIR, f"{__name__}-{policy_id}.log")
+        _logging_level = logging_level.lower()
+        if _logging_level not in cls._LOGGING_LEVELS:
+            _logging_level = cls._DEFAULT_LEVEL
+        logger.setLevel(cls._LOGGING_LEVELS[_logging_level])
+        file_name = f"{__name__}_{_logging_level}_{name}.log"
+        logs_file = os.path.join(cls._LOGS_DIR, file_name)
         handler = RotatingFileHandler(
             filename=logs_file,
             maxBytes=1024 ** 2,

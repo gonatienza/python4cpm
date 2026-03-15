@@ -8,9 +8,10 @@ Python4CPM Changelog
 
 ### Added
 - `python4cpm.accounts.TargetAccount.policy_id` prorperty.
+- `python4cpm.accounts.TargetAccount.object_name` prorperty.
 
 ### Changed
-- `Python4CPM` logger file naming convention is now based on the `python4cpm.accounts.TargetAccount.policy_id` prorperty.
+- `Python4CPM` logger file naming convention is now based on the the properties `python4cpm.accounts.TargetAccount.policy_id` and `python4cpm.accounts.TargetAccount.object_name`.
 
 ## [1.1.3.2] - 2026-03-13
 

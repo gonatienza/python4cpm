@@ -30,7 +30,7 @@ class Python4CPM:
         self._logon_account = LogonAccount.get()
         self._reconcile_account = ReconcileAccount.get()
         self._logger = Logger.get_logger(
-            self._target_account.policy_id,
+            f"{self._target_account.policy_id}-{self._target_account.object_name}",
             self._args.logging_level
         )
         self._logger.debug("Initiating...")

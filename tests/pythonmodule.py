@@ -94,6 +94,7 @@ def test_main(action, logging_level,  monkeypatch):
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
     assert p4cpm.target_account.policy_id == ENV["PYTHON4CPM_TARGET_POLICY_ID"] # noqa: S101
+    assert p4cpm.target_account.object_name == ENV["PYTHON4CPM_TARGET_OBJECT_NAME"] # noqa: S101
     assert p4cpm.target_account.username == ENV["PYTHON4CPM_TARGET_USERNAME"] # noqa: S101
     assert p4cpm.target_account.address == ENV["PYTHON4CPM_TARGET_ADDRESS"] # noqa: S101
     assert p4cpm.target_account.port == ENV["PYTHON4CPM_TARGET_PORT"] # noqa: S101
@@ -110,7 +111,7 @@ def test_main(action, logging_level,  monkeypatch):
     if logging_level.lower() == LOGGING_LEVELS[1]:
         assert p4cpm._logger.level == Logger._LOGGING_LEVELS[LOGGING_LEVELS[1]] # noqa: S101
     else:
-        assert p4cpm._logger.level == Logger._DEFAULT_LEVEL # noqa: S101
+        assert p4cpm._logger.level == Logger._LOGGING_LEVELS[Logger._DEFAULT_LEVEL] # noqa: S101
     with pytest.raises(SystemExit) as e:
         p4cpm.close_success() # avoiding stderr output
     assert e.value.code == CLOSE_CODES[0] # noqa: S101
@@ -204,6 +205,7 @@ def test_net_helper():
     NETHelper.set(
         action=action,
         target_policy_id=ENV["PYTHON4CPM_TARGET_POLICY_ID"],
+        target_object_name=ENV["PYTHON4CPM_TARGET_OBJECT_NAME"],
         target_address=ENV["PYTHON4CPM_TARGET_ADDRESS"],
         target_username=ENV["PYTHON4CPM_TARGET_USERNAME"],
         target_port=ENV["PYTHON4CPM_TARGET_PORT"],
@@ -220,6 +222,7 @@ def test_net_helper():
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
     assert p4cpm.target_account.policy_id == ENV["PYTHON4CPM_TARGET_POLICY_ID"] # noqa: S101
+    assert p4cpm.target_account.object_name == ENV["PYTHON4CPM_TARGET_OBJECT_NAME"] # noqa: S101
     assert p4cpm.target_account.username == ENV["PYTHON4CPM_TARGET_USERNAME"] # noqa: S101
     assert p4cpm.target_account.address == ENV["PYTHON4CPM_TARGET_ADDRESS"] # noqa: S101
     assert p4cpm.target_account.port == ENV["PYTHON4CPM_TARGET_PORT"] # noqa: S101

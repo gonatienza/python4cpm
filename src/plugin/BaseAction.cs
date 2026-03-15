@@ -13,6 +13,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string ParamsPythonScriptPath = "PythonScriptPath";
         private const string ParamsPythonLoggingLevel = "PythonLoggingLevel";
         private const string PropertiesPolicyId = "policyid";
+        private const string PropertiesObjectName = "objectname";
         private const string PropertiesUsername = "username";
         private const string PropertiesAddress = "address";
         private const string PropertiesPort = "port";
@@ -26,6 +27,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private string PythonScriptPath;
         private string PythonLoggingLevel;
         private string TargetPolicyId;
+        private string TargetObjectName;
         private string TargetUsername;
         private string TargetAddress;
         private string TargetPort;
@@ -88,6 +90,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
             if (TargetAccount?.AccountProp?.ContainsKey(PropertiesPolicyId) == true)
                 TargetPolicyId = TargetAccount.AccountProp[PropertiesPolicyId];
+            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesObjectName) == true)
+                TargetObjectName = TargetAccount.AccountProp[PropertiesObjectName];
             if (TargetAccount?.AccountProp?.ContainsKey(PropertiesUsername) == true)
                 TargetUsername = TargetAccount.AccountProp[PropertiesUsername];
             if (TargetAccount?.AccountProp?.ContainsKey(PropertiesAddress) == true)
@@ -107,6 +111,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             if (RequiresNewPassword && TargetAccount?.NewPassword?.Length > 0)
                 TargetNewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
             LogField(nameof(TargetPolicyId), TargetPolicyId);
+            LogField(nameof(TargetObjectName), TargetObjectName);
             LogField(nameof(TargetUsername), TargetUsername);
             LogField(nameof(TargetAddress), TargetAddress);
             LogField(nameof(TargetPort), TargetPort);
@@ -123,6 +128,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             var args = EnvHandler.GetArgs(
                 action,
                 TargetPolicyId,
+                TargetObjectName,
                 TargetUsername,
                 TargetAddress,
                 TargetPort,
