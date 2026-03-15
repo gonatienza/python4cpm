@@ -4,7 +4,7 @@ from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
 from python4cpm.secret import Secret
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
-from python4cpm.nethelper import NETHelper
+from python4cpm.devhelper import DevHelper
 from python4cpm.logger import Logger
 import json
 import pytest
@@ -95,6 +95,7 @@ def test_main(action, logging_level,  monkeypatch):
     assert p4cpm.args.logging_level == logging_level # noqa: S101
     assert p4cpm.target_account.policy_id == ENV["PYTHON4CPM_TARGET_POLICY_ID"] # noqa: S101
     assert p4cpm.target_account.object_name == ENV["PYTHON4CPM_TARGET_OBJECT_NAME"] # noqa: S101
+    assert p4cpm.target_account.safe_name == ENV["PYTHON4CPM_TARGET_SAFE_NAME"] # noqa: S101
     assert p4cpm.target_account.username == ENV["PYTHON4CPM_TARGET_USERNAME"] # noqa: S101
     assert p4cpm.target_account.address == ENV["PYTHON4CPM_TARGET_ADDRESS"] # noqa: S101
     assert p4cpm.target_account.port == ENV["PYTHON4CPM_TARGET_PORT"] # noqa: S101
@@ -202,9 +203,10 @@ def test_on_exit_stderr(monkeypatch, capsys):
 def test_net_helper():
     action = Python4CPM.ACTION_CHANGE
     logging_level = LOGGING_LEVELS[1]
-    NETHelper.set(
+    DevHelper.set(
         action=action,
         target_policy_id=ENV["PYTHON4CPM_TARGET_POLICY_ID"],
+        target_safe_name=ENV["PYTHON4CPM_TARGET_SAFE_NAME"],
         target_object_name=ENV["PYTHON4CPM_TARGET_OBJECT_NAME"],
         target_address=ENV["PYTHON4CPM_TARGET_ADDRESS"],
         target_username=ENV["PYTHON4CPM_TARGET_USERNAME"],
@@ -217,11 +219,12 @@ def test_net_helper():
         reconcile_password=ENV["PYTHON4CPM_RECONCILE_PASSWORD"],
         target_new_password=ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"]
     )
-    p4cpm = NETHelper.get()
+    p4cpm = Python4CPM()
     assert isinstance(p4cpm, Python4CPM) # noqa: S101
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
     assert p4cpm.target_account.policy_id == ENV["PYTHON4CPM_TARGET_POLICY_ID"] # noqa: S101
+    assert p4cpm.target_account.safe_name == ENV["PYTHON4CPM_TARGET_SAFE_NAME"] # noqa: S101
     assert p4cpm.target_account.object_name == ENV["PYTHON4CPM_TARGET_OBJECT_NAME"] # noqa: S101
     assert p4cpm.target_account.username == ENV["PYTHON4CPM_TARGET_USERNAME"] # noqa: S101
     assert p4cpm.target_account.address == ENV["PYTHON4CPM_TARGET_ADDRESS"] # noqa: S101

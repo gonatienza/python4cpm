@@ -33,6 +33,7 @@ class TargetAccount(BaseAccount):
     OBJ_PREFIX = "target_"
     PROPS = Props(
         "policy_id",
+        "safe_name",
         "object_name",
         "username",
         "password",
@@ -44,6 +45,7 @@ class TargetAccount(BaseAccount):
     def __init__(
         self,
         policy_id: str | None,
+        safe_name: str | None,
         object_name: str | None,
         username: str | None,
         password: str | None,
@@ -56,6 +58,7 @@ class TargetAccount(BaseAccount):
             password
         )
         self._policy_id = policy_id
+        self._safe_name = safe_name
         self._object_name = object_name
         self._address = address
         self._port = port
@@ -64,6 +67,10 @@ class TargetAccount(BaseAccount):
     @property
     def policy_id(self) -> str | None:
         return self._policy_id
+
+    @property
+    def safe_name(self) -> str | None:
+        return self._safe_name
 
     @property
     def object_name(self) -> str | None:

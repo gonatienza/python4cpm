@@ -29,10 +29,7 @@ class Python4CPM:
         self._target_account = TargetAccount.get()
         self._logon_account = LogonAccount.get()
         self._reconcile_account = ReconcileAccount.get()
-        self._logger = Logger.get_logger(
-            f"{self._target_account.policy_id}-{self._target_account.object_name}",
-            self._args.logging_level
-        )
+        self._logger = self._get_logger()
         self._logger.debug("Initiating...")
         self._log_obj(self._args)
         self._verify_action()
@@ -61,6 +58,15 @@ class Python4CPM:
     @property
     def reconcile_account(self) -> ReconcileAccount:
         return self._reconcile_account
+
+    def _get_logger(self) -> logging.Logger:
+        name_parts = (
+            self._target_account.policy_id,
+            self._target_account.safe_name,
+            self._target_account.object_name
+        )
+        name = "-".join(name_parts)
+        return Logger.get_logger(name, self._args.logging_level)
 
     def _verify_action(self) -> None:
         if self._args.action not in self._VALID_ACTIONS:

@@ -12,16 +12,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             : base(accountList, logger)
         {
         }
+        protected override bool RequiresNewPassword => true;
 
-        protected override bool RequiresNewPassword
-        {
-            get { return true; }
-        }
-
-        public override CPMAction ActionName
-        {
-            get { return CPMAction.reconcilepass; }
-        }
+        public override CPMAction ActionName => CPMAction.reconcilepass;
 
         public override int run(ref PlatformOutput platformOutput)
         {

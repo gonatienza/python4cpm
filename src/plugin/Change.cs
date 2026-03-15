@@ -13,15 +13,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
         }
 
-        protected override bool RequiresNewPassword
-        {
-            get { return true; }
-        }
+        protected override bool RequiresNewPassword => true;
 
-        public override CPMAction ActionName
-        {
-            get { return CPMAction.changepass; }
-        }
+        public override CPMAction ActionName => CPMAction.changepass;
 
         public override int run(ref PlatformOutput platformOutput)
         {

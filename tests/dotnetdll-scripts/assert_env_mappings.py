@@ -30,6 +30,7 @@ try:
         (p4cpm.args.action, action),
         (p4cpm.args.logging_level, config["extrainfo"]["PythonLoggingLevel"]),
         (p4cpm.target_account.policy_id, config["DEFAULT"]["PolicyID"]),
+        (p4cpm.target_account.safe_name, config["DEFAULT"]["safename"]),
         (p4cpm.target_account.object_name, config["DEFAULT"]["objectname"]),
         (p4cpm.target_account.username, config["DEFAULT"]["username"]),
         (p4cpm.target_account.address, config["DEFAULT"]["address"]),
