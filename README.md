@@ -60,6 +60,7 @@ class CredManager(Python4CPMHandler):
     """
     Properties:
         target_account (TargetAccount): Account being managed.
+            .policy_id (str): Platform name.
             .username (str): Account username.
             .address (str): Target address.
             .port (str): Target port.
@@ -156,28 +157,20 @@ For dev purposes, `NETHelper` is a companion helper to test your scripts without
 
 ```python
 from python4cpm import NETHelper, Python4CPM, Python4CPMHandler
-from getpass import getpass
-
-# Get secrets for your password, logon account password, reconcile account password and new password
-# You may set to None any argument that does not apply or simply leaving it to its default None value.
-target_password = getpass("password: ") # password from account
-logon_password = getpass("logon_password: ") # password from linked logon account
-reconcile_password = getpass("reconcile_password: ") # password from linked reconcile account
-target_new_password = getpass("new_password: ") # new password for the rotation
 
 NETHelper.set(
     action=Python4CPM.ACTION_CHANGE, # use actions from Python4CPM.ACTION_*
-    logging_level="debug", # "critical", "error", "warning", "info" or "debug"
-    target_policy_id="NETHelper", # -> will fall under CredManager.target_account.policy_id
-    target_username="jdoe", # -> will fall under CredManager.target_account.username
-    target_address="myapp.corp.local", # -> will fall under CredManager.target_account.address
-    target_port="8443", # -> will fall under CredManager.target_account.port
-    logon_username="ldoe", # -> will fall under CredManager.logon_account.username
-    reconcile_username="rdoe", # -> will fall under CredManager.reconcile_account.username
-    target_password=target_password, # -> will fall under CredManager.target_account.password.get()
-    logon_password=logon_password, # -> will fall under CredManager.logon_account.password.get()
-    reconcile_password=reconcile_password, # -> will fall under CredManager.reconcile_account.password.get()
-    target_new_password=target_new_password # -> will fall under CredManager.target_account.new_password.get()
+    logging_level="debug",
+    target_policy_id="NETHelper",
+    target_username="jdoe",
+    target_address="myapp.corp.local",
+    target_port="8443",
+    logon_username="ldoe",
+    reconcile_username="rdoe",
+    target_password="", # str value of target password 
+    logon_password="", # str value of logon password
+    reconcile_password="", # str value of reconcile password
+    target_new_password="" # str value of new password
 )
 
 class CredManager(Python4CPMHandler):
@@ -208,4 +201,3 @@ CredManager().run()
 
 - Remove the import of `NETHelper`.
 - Remove the `NETHelper.set()` call.
-- Remove any secrets prompting or interactive interruptions.
