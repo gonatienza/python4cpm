@@ -82,7 +82,7 @@ def test_main(action, logging_level,  monkeypatch):
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM(test_main.__name__)
+    p4cpm = Python4CPM()
     for k, v in vars(p4cpm.args).items():
         LOGGER.info(f"{k} -> {v}")
     accounts = (p4cpm.target_account, p4cpm.logon_account, p4cpm.reconcile_account)
@@ -93,6 +93,7 @@ def test_main(action, logging_level,  monkeypatch):
             LOGGER.info(f"{k} -> {v}")
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
+    assert p4cpm.target_account.policy_id == ENV["PYTHON4CPM_TARGET_POLICY_ID"] # noqa: S101
     assert p4cpm.target_account.username == ENV["PYTHON4CPM_TARGET_USERNAME"] # noqa: S101
     assert p4cpm.target_account.address == ENV["PYTHON4CPM_TARGET_ADDRESS"] # noqa: S101
     assert p4cpm.target_account.port == ENV["PYTHON4CPM_TARGET_PORT"] # noqa: S101
@@ -129,7 +130,7 @@ def test_no_logon_account(monkeypatch):
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM(test_no_logon_account.__name__)
+    p4cpm = Python4CPM()
     assert p4cpm.logon_account is None # noqa: S101
 
 
@@ -143,7 +144,7 @@ def test_no_reconcile_account(monkeypatch):
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM(test_no_reconcile_account.__name__)
+    p4cpm = Python4CPM()
     assert p4cpm.reconcile_account is None # noqa: S101
 
 
@@ -168,7 +169,7 @@ def test_exit_codes(close, monkeypatch, capsys):
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM(test_exit_codes.__name__)
+    p4cpm = Python4CPM()
     if close == CLOSE_CODES[0]:
         with pytest.raises(SystemExit) as e:
             p4cpm.close_success()
@@ -191,7 +192,7 @@ def test_on_exit_stderr(monkeypatch, capsys):
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM(test_on_exit_stderr.__name__)
+    p4cpm = Python4CPM()
     p4cpm._on_exit()
     captured = capsys.readouterr()
     assert captured.err != "" # noqa: S101
@@ -202,6 +203,7 @@ def test_net_helper():
     logging_level = LOGGING_LEVELS[1]
     NETHelper.set(
         action=action,
+        target_policy_id=ENV["PYTHON4CPM_TARGET_POLICY_ID"],
         target_address=ENV["PYTHON4CPM_TARGET_ADDRESS"],
         target_username=ENV["PYTHON4CPM_TARGET_USERNAME"],
         target_port=ENV["PYTHON4CPM_TARGET_PORT"],
@@ -217,6 +219,7 @@ def test_net_helper():
     assert isinstance(p4cpm, Python4CPM) # noqa: S101
     assert p4cpm.args.action == action # noqa: S101
     assert p4cpm.args.logging_level == logging_level # noqa: S101
+    assert p4cpm.target_account.policy_id == ENV["PYTHON4CPM_TARGET_POLICY_ID"] # noqa: S101
     assert p4cpm.target_account.username == ENV["PYTHON4CPM_TARGET_USERNAME"] # noqa: S101
     assert p4cpm.target_account.address == ENV["PYTHON4CPM_TARGET_ADDRESS"] # noqa: S101
     assert p4cpm.target_account.port == ENV["PYTHON4CPM_TARGET_PORT"] # noqa: S101

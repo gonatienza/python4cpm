@@ -56,7 +56,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 from python4cpm import Python4CPMHandler
 
 
-class MyRotator(Python4CPMHandler):
+class CredManager(Python4CPMHandler):
     """
     These are the usable properties and methods from Python4CPMHandler:
 
@@ -64,6 +64,9 @@ class MyRotator(Python4CPMHandler):
         # action requested from CPM/SRS
 
         ## Target Account
+
+        self.target_account.policy_id
+        # policy id from account
 
         self.target_account.username
         # address from account
@@ -141,20 +144,20 @@ class MyRotator(Python4CPMHandler):
 
 
 if __name__ == "__main__":
-    MyRotator().run() # initializes the class and calls the action that was requested from CPM/SRS.
+    CredManager().run() # initializes the class and calls the action that was requested from CPM/SRS.
 ```
 (*) More realistic examples can be found [here](https://github.com/gonatienza/python4cpm/blob/main/examples).
 
 When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
-1. Verify -> the sciprt will be executed once running the `MyRotator.verify()` method.
-2. Change -> the sciprt will be executed twice, running first the `MyRotator.logon()` method and secondly the `MyRotator.change()` method.
+1. Verify -> the sciprt will be executed once running the `self.verify()` method.
+2. Change -> the sciprt will be executed twice, running first the `self.logon()` method and secondly the `self.change()` method.
     - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-3. Reconcile -> the sciprt will be executed twice, running first the `MyRotator.prereconcile()` method and secondly the `MyRotator.reconcile()` method.
+3. Reconcile -> the sciprt will be executed twice, running first the `self.prereconcile()` method and secondly the `self.reconcile()` method.
     - If both actions are not terminated with `self.close_success()` and the scripts terminates without any exception, CPM/SRS will see this as a `self.close_fail(unrecoverable=True)`.
-4. When calling `MyRotator.verify()`, `MyRotator.logon()` or `MyRotator.prereconcile()`: `self.target_account.new_password` will always return `None`.
+4. When calling `self.verify()`, `self.logon()` or `self.prereconcile()`: `self.target_account.new_password` will always return `None`.
 5. If a logon account is not linked, `self.logon_account` will return `None`.
 6. If a reconcile account is not linked, `self.reconcile_account` will return `None`.
-7. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on the name of the subclass created (e.g., `MyRotator`).
+7. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on `self.target_account.policy_id`.
 
 
 ### Installing dependencies in python venv
@@ -189,19 +192,20 @@ target_new_password = getpass("new_password: ") # new password for the rotation
 
 NETHelper.set(
     action=Python4CPM.ACTION_CHANGE, # use actions from Python4CPM.ACTION_*
-    target_username="jdoe", # -> will fall under MyRotator.target_account.username
-    target_address="myapp.corp.local", # -> will fall under MyRotator.target_account.address
-    target_port="8443", # -> will fall under MyRotator.target_account.port
-    logon_username="ldoe", # -> will fall under MyRotator.logon_account.username
-    reconcile_username="rdoe", # -> will fall under MyRotator.reconcile_account.username
     logging_level="debug", # "critical", "error", "warning", "info" or "debug"
-    target_password=target_password, # -> will fall under MyRotator.target_account.password.get()
-    logon_password=logon_password, # -> will fall under MyRotator.logon_account.password.get()
-    reconcile_password=reconcile_password, # -> will fall under MyRotator.reconcile_account.password.get()
-    target_new_password=target_new_password # -> will fall under MyRotator.target_account.new_password.get()
+    target_policy_id="NETHelper", # -> will fall under CredManager.target_account.policy_id
+    target_username="jdoe", # -> will fall under CredManager.target_account.username
+    target_address="myapp.corp.local", # -> will fall under CredManager.target_account.address
+    target_port="8443", # -> will fall under CredManager.target_account.port
+    logon_username="ldoe", # -> will fall under CredManager.logon_account.username
+    reconcile_username="rdoe", # -> will fall under CredManager.reconcile_account.username
+    target_password=target_password, # -> will fall under CredManager.target_account.password.get()
+    logon_password=logon_password, # -> will fall under CredManager.logon_account.password.get()
+    reconcile_password=reconcile_password, # -> will fall under CredManager.reconcile_account.password.get()
+    target_new_password=target_new_password # -> will fall under CredManager.target_account.new_password.get()
 )
 
-class MyRotator(Python4CPMHandler):
+class CredManager(Python4CPMHandler):
     def verify(self):
         # TODO: Add your logic here
         self.close_success()
@@ -222,7 +226,7 @@ class MyRotator(Python4CPMHandler):
         # TODO: Add your logic here
         self.close_success()
 
-MyRotator().run()
+CredManager().run()
 ```
 
 #### Remember for your final script:

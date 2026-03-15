@@ -4,6 +4,14 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.4] - 2026-03-15
+
+### Added
+- `python4cpm.accounts.TargetAccount.policy_id` prorperty.
+
+### Changed
+- `Python4CPM` logger file naming convention is now based on the `python4cpm.accounts.TargetAccount.policy_id` prorperty.
+
 ## [1.1.3.2] - 2026-03-13
 
 ### Added
@@ -81,7 +89,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/e33b863...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.4...HEAD
+[1.1.4]: https://github.com/gonatienza/python4cpm/compare/f127687...v1.1.4
 [1.1.3.2]: https://github.com/gonatienza/python4cpm/compare/f127687...e33b863
 [1.1.3.1]: https://github.com/gonatienza/python4cpm/compare/v1.1.3...f127687
 [1.1.3]: https://github.com/gonatienza/python4cpm/compare/2935b9e...v1.1.3

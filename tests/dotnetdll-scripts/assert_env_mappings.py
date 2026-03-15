@@ -5,6 +5,10 @@ import os
 
 
 LOGGER = Logger.get_logger(os.path.basename(__file__), "debug")
+ACTIONS_WITH_NEW_PASSWORD = (
+    Python4CPM.ACTION_CHANGE,
+    Python4CPM.ACTION_RECONCILE
+)
 
 
 def get_config_from_ini():
@@ -19,11 +23,13 @@ def get_config_from_ini():
 
 
 try:
-    p4cpm = Python4CPM(os.path.basename(__file__))
+    p4cpm = Python4CPM()
     config = get_config_from_ini()
-    assertions = (
-        (p4cpm.args.action, Python4CPM.ACTION_CHANGE),
+    action = os.environ.get("PYTHON4CPM_PYTEST_ACTION")
+    assertions = [
+        (p4cpm.args.action, action),
         (p4cpm.args.logging_level, config["extrainfo"]["PythonLoggingLevel"]),
+        (p4cpm.target_account.policy_id, config["DEFAULT"]["PolicyID"]),
         (p4cpm.target_account.username, config["DEFAULT"]["username"]),
         (p4cpm.target_account.address, config["DEFAULT"]["address"]),
         (p4cpm.target_account.port, config["DEFAULT"]["port"]),
@@ -31,14 +37,23 @@ try:
         (p4cpm.reconcile_account.username, config["extrapass3"]["username"]),
         (p4cpm.target_account.password.get(), config["DEFAULT"]["password"]),
         (p4cpm.logon_account.password.get(), config["extrapass1"]["password"]),
-        (p4cpm.reconcile_account.password.get(), config["extrapass3"]["password"]),
-        (p4cpm.target_account.new_password.get(), config["DEFAULT"]["newpassword"])
-    )
+        (p4cpm.reconcile_account.password.get(), config["extrapass3"]["password"])
+    ]
     for a, b in assertions:
         if a != b:
-            LOGGER.error(f"Assertion failed '{a}' == '{b}'")
-            raise AssertionError
+            raise AssertionError(f"Assertion failed '{a}' == '{b}'")
         LOGGER.info(f"Asserted '{a}' == '{b}'")
+    if p4cpm.args.action in ACTIONS_WITH_NEW_PASSWORD:
+        a = p4cpm.target_account.new_password.get()
+        b = config["DEFAULT"]["newpassword"]
+        if a != b:
+            raise AssertionError(f"Assertion failed '{a}' == '{b}'")
+        LOGGER.info(f"Asserted '{a}' == '{b}'")
+    else:
+        if p4cpm.target_account.new_password is not None:
+            LOGGER.error("target_account.new_password is not None")
+            raise AssertionError
+        LOGGER.info(f"Asserted '{p4cpm.target_account.new_password}' is not 'None'")
     p4cpm.close_success()
 except Exception as e:
     LOGGER.error(f"{type(e).__name__}: {e}")

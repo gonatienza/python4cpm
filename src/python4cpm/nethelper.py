@@ -11,6 +11,7 @@ class NETHelper:
         cls,
         action: str | None = None,
         logging_level: str | None = None,
+        target_policy_id: str | None = None,
         target_username: str | None = None,
         target_address: str | None = None,
         target_port: str | None = None,
@@ -29,6 +30,7 @@ class NETHelper:
         keys = (
             Args.get_key(Args.PROPS.action),
             Args.get_key(Args.PROPS.logging_level),
+            TargetAccount.get_key(TargetAccount.PROPS.policy_id),
             TargetAccount.get_key(TargetAccount.PROPS.username),
             TargetAccount.get_key(TargetAccount.PROPS.address),
             TargetAccount.get_key(TargetAccount.PROPS.port),
@@ -42,6 +44,7 @@ class NETHelper:
         values = (
             action,
             logging_level,
+            target_policy_id,
             target_username,
             target_address,
             target_port,
@@ -58,4 +61,4 @@ class NETHelper:
 
     @classmethod
     def get(cls) -> Python4CPM:
-        return Python4CPM(cls.__name__)
+        return Python4CPM()

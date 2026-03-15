@@ -3,9 +3,6 @@ from python4cpm.python4cpm import Python4CPM
 
 
 class Python4CPMHandler(ABC, Python4CPM):
-    def __init__(self) -> None:
-        super().__init__(self.__class__.__name__)
-
     def run(self) -> None:
         actions = {
             self.ACTION_VERIFY: self.verify,

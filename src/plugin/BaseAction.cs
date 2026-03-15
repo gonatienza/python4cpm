@@ -12,6 +12,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string ParamsPythonExePath = "PythonExePath";
         private const string ParamsPythonScriptPath = "PythonScriptPath";
         private const string ParamsPythonLoggingLevel = "PythonLoggingLevel";
+        private const string PropertiesPolicyId = "policyid";
         private const string PropertiesUsername = "username";
         private const string PropertiesAddress = "address";
         private const string PropertiesPort = "port";
@@ -24,6 +25,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private string PythonExePath;
         private string PythonScriptPath;
         private string PythonLoggingLevel;
+        private string TargetPolicyId;
         private string TargetUsername;
         private string TargetAddress;
         private string TargetPort;
@@ -84,6 +86,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 
         private void GetAccounts()
         {
+            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesPolicyId) == true)
+                TargetPolicyId = TargetAccount.AccountProp[PropertiesPolicyId];
             if (TargetAccount?.AccountProp?.ContainsKey(PropertiesUsername) == true)
                 TargetUsername = TargetAccount.AccountProp[PropertiesUsername];
             if (TargetAccount?.AccountProp?.ContainsKey(PropertiesAddress) == true)
@@ -102,6 +106,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 ReconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
             if (RequiresNewPassword && TargetAccount?.NewPassword?.Length > 0)
                 TargetNewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
+            LogField(nameof(TargetPolicyId), TargetPolicyId);
             LogField(nameof(TargetUsername), TargetUsername);
             LogField(nameof(TargetAddress), TargetAddress);
             LogField(nameof(TargetPort), TargetPort);
@@ -117,6 +122,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
             var args = EnvHandler.GetArgs(
                 action,
+                TargetPolicyId,
                 TargetUsername,
                 TargetAddress,
                 TargetPort,
