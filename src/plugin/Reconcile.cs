@@ -12,6 +12,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             : base(accountList, logger)
         {
         }
+
         protected override bool RequiresNewPassword => true;
 
         public override CPMAction ActionName => CPMAction.reconcilepass;
