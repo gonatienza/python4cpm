@@ -27,7 +27,7 @@ class Logger:
         if _logging_level not in cls._LOGGING_LEVELS:
             _logging_level = cls._DEFAULT_LEVEL
         logger.setLevel(cls._LOGGING_LEVELS[_logging_level])
-        file_name = f"{__name__}_{_logging_level}_{name}_{uid}.log"
+        file_name = f"{__name__}_{_logging_level}_{name}.log"
         logs_file = os.path.join(cls._LOGS_DIR, file_name)
         handler = RotatingFileHandler(
             filename=logs_file,
@@ -35,7 +35,7 @@ class Logger:
             backupCount=1
         )
         fmt = (
-            "%(asctime)s.%(msecs)03d | %(levelname)s | "
+            "%(asctime)s.%(msecs)03d | %(name)s | %(levelname)s | "
             "%(module)s | %(funcName)s | %(message)s"
         )
         datefmt = "%Y-%m-%d %H:%M:%S"
