@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace CyberArk.Extensions.Plugin.Python4CPM
 {
-    public class EnvHandler
+    public static class EnvHandler
     {
         private const string Prefix = "python4cpm_";
         private const string ArgsObjPrefix = "args_";
@@ -19,32 +19,6 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string PortKey = "port";
         private const string PasswordKey = "password";
         private const string NewPasswordKey = "new_password";
-
-        private static string GetEnvKey(string objPrefix, string key)
-        {
-            string env_key = $"{Prefix}{objPrefix}{key}";
-            return env_key.ToUpper();
-        }
-
-        private static string GetArgsKey(string key)
-        {
-            return GetEnvKey(ArgsObjPrefix, key);
-        }
-
-        private static string GetTargetAccountKey(string key)
-        {
-            return GetEnvKey(TargetAccountObjPrefix, key);
-        }
-
-        private static string GetLogonAccountKey(string key)
-        {
-            return GetEnvKey(LogonAccountObjPrefix, key);
-        }
-
-        private static string GetReconcileAccountKey(string key)
-        {
-            return GetEnvKey(ReconcileAccountObjPrefix, key);
-        }
 
         public static Dictionary<string, string> GetArgs(
             string action,
@@ -97,6 +71,32 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             if (targetNewPassword != null)
                 secrets[GetTargetAccountKey(NewPasswordKey)] = targetNewPassword;
             return secrets;
+        }
+
+        private static string GetEnvKey(string objPrefix, string key)
+        {
+            string envKey = $"{Prefix}{objPrefix}{key}";
+            return envKey.ToUpper();
+        }
+
+        private static string GetArgsKey(string key)
+        {
+            return GetEnvKey(ArgsObjPrefix, key);
+        }
+
+        private static string GetTargetAccountKey(string key)
+        {
+            return GetEnvKey(TargetAccountObjPrefix, key);
+        }
+
+        private static string GetLogonAccountKey(string key)
+        {
+            return GetEnvKey(LogonAccountObjPrefix, key);
+        }
+
+        private static string GetReconcileAccountKey(string key)
+        {
+            return GetEnvKey(ReconcileAccountObjPrefix, key);
         }
     }
 }

@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using CyberArk.Extensions.Plugins.Models;
 using CyberArk.Extensions.Utilties.Logger;
-using System.Collections.Generic;
 
 namespace CyberArk.Extensions.Plugin.Python4CPM
 {
@@ -13,9 +13,9 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
         }
 
-        protected override bool RequiresNewPassword => true;
-
         public override CPMAction ActionName => CPMAction.changepass;
+
+        protected override bool RequiresNewPassword => true;
 
         public override int run(ref PlatformOutput platformOutput)
         {

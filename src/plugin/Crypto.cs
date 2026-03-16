@@ -1,11 +1,11 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
-using System.Runtime.InteropServices;
 
 namespace CyberArk.Extensions.Plugin.Python4CPM
 {
-    public class Crypto
+    public static class Crypto
     {
         public static EncryptedString Encrypt(SecureString secureStr)
         {
