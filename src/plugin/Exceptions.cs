@@ -4,6 +4,11 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     public class PythonExecutionException : Exception
     {
+        public PythonExecutionException(int exitCode)
+        {
+            ExitCode = exitCode;
+        }
+
         public int ExitCode { get; }
 
         public override string Message
@@ -20,11 +25,6 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                         return "Python closed unexpectedly";
                 }
             }
-        }
-
-        public PythonExecutionException(int exitCode) : base()
-        {
-            ExitCode = exitCode;
         }
     }
 }
