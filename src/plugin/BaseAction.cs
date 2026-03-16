@@ -9,14 +9,15 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 {
     abstract public class BaseAction : AbsAction
     {
-        private const string ParamsPythonExePath = "PythonExePath";
-        private const string ParamsPythonScriptPath = "PythonScriptPath";
-        private const string ParamsPythonLoggingLevel = "PythonLoggingLevel";
-        private const string PropertiesPolicyId = "policyid";
-        private const string PropertiesObjectName = "objectname";
-        private const string PropertiesUsername = "username";
-        private const string PropertiesAddress = "address";
-        private const string PropertiesPort = "port";
+        private const string PythonExePathParam = "PythonExePath";
+        private const string PythonScriptPathParam = "PythonScriptPath";
+        private const string PythonLoggingLevelParam = "PythonLoggingLevel";
+        private const string PolicyIdProperty = "policyid";
+        private const string SafeNameProperty = "safename";
+        private const string ObjectNameProperty = "objectname";
+        private const string UsernameProperty = "username";
+        private const string AddressProperty = "address";
+        private const string PortProperty = "port";
         private const int CloseSuccess = 0;
         private const int CloseFailedUnrecoverable = 8900;
         private const int CloseFailedRecoverable = 8100;
@@ -27,6 +28,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private string PythonScriptPath;
         private string PythonLoggingLevel;
         private string TargetPolicyId;
+        private string TargetSafeName;
         private string TargetObjectName;
         private string TargetUsername;
         private string TargetAddress;
@@ -43,10 +45,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
         }
 
-        protected abstract bool RequiresNewPassword
-        {
-            get;
-        }
+        protected abstract bool RequiresNewPassword { get; }
 
         private string GetLoggingValue(object obj)
         {
@@ -71,37 +70,39 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 
         private void GetParams()
         {
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(ParamsPythonExePath) == true)
-                PythonExePath = TargetAccount.ExtraInfoProp[ParamsPythonExePath];
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(ParamsPythonScriptPath) == true)
-                PythonScriptPath = TargetAccount.ExtraInfoProp[ParamsPythonScriptPath];
-            if (TargetAccount?.ExtraInfoProp?.ContainsKey(ParamsPythonLoggingLevel) == true)
-                PythonLoggingLevel = TargetAccount.ExtraInfoProp[ParamsPythonLoggingLevel];
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PythonExePathParam) == true)
+                PythonExePath = TargetAccount.ExtraInfoProp[PythonExePathParam];
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PythonScriptPathParam) == true)
+                PythonScriptPath = TargetAccount.ExtraInfoProp[PythonScriptPathParam];
+            if (TargetAccount?.ExtraInfoProp?.ContainsKey(PythonLoggingLevelParam) == true)
+                PythonLoggingLevel = TargetAccount.ExtraInfoProp[PythonLoggingLevelParam];
             LogField(nameof(PythonExePath), PythonExePath);
             LogField(nameof(PythonScriptPath), PythonScriptPath);
             LogField(nameof(PythonLoggingLevel), PythonLoggingLevel);
             if (!File.Exists(PythonExePath))
-                throw new FileNotFoundException($"{ParamsPythonExePath}: '{PythonExePath}' not found");
+                throw new FileNotFoundException($"{PythonExePathParam}: '{PythonExePath}' not found");
             if (!File.Exists(PythonScriptPath))
-                throw new FileNotFoundException($"{ParamsPythonScriptPath}: '{PythonScriptPath}' not found");
+                throw new FileNotFoundException($"{PythonScriptPathParam}: '{PythonScriptPath}' not found");
         }
 
         private void GetAccounts()
         {
-            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesPolicyId) == true)
-                TargetPolicyId = TargetAccount.AccountProp[PropertiesPolicyId];
-            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesObjectName) == true)
-                TargetObjectName = TargetAccount.AccountProp[PropertiesObjectName];
-            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesUsername) == true)
-                TargetUsername = TargetAccount.AccountProp[PropertiesUsername];
-            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesAddress) == true)
-                TargetAddress = TargetAccount.AccountProp[PropertiesAddress];
-            if (TargetAccount?.AccountProp?.ContainsKey(PropertiesPort) == true)
-                TargetPort = TargetAccount.AccountProp[PropertiesPort];
-            if (LogOnAccount?.AccountProp?.ContainsKey(PropertiesUsername) == true)
-                LogonUsername = LogOnAccount.AccountProp[PropertiesUsername];
-            if (ReconcileAccount?.AccountProp?.ContainsKey(PropertiesUsername) == true)
-                ReconcileUsername = ReconcileAccount.AccountProp[PropertiesUsername];
+            if (TargetAccount?.AccountProp?.ContainsKey(PolicyIdProperty) == true)
+                TargetPolicyId = TargetAccount.AccountProp[PolicyIdProperty];
+            if (TargetAccount?.AccountProp?.ContainsKey(SafeNameProperty) == true)
+                TargetSafeName = TargetAccount.AccountProp[SafeNameProperty];
+            if (TargetAccount?.AccountProp?.ContainsKey(ObjectNameProperty) == true)
+                TargetObjectName = TargetAccount.AccountProp[ObjectNameProperty];
+            if (TargetAccount?.AccountProp?.ContainsKey(UsernameProperty) == true)
+                TargetUsername = TargetAccount.AccountProp[UsernameProperty];
+            if (TargetAccount?.AccountProp?.ContainsKey(AddressProperty) == true)
+                TargetAddress = TargetAccount.AccountProp[AddressProperty];
+            if (TargetAccount?.AccountProp?.ContainsKey(PortProperty) == true)
+                TargetPort = TargetAccount.AccountProp[PortProperty];
+            if (LogOnAccount?.AccountProp?.ContainsKey(UsernameProperty) == true)
+                LogonUsername = LogOnAccount.AccountProp[UsernameProperty];
+            if (ReconcileAccount?.AccountProp?.ContainsKey(UsernameProperty) == true)
+                ReconcileUsername = ReconcileAccount.AccountProp[UsernameProperty];
             if (TargetAccount?.CurrentPassword?.Length > 0)
                 TargetCurrentPassword = Crypto.Encrypt(TargetAccount.CurrentPassword);
             if (LogOnAccount?.CurrentPassword?.Length > 0)
@@ -111,6 +112,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             if (RequiresNewPassword && TargetAccount?.NewPassword?.Length > 0)
                 TargetNewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
             LogField(nameof(TargetPolicyId), TargetPolicyId);
+            LogField(nameof(TargetSafeName), TargetSafeName);
             LogField(nameof(TargetObjectName), TargetObjectName);
             LogField(nameof(TargetUsername), TargetUsername);
             LogField(nameof(TargetAddress), TargetAddress);
@@ -128,6 +130,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             var args = EnvHandler.GetArgs(
                 action,
                 TargetPolicyId,
+                TargetSafeName,
                 TargetObjectName,
                 TargetUsername,
                 TargetAddress,

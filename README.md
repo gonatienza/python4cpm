@@ -60,8 +60,6 @@ class CredManager(Python4CPMHandler):
     """
     Properties:
         target_account (TargetAccount): Account being managed.
-            .policy_id (str): Platform name.
-            .object_name (str): Account name.
             .username (str): Account username.
             .address (str): Target address.
             .port (str): Target port.
@@ -134,7 +132,7 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 6. If a reconcile account is not linked, `reconcile_account` will return `None`.
 7. Always use the `close_success` or `close_fail` methods to signal the proper termination for all actions.
     - If any action is not terminated with a termination method, CPM/SRS will see this as a `close_fail(unrecoverable=True)`, even if no exceptions are raised.
-8. The python `Logger` places its logs in the `Logs/ThirdParty` directory.  The filename will be based on `target_account.policy_id` and `target_account.object_name`.
+8. The python `Logger` places its logs in the `Logs/ThirdParty` directory.
 
 
 ### Installing dependencies in python venv
@@ -148,22 +146,23 @@ As with any python venv, you can install dependencies in your venv.
 
 ## Dev Helper:
 
-For dev purposes, `NETHelper` is a companion helper to test your scripts without CPM/SRS.  It simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin creates the environment context for the python module.
+For dev purposes, `DevHelper` is a companion helper to test your scripts without CPM/SRS.  It simplifies the instantiation of the `Python4CPM` or `Python4CPMHandler` objects by simulating how the plugin creates the environment context for the python module.
 
-**Note**: As CPM and the SRS management agent run in Windows, the plugin was built to encrypt secrets using DPAPI (a windows only library).  For dev purposes in Linux/Mac dev workstations, those secrets put in the environment context by `NETHelper` will be in plaintext.  In windows dev workstations, `NETHelper` encrypts the secrets as the .NET plugin does.  This is informational only, **the module will use its encryption/decryption capabilities automatically based on the platform** it is running on and you do not have to do anything specific to enable it.
+**Note**: As CPM and the SRS management agent run in Windows, the plugin was built to encrypt secrets using DPAPI (a windows only library).  For dev purposes in Linux/Mac dev workstations, those secrets put in the environment context by `DevHelper` will be in plaintext.  In windows dev workstations, `DevHelper` encrypts the secrets as the .NET plugin does.  This is informational only, **the module will use its encryption/decryption capabilities automatically based on the platform** it is running on and you do not have to do anything specific to enable it.
 
 ### Example:
 
 #### Set your arguments and secrets:
 
 ```python
-from python4cpm import NETHelper, Python4CPM, Python4CPMHandler
+from python4cpm import DevHelper, Python4CPM, Python4CPMHandler
 
-NETHelper.set(
+DevHelper.set(
     action=Python4CPM.ACTION_CHANGE, # use actions from Python4CPM.ACTION_*
     logging_level="debug",
-    target_policy_id="NETHelper",
-    target_object_name="Objectname",
+    target_policy_id="DevHelper", # name of platform
+    target_safe_name="Safename", # name of safe
+    target_object_name="Objectname", # name of account
     target_username="jdoe",
     target_address="myapp.corp.local",
     target_port="8443",
@@ -201,5 +200,5 @@ CredManager().run()
 
 #### Remember for your final script:
 
-- Remove the import of `NETHelper`.
-- Remove the `NETHelper.set()` call.
+- Remove the import of `DevHelper`.
+- Remove the `DevHelper.set()` call.

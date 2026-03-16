@@ -1,17 +1,17 @@
-from python4cpm.python4cpm import Python4CPM
 from python4cpm.args import Args
 from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
 from python4cpm.crypto import Crypto
 import os
 
 
-class NETHelper:
+class DevHelper:
     @classmethod
     def set(
         cls,
         action: str | None = None,
         logging_level: str | None = None,
         target_policy_id: str | None = None,
+        target_safe_name: str | None = None,
         target_object_name: str | None = None,
         target_username: str | None = None,
         target_address: str | None = None,
@@ -32,6 +32,7 @@ class NETHelper:
             Args.get_key(Args.PROPS.action),
             Args.get_key(Args.PROPS.logging_level),
             TargetAccount.get_key(TargetAccount.PROPS.policy_id),
+            TargetAccount.get_key(TargetAccount.PROPS.safe_name),
             TargetAccount.get_key(TargetAccount.PROPS.object_name),
             TargetAccount.get_key(TargetAccount.PROPS.username),
             TargetAccount.get_key(TargetAccount.PROPS.address),
@@ -47,6 +48,7 @@ class NETHelper:
             action,
             logging_level,
             target_policy_id,
+            target_safe_name,
             target_object_name,
             target_username,
             target_address,
@@ -61,7 +63,3 @@ class NETHelper:
         for i, key in enumerate(keys):
             if values[i] is not None:
                 os.environ.update({key: values[i]})
-
-    @classmethod
-    def get(cls) -> Python4CPM:
-        return Python4CPM()

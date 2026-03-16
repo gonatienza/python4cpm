@@ -12,6 +12,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string ActionKey = "action";
         private const string LoggingLevelKey = "logging_level";
         private const string PolicyIdKey = "policy_id";
+        private const string SafeNameKey = "safe_name";
         private const string ObjectNameKey = "object_name";
         private const string UsernameKey = "username";
         private const string AddressKey = "address";
@@ -48,6 +49,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         public static Dictionary<string, string> GetArgs(
             string action,
             string targetPolicyId,
+            string targetSafeName,
             string targetObjectName,
             string targetUsername,
             string targetAddress,
@@ -60,6 +62,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             args[GetArgsKey(ActionKey)] = action;
             if (targetPolicyId != null)
                 args[GetTargetAccountKey(PolicyIdKey)] = targetPolicyId;
+            if (targetSafeName != null)
+                args[GetTargetAccountKey(SafeNameKey)] = targetSafeName;
             if (targetObjectName != null)
                 args[GetTargetAccountKey(ObjectNameKey)] = targetObjectName;
             if (targetUsername != null)
