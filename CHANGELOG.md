@@ -4,6 +4,11 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.7] - 2026-03-17
+
+### Added
+- Linting and code optimization.
+
 ## [1.1.6] - 2026-03-16
 
 ### Added
@@ -98,7 +103,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.6...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.7...HEAD
+[1.1.6]: https://github.com/gonatienza/python4cpm/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/gonatienza/python4cpm/compare/v1.1.4...v1.1.6
 [1.1.4]: https://github.com/gonatienza/python4cpm/compare/e33b863...v1.1.4
 [1.1.3.2]: https://github.com/gonatienza/python4cpm/compare/f127687...e33b863
