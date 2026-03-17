@@ -75,7 +75,7 @@ class Python4CPM:
     def _log_obj(self, obj: object | None) -> None:
         if obj is not None:
             for key, value in vars(obj).items():
-                _key = f"{obj.__class__.__name__}.{key.removeprefix('_')}"
+                logging_key = f"{obj.__class__.__name__}: {key}"
                 if value is not None:
                     if not isinstance(value, Secret):
                         logging_value = f"'{value}'"
@@ -83,7 +83,7 @@ class Python4CPM:
                         logging_value = str(value)
                 else:
                     logging_value = "[NOT SET]"
-                self._logger.debug(f"{_key} -> {logging_value}")
+                self._logger.debug(f"{logging_key} -> {logging_value}")
 
     def close_fail(self, unrecoverable: bool = False) -> None:
         if unrecoverable is False:
