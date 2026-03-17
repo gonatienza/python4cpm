@@ -14,11 +14,9 @@ class Secret:
     def __str__(self) -> str:
         if Crypto.ENABLED:
             return "[ENCRYPTED]"
-        else:
-            return "[SET]"
+        return "[SET]"
 
     def get(self) -> str:
         if Crypto.ENABLED:
             return Crypto.decrypt(self._secret)
-        else:
-            return self._secret
+        return self._secret
