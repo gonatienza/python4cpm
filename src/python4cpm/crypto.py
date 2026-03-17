@@ -5,10 +5,7 @@ import base64
 
 
 class Crypto:
-    if sys.platform == "win32":
-        ENABLED = True
-    else:
-        ENABLED = False
+    ENABLED = sys.platform == "win32"
 
     class DataBlob(ctypes.Structure):
         _fields_ = [
