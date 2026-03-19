@@ -1,11 +1,12 @@
 from python4cpm.python4cpm import Python4CPM
 from python4cpm.python4cpmhandler import Python4CPMHandler
 from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
-from python4cpm.secret import Secret
+from python4cpm.secrets import Secret
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
 from python4cpm.devhelper import DevHelper
-from python4cpm.logger import Logger
+from python4cpm.loggerhandler import LoggerHandler
+from python4cpm.exithandler import ExitHandler
 import json
 import pytest
 import os
@@ -19,7 +20,7 @@ def get_env():
     return env
 
 
-LOGGER = Logger.get_logger(os.path.basename(__file__), "debug")
+LOGGER = LoggerHandler.get_logger(os.path.basename(__file__), "debug")
 ENV = get_env()
 LOGGING_LEVELS = ["ERROR", "debug", "bad"]
 ARGS_PARAMS = [
@@ -110,9 +111,9 @@ def test_main(action, logging_level,  monkeypatch):
         assert p4cpm.target_account.new_password.get() == ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"] # noqa: S101 E501
     assert p4cpm._logger # noqa: S101
     if logging_level.lower() == LOGGING_LEVELS[1]:
-        assert p4cpm._logger.level == Logger._LOGGING_LEVELS[LOGGING_LEVELS[1]] # noqa: S101
+        assert p4cpm._logger.level == LoggerHandler._LOGGING_LEVELS[LOGGING_LEVELS[1]] # noqa: S101
     else:
-        assert p4cpm._logger.level == Logger._LOGGING_LEVELS[Logger._DEFAULT_LEVEL] # noqa: S101
+        assert p4cpm._logger.level == LoggerHandler._LOGGING_LEVELS[LoggerHandler._DEFAULT_LEVEL] # noqa: S101 E501
     with pytest.raises(SystemExit) as e:
         p4cpm.close_success() # avoiding stderr output
     assert e.value.code == CLOSE_CODES[0] # noqa: S101
@@ -187,6 +188,7 @@ def test_exit_codes(close, monkeypatch, capsys):
 
 
 def test_on_exit_stderr(monkeypatch, capsys):
+    ExitHandler.reset()
     env = ENV.copy()
     env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
     env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
@@ -194,8 +196,8 @@ def test_on_exit_stderr(monkeypatch, capsys):
     LOGGER.info(f"env -> {env}")
     for k, v in env.items():
         monkeypatch.setenv(k, v)
-    p4cpm = Python4CPM()
-    p4cpm._on_exit()
+    Python4CPM()
+    ExitHandler.on_exit()
     captured = capsys.readouterr()
     assert captured.err != "" # noqa: S101
 

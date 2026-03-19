@@ -4,6 +4,15 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.8] - 2026-03-20
+
+### Added
+- `Password` and `NewPassword` in .NET.
+- `Password` and `NewPassword` in python module.
+
+### Changed
+- `EncryptedString` renamed `Secret` in .NET.
+
 ## [1.1.7] - 2026-03-17
 
 ### Added
@@ -103,8 +112,9 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.7...HEAD
-[1.1.6]: https://github.com/gonatienza/python4cpm/compare/v1.1.6...v1.1.7
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.8...HEAD
+[1.1.8]: https://github.com/gonatienza/python4cpm/compare/v1.1.7...v1.1.8
+[1.1.7]: https://github.com/gonatienza/python4cpm/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/gonatienza/python4cpm/compare/v1.1.4...v1.1.6
 [1.1.4]: https://github.com/gonatienza/python4cpm/compare/e33b863...v1.1.4
 [1.1.3.2]: https://github.com/gonatienza/python4cpm/compare/f127687...e33b863

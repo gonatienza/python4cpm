@@ -35,10 +35,10 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private string _targetPort;
         private string _logonUsername;
         private string _reconcileUsername;
-        private EncryptedString _targetCurrentPassword;
-        private EncryptedString _logonCurrentPassword;
-        private EncryptedString _reconcileCurrentPassword;
-        private EncryptedString _targetNewPassword;
+        private Password _targetCurrentPassword;
+        private Password _logonCurrentPassword;
+        private Password _reconcileCurrentPassword;
+        private NewPassword _targetNewPassword;
 
         public BaseAction(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
@@ -81,7 +81,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         {
             if (obj == null)
                 return "[NOT SET]";
-            if (obj is EncryptedString)
+            if (obj is Secret)
                 return $"{obj}";
             return $"'{obj}'";
         }
@@ -134,13 +134,13 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             if (ReconcileAccount?.AccountProp?.ContainsKey(UsernameProperty) == true)
                 _reconcileUsername = ReconcileAccount.AccountProp[UsernameProperty];
             if (TargetAccount?.CurrentPassword?.Length > 0)
-                _targetCurrentPassword = Crypto.Encrypt(TargetAccount.CurrentPassword);
+                _targetCurrentPassword = Password.FromSecureString(TargetAccount.CurrentPassword);
             if (LogOnAccount?.CurrentPassword?.Length > 0)
-                _logonCurrentPassword = Crypto.Encrypt(LogOnAccount.CurrentPassword);
+                _logonCurrentPassword = Password.FromSecureString(LogOnAccount.CurrentPassword);
             if (ReconcileAccount?.CurrentPassword?.Length > 0)
-                _reconcileCurrentPassword = Crypto.Encrypt(ReconcileAccount.CurrentPassword);
+                _reconcileCurrentPassword = Password.FromSecureString(ReconcileAccount.CurrentPassword);
             if (RequiresNewPassword && TargetAccount?.NewPassword?.Length > 0)
-                _targetNewPassword = Crypto.Encrypt(TargetAccount.NewPassword);
+                _targetNewPassword = NewPassword.FromSecureString(TargetAccount.NewPassword);
             LogField(nameof(_targetPolicyId), _targetPolicyId);
             LogField(nameof(_targetSafeName), _targetSafeName);
             LogField(nameof(_targetObjectName), _targetObjectName);

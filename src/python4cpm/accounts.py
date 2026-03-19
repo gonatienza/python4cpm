@@ -1,5 +1,5 @@
 from python4cpm.envhandler import EnvHandler, Props
-from python4cpm.secret import Secret
+from python4cpm.secrets import Password, NewPassword
 
 
 class BaseAccount(EnvHandler):
@@ -11,7 +11,7 @@ class BaseAccount(EnvHandler):
         password: str | None
     ) -> None:
         self._username = username
-        self._password = Secret.from_env_var(password)
+        self._password = Password.from_env_var(password)
 
     @classmethod
     def get(cls) -> object | None:
@@ -25,7 +25,7 @@ class BaseAccount(EnvHandler):
         return self._username
 
     @property
-    def password(self) -> Secret:
+    def password(self) -> Password:
         return self._password
 
 
@@ -62,7 +62,7 @@ class TargetAccount(BaseAccount):
         self._object_name = object_name
         self._address = address
         self._port = port
-        self._new_password = Secret.from_env_var(new_password)
+        self._new_password = NewPassword.from_env_var(new_password)
 
     @property
     def policy_id(self) -> str | None:
@@ -85,7 +85,7 @@ class TargetAccount(BaseAccount):
         return self._port
 
     @property
-    def new_password(self) -> Secret:
+    def new_password(self) -> NewPassword:
         return self._new_password
 
 

@@ -55,13 +55,13 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             return args;
         }
 
-        public static Dictionary<string, EncryptedString> GetSecrets(
-            EncryptedString targetCurrentPassword,
-            EncryptedString logonCurrentPassword,
-            EncryptedString reconcileCurrentPassword,
-            EncryptedString targetNewPassword)
+        public static Dictionary<string, Secret> GetSecrets(
+            Password targetCurrentPassword,
+            Password logonCurrentPassword,
+            Password reconcileCurrentPassword,
+            NewPassword targetNewPassword)
         {
-            var secrets = new Dictionary<string, EncryptedString>();
+            var secrets = new Dictionary<string, Secret>();
             if (targetCurrentPassword != null)
                 secrets[GetTargetAccountKey(PasswordKey)] = targetCurrentPassword;
             if (logonCurrentPassword != null)
