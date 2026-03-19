@@ -4,7 +4,7 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
-## [1.1.8] - 2026-03-20
+## [1.1.8] - 2026-03-19
 
 ### Added
 - `Password` and `NewPassword` in .NET.
