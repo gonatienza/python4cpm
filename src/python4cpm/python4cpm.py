@@ -1,10 +1,10 @@
 import sys
-import atexit
 import logging
-from python4cpm.secret import Secret
+from python4cpm.secrets import Secret
 from python4cpm.args import Args
-from python4cpm.logger import Logger
+from python4cpm.loggerhandler import LoggerHandler
 from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
+from python4cpm.exithandler import ExitHandler
 
 
 class Python4CPM:
@@ -36,8 +36,6 @@ class Python4CPM:
         self._log_obj(self._target_account)
         self._log_obj(self._logon_account)
         self._log_obj(self._reconcile_account)
-        self._closed = False
-        atexit.register(self._on_exit)
 
     @property
     def args(self) -> Args:
@@ -66,7 +64,7 @@ class Python4CPM:
             self._target_account.object_name
         )
         name = "-".join(name_parts)
-        return Logger.get_logger(name, self._args.logging_level)
+        return LoggerHandler.get_logger(name, self._args.logging_level)
 
     def _verify_action(self) -> None:
         if self._args.action not in self._VALID_ACTIONS:
@@ -91,17 +89,10 @@ class Python4CPM:
         else:
             code = self._FAILED_UNRECOVERABLE_CODE
         self._logger.error(f"Closing with code {code}")
-        self._closed = True
+        ExitHandler.set_closed()
         sys.exit(code)
 
     def close_success(self) -> None:
         self._logger.debug(f"Closing with code {self._SUCCESS_CODE}")
-        self._closed = True
+        ExitHandler.set_closed()
         sys.exit(self._SUCCESS_CODE)
-
-    def _on_exit(self):
-        if self._closed is False:
-            message = "No close signal called"
-            self._logger.error(message)
-            sys.stderr.write(message)
-            sys.stderr.flush()

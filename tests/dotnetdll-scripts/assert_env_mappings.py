@@ -1,10 +1,10 @@
 from python4cpm import Python4CPM
-from python4cpm.logger import Logger
+from python4cpm.loggerhandler import LoggerHandler
 from configparser import ConfigParser
 import os
 
 
-LOGGER = Logger.get_logger(os.path.basename(__file__), "debug")
+LOGGER = LoggerHandler.get_logger(os.path.basename(__file__), "debug")
 ACTIONS_WITH_NEW_PASSWORD = (
     Python4CPM.ACTION_CHANGE,
     Python4CPM.ACTION_RECONCILE

@@ -29,7 +29,7 @@
   <ItemGroup>
     <Compile Include="Exceptions.cs" />
     <Compile Include="Crypto.cs" />
-    <Compile Include="EncryptedString.cs" />
+    <Compile Include="Secrets.cs" />
     <Compile Include="EnvHandler.cs" />
     <Compile Include="BaseAction.cs" />
     <Compile Include="Verify.cs" />

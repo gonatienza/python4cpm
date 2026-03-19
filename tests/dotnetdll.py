@@ -1,7 +1,7 @@
 
 from configparser import ConfigParser
 from python4cpm import Python4CPM
-from python4cpm.logger import Logger
+from python4cpm.loggerhandler import LoggerHandler
 from tempfile import NamedTemporaryFile
 from io import StringIO
 import pytest
@@ -37,7 +37,7 @@ def get_scripts_path():
     return os.path.join(file_dir, "dotnetdll-scripts")
 
 
-LOGGER = Logger.get_logger(os.path.basename(__file__), "debug")
+LOGGER = LoggerHandler.get_logger(os.path.basename(__file__), "debug")
 PLUGIN_INVOKER_PATH, PYTHON4CPM_DLL_PATH = get_framework_paths()
 SUCCESS_CODE = 0
 FAILED_RECOVERABLE_CODE = 8100

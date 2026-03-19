@@ -3,7 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 
-class Logger:
+class LoggerHandler:
     _LOGS_DIR = os.path.join("Logs", "ThirdParty")
     _LOGGING_LEVELS = {
         "critical": logging.CRITICAL,
@@ -13,6 +13,7 @@ class Logger:
         "debug": logging.DEBUG
     }
     _DEFAULT_LEVEL = "error"
+    _all_loggers = []
 
     @classmethod
     def get_logger(
@@ -42,4 +43,9 @@ class Logger:
         formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
         handler.setFormatter(formatter)
         logger.addHandler(handler)
+        cls._all_loggers.append(logger)
         return logger
+
+    @classmethod
+    def get_all_loggers(cls):
+        return cls._all_loggers
