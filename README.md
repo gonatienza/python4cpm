@@ -130,8 +130,9 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 4. When calling `verify()`, `logon()` or `prereconcile()`: `target_account.new_password` will always return `None`.
 5. If a logon account is not linked, `logon_account` will return `None`.
 6. If a reconcile account is not linked, `reconcile_account` will return `None`.
-7. Always use the `close_success` or `close_fail` methods to signal the proper termination for all actions.
-    - If any action is not terminated with a termination method, CPM/SRS will see this as a `close_fail(unrecoverable=True)`, even if no exceptions are raised.
+7. **Always** use the `close_success` or `close_fail` methods to signal the proper termination for all actions.
+    - `close_fail` takes the optional argument of `unrecoverable` as a bool flag (by default set to `False`).  It signals CPM whether the error you encountered cannot be solved through the rotation logic or requires manual intervention.  E.g., a regular rotation fails (which is still recoverable) and when called for a reconciliation process it fails too (at this point the error encountered is not recoverable).
+    - If any action is not terminated with a termination method, CPM/SRS will see this as a `close_fail(unrecoverable=True)`.  This happens regardless of whether it was terminated by an exception or no exception was raised.  **If you rotate a credential successfully and do not close with success, you will have a rotated credential that will be lost and not saved into the vault**.
 8. The python `Logger` places its logs in the `Logs/ThirdParty` directory.
 
 
@@ -140,7 +141,7 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
 As with any python venv, you can install dependencies in your venv.
 1. If your CPM can connect to the internet:
    - You can use regular pip install commands (e.g., `c:\venv\Scripts\pip.exe install requests`).
-2. If your CPM cannot connect to the internet:
+2. If your CPM cannot connect to the internet:encountered
    - You can download packages for an offline install.  More info [here](https://pip.pypa.io/en/stable/cli/pip_download/).
 
 

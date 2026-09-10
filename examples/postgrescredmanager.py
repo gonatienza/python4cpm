@@ -27,7 +27,7 @@ class Postgres(Python4CPMHandler):
             username = self.target_account.username
             password = self.target_account.password.get()
         else:
-            username = self.reconcile_username.username
+            username = self.reconcile_account.username
             password = self.reconcile_account.password.get()
         return username, password
 
