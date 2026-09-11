@@ -18,8 +18,8 @@ This platform allows you to duplicate it multiple times, simply changing its set
     - **Python must be installed for all users**.  Follow the custom install steps from the installation wizard to check the checkbox.
 3. Create a venv in the server, by running `py -m venv c:\venv`.  If desired, use a custom location and adjust any future references.
 4. Install `python4cpm` in your venv:
-    - If your CPM can connect to the internet, install with `c:\venv\Scripts\pip.exe install python4cpm`.
-    - If your CPM cannot connect to the internet:
+    - If your CPM/SRS can connect to the internet, install with `c:\venv\Scripts\pip.exe install python4cpm`.
+    - If your CPM/SRS cannot connect to the internet:
         - Download the latest `python4cpm-*.whl` file from the [pypi project files](https://pypi.org/project/python4cpm/#files).
         - Copy the file to the server into a temporary directory called `python4cpm-wheel`.
         - From the parent directory of `python4cpm-wheel` run `c:\venv\Scripts\pip.exe install --no-index --find-links=.\python4cpm-wheel python4cpm`.
@@ -63,8 +63,8 @@ class CredManager(Python4CPMHandler):
             .username (str): Account username.
             .address (str): Target address.
             .port (str): Target port.
-            .password (Secret): Current password. Call .get() to retrieve value.
-            .new_password (Secret): Replacement password. Call .get() to retrieve value.
+            .password (Secret): Current password. Call .get() to retrieve value as many times as needed.
+            .new_password (Secret): Replacement password. Call .get() to retrieve value as many times as needed..
 
         logon_account (LogonAccount): Linked Logon Account.
             .username (str): Account username.
