@@ -18,7 +18,7 @@ jobs:
           path: _python4cpm
       - name: Get private repo files
         run: |
-          Expand-Archive -Path "_python4cpm\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
+          Expand-Archive -Path "_python4cpm\x86\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
           New-Item -ItemType Directory -Force -Path "src\plugin\lib"
           Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
           Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
@@ -36,6 +36,7 @@ jobs:
         with:
           name: platform-artifact
           path: dist/python4cpm-platform.zip
+          if-no-files-found: error
   
   update-release:
     needs: [dotnet-build]
