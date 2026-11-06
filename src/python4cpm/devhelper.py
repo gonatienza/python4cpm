@@ -5,6 +5,14 @@ import os
 
 
 class DevHelper:
+    @staticmethod
+    def _get_secret_value(value: str | None) -> str | None:
+        if not value:
+            return None
+        if Crypto.ENABLED:
+            return Crypto.encrypt(value)
+        return value
+
     @classmethod
     def set(
         cls,
@@ -23,11 +31,10 @@ class DevHelper:
         reconcile_password: str | None = None,
         target_new_password: str | None = None
     ) -> None:
-        if Crypto.ENABLED:
-            target_password = Crypto.encrypt(target_password)
-            logon_password = Crypto.encrypt(logon_password)
-            reconcile_password = Crypto.encrypt(reconcile_password)
-            target_new_password = Crypto.encrypt(target_new_password)
+        target_password = cls._get_secret_value(target_password)
+        logon_password = cls._get_secret_value(logon_password)
+        reconcile_password = cls._get_secret_value(reconcile_password)
+        target_new_password = cls._get_secret_value(target_new_password)
         keys = (
             Args.get_key(Args.PROPS.action),
             Args.get_key(Args.PROPS.logging_level),
@@ -62,4 +69,6 @@ class DevHelper:
         )
         for i, key in enumerate(keys):
             if values[i] is not None:
-                os.environ.update({key: values[i]})
+                os.environ[key] = values[i]
+            else:
+                os.environ.pop(key, None)

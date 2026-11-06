@@ -202,7 +202,7 @@ def test_on_exit_stderr(monkeypatch, capsys):
     assert captured.err != "" # noqa: S101
 
 
-def test_net_helper():
+def test_dev_helper():
     action = Python4CPM.ACTION_CHANGE
     logging_level = LOGGING_LEVELS[1]
     DevHelper.set(
@@ -240,3 +240,39 @@ def test_net_helper():
     with pytest.raises(SystemExit) as e:
         p4cpm.close_success()
         assert e.value.code == CLOSE_CODES[0] # noqa: S101
+
+
+@pytest.mark.parametrize("unset_value", [None, ""])
+def test_dev_helper_unset_secrets(unset_value):
+    kwargs = {
+        "target_policy_id": ENV["PYTHON4CPM_TARGET_POLICY_ID"],
+        "target_safe_name": ENV["PYTHON4CPM_TARGET_SAFE_NAME"],
+        "target_object_name": ENV["PYTHON4CPM_TARGET_OBJECT_NAME"],
+        "target_username": ENV["PYTHON4CPM_TARGET_USERNAME"],
+        "logon_username": ENV["PYTHON4CPM_LOGON_USERNAME"],
+        "reconcile_username": ENV["PYTHON4CPM_RECONCILE_USERNAME"]
+    }
+    DevHelper.set(
+        action=Python4CPM.ACTION_CHANGE,
+        target_password=ENV["PYTHON4CPM_TARGET_PASSWORD"],
+        logon_password=ENV["PYTHON4CPM_LOGON_PASSWORD"],
+        reconcile_password=ENV["PYTHON4CPM_RECONCILE_PASSWORD"],
+        target_new_password=ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"],
+        **kwargs
+    )
+    DevHelper.set(
+        action=Python4CPM.ACTION_VERIFY,
+        target_password=unset_value,
+        logon_password=unset_value,
+        reconcile_password=unset_value,
+        target_new_password=unset_value,
+        **kwargs
+    )
+    p4cpm = Python4CPM()
+    assert p4cpm.target_account.password is None # noqa: S101
+    assert p4cpm.target_account.new_password is None # noqa: S101
+    assert p4cpm.logon_account.password is None # noqa: S101
+    assert p4cpm.reconcile_account.password is None # noqa: S101
+    with pytest.raises(SystemExit) as e:
+        p4cpm.close_success()
+    assert e.value.code == CLOSE_CODES[0] # noqa: S101

@@ -4,7 +4,7 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
-## [1.1.9] - 2026-11-05
+## [1.1.9] - 2026-11-07
 
 ### Added
 - Added support to `Credentials Management .NET SDK - 64bit`.
@@ -13,6 +13,7 @@ Python4CPM Changelog
 ### Changed
 - Minimum Python version to `3.11`.
 - Defaults for `PerformPeriodicChange` and `VFPerformPeriodicVerification` to `yes`.
+- `DevHelper` treats unset or empty secrets as `None` and clears values left out of `DevHelper.set()`, matching the plugin.
 
 ## [1.1.8] - 2026-03-19
 
