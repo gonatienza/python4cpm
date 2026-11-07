@@ -7,7 +7,7 @@ Python4CPM Changelog
 ## [1.1.9] - 2026-11-07
 
 ### Added
-- Added support to `Credentials Management .NET SDK - 64bit`.
+- Support and testing for `Credentials Management .NET SDK - 64bit`.
 - Testing for Python `3.15`.
 
 ### Changed
