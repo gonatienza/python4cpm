@@ -8,7 +8,6 @@ import json
 
 class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        self.logger.info(f"NoRedirectHandler: ignoring redirect -> {newurl}")
         return None
 
 

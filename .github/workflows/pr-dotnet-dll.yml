@@ -9,6 +9,14 @@ on:
 jobs:
   dotnet-build-and-tests:
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86
+            invoker: CANetPluginInvoker.exe
+          - arch: x64
+            invoker: CANetPluginInvoker_x64.exe
     steps:
       - uses: actions/checkout@v7
       - uses: actions/checkout@v7
@@ -17,11 +25,12 @@ jobs:
           token: ${{ secrets._PYTHON4CPM_TOKEN }}
           path: _python4cpm
       - name: Get private repo files
-        run : |
-          Expand-Archive -Path "_python4cpm\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
+        run: |
+          Expand-Archive -Path "_python4cpm\x86\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\build_sdk"
           New-Item -ItemType Directory -Force -Path "src\plugin\lib"
-          Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
-          Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
+          Copy-Item -Path "_python4cpm\build_sdk\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
+          Copy-Item -Path "_python4cpm\build_sdk\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
+          Expand-Archive -Path "_python4cpm\${{ matrix.arch }}\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
       - uses: microsoft/setup-msbuild@v3
       - name: Build .NET Release
         run: |
@@ -31,8 +40,10 @@ jobs:
           Copy-Item -Path "src\plugin\bin\Release\CyberArk.Extensions.Plugin.Python4CPM.dll" "_python4cpm\framework"
       - uses: actions/setup-python@v7
         with:
-          python-version: 3.14
+          python-version: 3.15
       - name: Install and test
+        env:
+          PLUGIN_INVOKER_NAME: ${{ matrix.invoker }}
         run: |
           python -m pip install --upgrade pip
           pip install . pytest
@@ -41,5 +52,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: Logs
+          name: Logs-${{ matrix.arch }}
           path: Logs/ThirdParty

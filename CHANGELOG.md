@@ -4,6 +4,17 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.9] - 2026-11-07
+
+### Added
+- Added support to `Credentials Management .NET SDK - 64bit`.
+- Testing for Python `3.15`.
+
+### Changed
+- Minimum Python version to `3.11`.
+- Defaults for `PerformPeriodicChange` and `VFPerformPeriodicVerification` to `yes`.
+- `DevHelper` treats unset or empty secrets as `None` and clears values left out of `DevHelper.set()`, matching the plugin.
+
 ## [1.1.8] - 2026-03-19
 
 ### Added
@@ -112,7 +123,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.8...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.9...HEAD
+[1.1.9]: https://github.com/gonatienza/python4cpm/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/gonatienza/python4cpm/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/gonatienza/python4cpm/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/gonatienza/python4cpm/compare/v1.1.4...v1.1.6

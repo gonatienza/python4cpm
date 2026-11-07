@@ -17,8 +17,8 @@ jobs:
           token: ${{ secrets._PYTHON4CPM_TOKEN }}
           path: _python4cpm
       - name: Get private repo files
-        run : |
-          Expand-Archive -Path "_python4cpm\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
+        run: |
+          Expand-Archive -Path "_python4cpm\x86\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
           New-Item -ItemType Directory -Force -Path "src\plugin\lib"
           Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
           Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
@@ -36,6 +36,7 @@ jobs:
         with:
           name: platform-artifact
           path: dist/python4cpm-platform.zip
+          if-no-files-found: error
 
   release:
     needs: [dotnet-build]
@@ -55,11 +56,11 @@ jobs:
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
       - name: Delete existing release
-        run: gh release delete v${VERSION} -y || true
+        run: gh release delete v${MAIN_VERSION} -y || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete existing tag
-        run: git push -d origin v${VERSION} || true
+        run: git push -d origin v${MAIN_VERSION} || true
       - name: Create release and add minor
         run: |
           mv dist/python4cpm-platform.zip dist/python4cpm-platform-${FULL_VERSION}.zip

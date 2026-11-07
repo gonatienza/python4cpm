@@ -1,6 +1,6 @@
 # Python4CPM
 
-A simple and secure way of using python scripts with CyberArk CPM/SRS password rotations.
+A simple and secure way of using python scripts with Idira/CyberArk CPM/SRS password rotations.
 
 ## How it works
 
@@ -14,10 +14,10 @@ This platform allows you to duplicate it multiple times, simply changing its set
 
 ### Preparing Python
 
-1. Install Python along CPM or the SRS Connector Management Agent.
+1. Install Python 3.11 or later along CPM or the SRS Connector Management Agent.
     - **Python must be installed for all users**.  Follow the custom install steps from the installation wizard to check the checkbox.
-3. Create a venv in the server, by running `py -m venv c:\venv`.  If desired, use a custom location and adjust any future references.
-4. Install `python4cpm` in your venv:
+2. Create a venv in the server, by running `py -m venv c:\venv`.  If desired, use a custom location and adjust any future references.
+3. Install `python4cpm` in your venv:
     - If your CPM/SRS can connect to the internet, install with `c:\venv\Scripts\pip.exe install python4cpm`.
     - If your CPM/SRS cannot connect to the internet:
         - Download the latest `python4cpm-*.whl` file from the [pypi project files](https://pypi.org/project/python4cpm/#files).
@@ -35,9 +35,8 @@ This platform allows you to duplicate it multiple times, simply changing its set
 5. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
 6. Edit the duplicated platform and specify the path of your script, under `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonScriptPath -> Value` (e.g., `C:\python4cpm-scripts\myapp.py`).
 7. Also update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonExePath -> Value` with the custom path for the venv's `python.exe` file (e.g., `c:\venv\Scripts\python.exe`).
-8. If you want to disable logging, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLogging -> Value` to `no`.
-9. If you want to change the logging level to `debug`, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel -> Value` to `debug`.
-10. For new applications repeat steps from 4 to 9.
+8. If you want to change the logging level, update `Target Account Platform -> Automatic Platform Management -> Additional Policy Settings -> Parameters -> PythonLoggingLevel -> Value` to `critical`, `error`, `warning`, `info` or `debug`.
+9. For new applications repeat steps from 4 to 8.
 
 #### If you are using SRS (SaaS only):
 1. Download the `python4cpm-platform-*.zip` asset from the latest  [release](https://github.com/gonatienza/python4cpm/releases).
@@ -46,9 +45,30 @@ This platform allows you to duplicate it multiple times, simply changing its set
 4. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
 5. Edit the duplicated platform and specify the path of your script, under `Plugin Settings -> Additional Parameters -> PythonScriptPath` (e.g., `C:\python4cpm-scripts\myapp.py`).
 6. Also update `Plugin Settings -> Additional Parameters -> PythonExePath` with the custom path for the venv's `python.exe` file (e.g., `c:\venv\Scripts\python.exe`).
-7. If you want to disable logging, update `Plugin Settings -> Additional Parameters -> PythonLogging` to `no`.
-8. If you want to change the logging level to `debug`, update `Plugin Settings -> Additional Parameters -> PythonLoggingLevel -> Value` to `debug`.
-9. For new applications repeat steps from 3 to 8.
+7. If you want to change the logging level, update `Plugin Settings -> Additional Parameters -> PythonLoggingLevel -> Value` to `critical`, `error`, `warning`, `info` or `debug`.
+8. For new applications repeat steps from 3 to 7.
+
+### Platform defaults
+
+**Automatic verification and change are enabled by default.**  Only assign accounts to a duplicated platform that has `PythonExePath` and `PythonScriptPath` set.  The imported platform ships with the placeholder `ReplaceWithAbsolutePath`, which fails with `8900` without starting Python.  Adjust these defaults to match your application:
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `PerformPeriodicChange` | `Yes` | Rotate automatically |
+| `ExpirationPeriod` | `90` | Days before a password expires |
+| `VFPerformPeriodicVerification` | `Yes` | Verify automatically |
+| `Interval` | `1440` | Minutes |
+| `Timeout` | `120` | Seconds |
+| `MaximumRetries` | `5` | Retries |
+| `MinDelayBetweenRetries` | `90` | Minutes between retries |
+| `UnrecoverableErrors` | `8900` | Return codes treated as unrecoverable |
+| `RCAutomaticReconcileWhenUnsynched` | `Yes` | Reconcile when unsynched |
+| `PasswordLength`, `MinUpperCase`, `MinLowerCase`, `MinDigit`, `MinSpecial` | `12`, `2`, `2`, `1`, `1` | Rules for generating `new_password` |
+| `PasswordForbiddenChars` | Empty | Characters the new password must not contain |
+
+The new password is generated for you, so **make the password rules match the target system's policy**.  Your script only applies it.
+
+Accounts require `Username` and `Address`, and `Port` is optional.  Link a `LogonAccount` and a `ReconcileAccount` if your script needs them.
 
 ## Python Script
 
@@ -62,17 +82,24 @@ class CredManager(Python4CPMHandler):
         target_account (TargetAccount): Account being managed.
             .username (str): Account username.
             .address (str): Target address.
-            .port (str): Target port.
-            .password (Secret): Current password. Call .get() to retrieve value as many times as needed.
-            .new_password (Secret): Replacement password. Call .get() to retrieve value as many times as needed..
+            .port (str | None): Target port.
+            .policy_id (str): Platform ID.
+            .safe_name (str): Safe name.
+            .object_name (str): Account name in the vault.
+            .password (Secret | None): Current password. Call .get() to retrieve value as many times as needed.
+            .new_password (Secret | None): Replacement password. Call .get() to retrieve value as many times as needed.
 
-        logon_account (LogonAccount): Linked Logon Account.
+        logon_account (LogonAccount | None): Linked Logon Account.
             .username (str): Account username.
-            .password (Secret): Logon password. Call .get() to retrieve value.
+            .password (Secret | None): Logon password. Call .get() to retrieve value.
 
-        reconcile_account (ReconcileAccount): Linked Reconcile Account.
+        reconcile_account (ReconcileAccount | None): Linked Reconcile Account.
             .username (str): Account username.
-            .password (Secret): Reconcile password. Call .get() to retrieve value.
+            .password (Secret | None): Reconcile password. Call .get() to retrieve value.
+
+        args (Args): Execution arguments.
+            .action (str): Requested action.
+            .logging_level (str | None): Value of PythonLoggingLevel.
 
         logger (logging.Logger): Logger instance.
 
@@ -135,13 +162,91 @@ When doing `verify`, `change` or `reconcile` from Privilege Cloud/PVWA:
     - If any action is not terminated with a termination method, CPM/SRS will see this as a `close_fail(unrecoverable=True)`.  This happens regardless of whether it was terminated by an exception or no exception was raised.  **If you rotate a credential successfully and do not close with success, you will have a rotated credential that will be lost and not saved into the vault**.
 8. The python `Logger` places its logs in the `Logs/ThirdParty` directory.
 
+### Writing a rotation script
+
+#### What each method should do
+
+| Method | Action | `new_password` | What to do |
+| --- | --- | --- | --- |
+| `verify()` | `verifypass` | `None` | Authenticate with `target_account`. |
+| `logon()` | `logon` | `None` | Prepare for `change()`.  It can just call `close_success()`. |
+| `change()` | `changepass` | Set | Authenticate, then set `target_account.new_password` on the target. |
+| `prereconcile()` | `prereconcilepass` | `None` | Authenticate with `reconcile_account`. |
+| `reconcile()` | `reconcilepass` | Set | Authenticate with `reconcile_account`, then set `target_account.new_password` on `target_account.username`. |
+
+Use `reconcile_account` for `prereconcile()` and `reconcile()`, because `target_account.password` is not expected to work when reconciling.
+
+#### Return codes
+
+| Script result | Python exit code | Returned to CPM/SRS |
+| --- | --- | --- |
+| `close_success()` | `10` | `0` (success) |
+| `close_fail()` | `81` | `8100` (recoverable) |
+| `close_fail(unrecoverable=True)` | `89` | `8900` (unrecoverable) |
+| Unhandled exception | `1` | `8900` (unrecoverable) |
+| No close method called | `0` | `8900` (unrecoverable) |
+| Any other exit code | That code | `8900` (unrecoverable) |
+| `PythonExePath` or `PythonScriptPath` not found | Python is not started | `8900` (unrecoverable) |
+
+#### Rules for your script
+
+- **Every method runs in a new python process.**  Nothing in memory is shared between `logon()` and `change()`, or between `prereconcile()` and `reconcile()`.
+- **Implement all five methods.**  A missing method raises a `TypeError` when the class is created, which returns `8900`.
+- **If you override `__init__`, call `super().__init__()` first.**
+- **Check for `None`.**  Empty values are not sent, so these can all be `None`: `port`, any `password`, and `new_password`.  A linked account can have a username and no password.  `.get()` on `None` raises an `AttributeError`.
+- **`address` is the raw value from the account.**  Build URLs yourself, and pick a default for when `port` is `None`.
+- **Change the password last.**  Close with `close_success()` straight after the target accepts it, and do nothing that can fail in between.
+- **Close methods raise `SystemExit`.**  They are safe inside `try/except Exception`, and code after them does not run, except `finally` blocks.  A bare `except:` or `except BaseException:` catches them, and that action then returns `8900`.
+- **Set a timeout on every network call.**  The plugin waits for python with no time limit of its own, so keep each action under the platform's `Timeout`.
+- **Use `self.logger`, not `print`.**  Standard output is not captured.  Standard error is written to the plugin log when an action fails.
+- **Never log the result of `.get()`.**  Logging a `Secret` itself is safe and shows `[ENCRYPTED]`.  Keep secrets out of exception messages too, as tracebacks reach the plugin log.
+- **Use absolute paths.**  The working directory is inherited from the CPM/SRS process, not taken from your script's folder.
+- **Keep TLS verification on in production.**  The `simpleauthcredmanager.py` example turns it off.
+
+Common failures can be handled like this:
+
+```python
+def verify(self):
+    try:
+        self._login(self.target_account)
+    except Exception as e:
+        self.logger.error(f"{type(e).__name__}: {e}")
+        self.close_fail()
+    self.close_success()
+```
+
+Use `close_fail()` for what a later attempt could fix, like a timeout or a rejected password.  Use `close_fail(unrecoverable=True)` for what needs manual intervention.
+
+#### Logs
+
+All logs are in `Logs/ThirdParty`, relative to the working directory.
+
+| File | Content |
+| --- | --- |
+| `python4cpm.loggerhandler_<level>_<PolicyID>-<SafeName>-<ObjectName>.log` | `self.logger` output.  Rotates at 1 MB and keeps one backup. |
+| `<PolicyID>-<SafeName>-<FolderName>-<ObjectName>.Log` | The last error, with its error code. |
+| `Debug_<PolicyID>-<SafeName>-<FolderName>-<ObjectName>_CANetPluginInvoker_<date>.log` | Plugin trace, written with `Debug=Yes` in a manual run, including paths, values and standard error. |
+
+The default level is `error`, so `self.logger.info()` and `self.logger.debug()` write nothing until you change `PythonLoggingLevel`.  An unknown level falls back to `error`, and `critical` is the quietest.  Logging cannot be turned off.
+
+#### Troubleshooting
+
+| Log message | Cause |
+| --- | --- |
+| `PythonExePath: '...' not found` or `PythonScriptPath: '...' not found` | Wrong path, or the account is still on the imported platform. |
+| `Python closed with exit code: 0` and `No close signal called` | A method ended without a close method. |
+| `Python closed with exit code: 1` | Unhandled exception.  The traceback follows in `StdErr Output`. |
+| `Python closed with failed recoverable` | The script called `close_fail()`. |
+| `Python closed with failed unrecoverable` | The script called `close_fail(unrecoverable=True)`. |
+| `can't open file '...\ C:\...'` | A manual `.ini` file has spaces around `=`. |
+
 
 ### Installing dependencies in python venv
 
 As with any python venv, you can install dependencies in your venv.
 1. If your CPM can connect to the internet:
    - You can use regular pip install commands (e.g., `c:\venv\Scripts\pip.exe install requests`).
-2. If your CPM cannot connect to the internet:encountered
+2. If your CPM cannot connect to the internet:
    - You can download packages for an offline install.  More info [here](https://pip.pypa.io/en/stable/cli/pip_download/).
 
 
@@ -169,10 +274,10 @@ DevHelper.set(
     target_port="8443",
     logon_username="ldoe",
     reconcile_username="rdoe",
-    target_password="", # str value of target password 
-    logon_password="", # str value of logon password
-    reconcile_password="", # str value of reconcile password
-    target_new_password="" # str value of new password
+    target_password="", # str value of target password (required by most scripts)
+    logon_password="", # str value of logon password (leave out if not linked)
+    reconcile_password="", # str value of reconcile password (leave out if not linked)
+    target_new_password="" # str value of new password (only for change and reconcile)
 )
 
 class CredManager(Python4CPMHandler):
@@ -198,6 +303,15 @@ class CredManager(Python4CPMHandler):
 
 CredManager().run()
 ```
+
+#### Remember when using `DevHelper`:
+
+- `target_policy_id`, `target_safe_name` and `target_object_name` are required.  The log file name is built from them.
+- A password left out or set to `""` becomes `None`, as in production.  Leave out `target_new_password` when testing `verify()`, `logon()` or `prereconcile()`.
+- Each `DevHelper.set()` call replaces the previous one, so anything left out is cleared.
+- Each run tests one `action`, so set it to test each of the five methods.
+- Exit code `10` means success, and `81` or `89` mean the script called `close_fail()`.  Anything else returns `8900` in production.
+- **Your script runs for real.**  `change()` and `reconcile()` change the password on the target, so use a test account.
 
 #### Remember for your final script:
 

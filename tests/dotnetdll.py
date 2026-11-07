@@ -24,7 +24,8 @@ def get_framework_paths():
     file_dir = os.path.dirname(__file__)
     root_dir = os.path.dirname(file_dir)
     framework_dir = os.path.join(root_dir, "_python4cpm", "framework")
-    plugin_invoker_path = os.path.join(framework_dir, "CANetPluginInvoker.exe")
+    plugin_invoker_name = os.environ["PLUGIN_INVOKER_NAME"]
+    plugin_invoker_path = os.path.join(framework_dir, plugin_invoker_name)
     python4cpm_dll_path = os.path.join(
         framework_dir,
         "CyberArk.Extensions.Plugin.Python4CPM.dll"
@@ -88,7 +89,7 @@ def test_python4cpm_dll_returns(python_path, script, action):
     if action not in ACTIONS_WITH_NEW_PASSWORD:
         config.remove_option("DEFAULT", "newpassword")
     buffer = StringIO()
-    config.write(buffer)
+    config.write(buffer, space_around_delimiters=False)
     _config = buffer.getvalue().split("\n", 1)[1]
     LOGGER.info(f"config -> \n{_config}")
     tmp = NamedTemporaryFile(mode="w", suffix=".ini", delete=False)
@@ -120,7 +121,7 @@ def test_python4cpm_dll_env_mappings(action, monkeypatch):
     config.set("extrainfo", "PythonExePath", PYTHON_PATHS[0])
     config.set("extrainfo", "PythonScriptPath", script)
     buffer = StringIO()
-    config.write(buffer)
+    config.write(buffer, space_around_delimiters=False)
     _config = buffer.getvalue().split("\n", 1)[1]
     LOGGER.info(f"config -> \n{_config}")
     tmp = NamedTemporaryFile(mode="w", suffix=".ini", delete=False)
