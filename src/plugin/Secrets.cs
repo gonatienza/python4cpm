@@ -11,6 +11,11 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 
         public string Value { get; }
 
+        public string Get()
+        {
+            return Crypto.Decrypt(Value);
+        }
+
         public override string ToString()
         {
             if (Value != null)
@@ -39,5 +44,10 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             Secret secret = Crypto.Encrypt(secureStr);
             return new NewPassword(secret.Value);
         }
+    }
+
+    public class ReturnedPassword : Secret
+    {
+        public ReturnedPassword(string value) : base(value) { }
     }
 }

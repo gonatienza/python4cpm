@@ -8,6 +8,10 @@ import pytest
 import os
 import sys
 import subprocess
+import base64
+import ctypes
+import ctypes.wintypes
+import glob
 
 
 def get_config_from_ini():
@@ -38,6 +42,32 @@ def get_scripts_path():
     return os.path.join(file_dir, "dotnetdll-scripts")
 
 
+def set_session_key():
+    # CASOSEncryptor encrypts with an AES key taken from the SESSION_KEY env
+    # var (DPAPI-protected, base64).  CPM sets it; the invoker does not.
+    class DataBlob(ctypes.Structure):
+        _fields_ = [
+            ("cbData", ctypes.wintypes.DWORD),
+            ("pbData", ctypes.POINTER(ctypes.c_ubyte))
+        ]
+    key = os.urandom(32)
+    buffer = ctypes.create_string_buffer(key, len(key))
+    input_blob = DataBlob(len(key), ctypes.cast(buffer, ctypes.POINTER(ctypes.c_ubyte)))
+    output_blob = DataBlob()
+    if not ctypes.windll.crypt32.CryptProtectData(
+        ctypes.byref(input_blob), None, None, None, None, 0, ctypes.byref(output_blob)
+    ):
+        raise ctypes.WinError()
+    protected = ctypes.string_at(output_blob.pbData, output_blob.cbData)
+    ctypes.windll.kernel32.LocalFree(output_blob.pbData)
+    os.environ["SESSION_KEY"] = base64.b64encode(protected).decode()
+
+
+def get_returned_password_files():
+    return set(glob.glob(os.path.join("tmp", "*.txt")))
+
+
+set_session_key()
 LOGGER = LoggerHandler.get_logger(os.path.basename(__file__), "debug")
 PLUGIN_INVOKER_PATH, PYTHON4CPM_DLL_PATH = get_framework_paths()
 SUCCESS_CODE = 0
@@ -54,6 +84,8 @@ SCRIPTS_AND_CODES = {
     os.path.join(_SCRIPTS_PATH, "success.py"): SUCCESS_CODE,
     os.path.join(_SCRIPTS_PATH, "unexpected_exception.py"): FAILED_UNRECOVERABLE_CODE,
     os.path.join(_SCRIPTS_PATH, "no_close_signal.py"): FAILED_UNRECOVERABLE_CODE,
+    os.path.join(_SCRIPTS_PATH, "success_returned_password.py"): SUCCESS_CODE,
+    os.path.join(_SCRIPTS_PATH, "bad_returned_password.py"): FAILED_UNRECOVERABLE_CODE,
     "nonexistent": FAILED_UNRECOVERABLE_CODE
 }
 PYTHON_PATHS = [
@@ -103,12 +135,31 @@ def test_python4cpm_dll_returns(python_path, script, action):
         "True"
     ]
     LOGGER.info(f"cmd -> {' '.join(cmd)}")
+    files_before = get_returned_password_files()
     result = subprocess.run(cmd) # noqa S603
     LOGGER.info(f"return code -> {result.returncode}")
+    new_files = get_returned_password_files() - files_before
     if python_path == PYTHON_PATHS[0]:
-        assert result.returncode == SCRIPTS_AND_CODES[script] # noqa: S101
+        expected = SCRIPTS_AND_CODES[script]
+        if os.path.basename(script) == "bad_returned_password.py" and action not in ACTIONS_WITH_NEW_PASSWORD: # noqa: E501
+            expected = SUCCESS_CODE # returned password is only decrypted when written
+        assert result.returncode == expected # noqa: S101
     else:
         assert result.returncode == FAILED_UNRECOVERABLE_CODE # noqa: S101
+    writes_file = (
+        python_path == PYTHON_PATHS[0]
+        and os.path.basename(script) == "success_returned_password.py"
+        and action in ACTIONS_WITH_NEW_PASSWORD
+    )
+    if writes_file:
+        assert len(new_files) == 1 # noqa: S101
+        with open(new_files.pop()) as f:
+            lines = f.read().splitlines()
+        LOGGER.info(f"returned password file lines -> {len(lines)}")
+        assert len(lines) == 2 # noqa: S101
+        assert all(line.startswith("ENC_") for line in lines) # noqa: S101
+    else:
+        assert not new_files # noqa: S101
 
 
 @pytest.mark.parametrize("action", ACTIONS)

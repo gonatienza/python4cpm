@@ -22,6 +22,9 @@
     <Reference Include="CyberArk.Extensions.Plugins.Models">
       <HintPath>lib\CyberArk.Extensions.Plugins.Models.dll</HintPath>
     </Reference>
+    <Reference Include="CyberArk.Extensions.Infra.Common">
+      <HintPath>lib\CyberArk.Extensions.Infra.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Security" />

@@ -5,6 +5,7 @@ from python4cpm.args import Args
 from python4cpm.loggerhandler import LoggerHandler
 from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
 from python4cpm.exithandler import ExitHandler
+from python4cpm.returnhandler import ReturnHandler
 
 
 class Python4CPM:
@@ -83,6 +84,15 @@ class Python4CPM:
                     logging_value = "[NOT SET]"
                 self._logger.debug(f"{logging_key} -> {logging_value}")
 
+    def _send_returned_password(self) -> None:
+        returned_password = self._target_account.returned_password
+        if returned_password is None:
+            return
+        ReturnHandler.return_and_close(returned_password)
+        logging_key = f"{self._target_account.__class__.__name__}: _returned_password"
+        logging_value = str(returned_password)
+        self._logger.debug(f"{logging_key} -> {logging_value}")
+
     def close_fail(self, unrecoverable: bool = False) -> None:
         if unrecoverable is False:
             code = self._FAILED_RECOVERABLE_CODE
@@ -93,6 +103,7 @@ class Python4CPM:
         sys.exit(code)
 
     def close_success(self) -> None:
+        self._send_returned_password()
         self._logger.debug(f"Closing with code {self._SUCCESS_CODE}")
         ExitHandler.set_closed()
         sys.exit(self._SUCCESS_CODE)

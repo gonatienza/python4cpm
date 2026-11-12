@@ -27,4 +27,22 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             }
         }
     }
+
+    public class MissingAccountPropertyException : Exception
+    {
+        public MissingAccountPropertyException(string propertyName)
+        {
+            PropertyName = propertyName;
+        }
+
+        public string PropertyName { get; }
+
+        public override string Message
+        {
+            get
+            {
+                return $"Account property '{PropertyName}' is required";
+            }
+        }
+    }
 }

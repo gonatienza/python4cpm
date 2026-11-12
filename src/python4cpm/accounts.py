@@ -1,5 +1,5 @@
 from python4cpm.envhandler import EnvHandler, Props
-from python4cpm.secrets import Password, NewPassword
+from python4cpm.secrets import Password, NewPassword, ReturnedPassword
 
 
 class BaseAccount(EnvHandler):
@@ -63,6 +63,7 @@ class TargetAccount(BaseAccount):
         self._address = address
         self._port = port
         self._new_password = NewPassword.from_env_var(new_password)
+        self._returned_password = None
 
     @property
     def policy_id(self) -> str | None:
@@ -87,6 +88,15 @@ class TargetAccount(BaseAccount):
     @property
     def new_password(self) -> NewPassword:
         return self._new_password
+
+    @property
+    def returned_password(self) -> ReturnedPassword | None:
+        return self._returned_password
+
+    def set_password(self, password: ReturnedPassword) -> None:
+        if not isinstance(password, ReturnedPassword):
+            raise TypeError("password must be a ReturnedPassword")
+        self._returned_password = password
 
 
 class LogonAccount(BaseAccount):

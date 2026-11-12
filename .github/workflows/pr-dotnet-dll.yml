@@ -30,6 +30,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path "src\plugin\lib"
           Copy-Item -Path "_python4cpm\build_sdk\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
           Copy-Item -Path "_python4cpm\build_sdk\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
+          Copy-Item -Path "_python4cpm\build_sdk\CyberArk.Extensions.Infra.Common.dll" -Destination "src\plugin\lib"
           Expand-Archive -Path "_python4cpm\${{ matrix.arch }}\Credentials Management .NET SDK*.zip" -DestinationPath "_python4cpm\framework"
       - uses: microsoft/setup-msbuild@v3
       - name: Build .NET Release

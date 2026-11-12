@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace CyberArk.Extensions.Plugin.Python4CPM
 {
@@ -33,6 +34,25 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             {
                 if (unmanagedPtr != IntPtr.Zero)
                     Marshal.ZeroFreeGlobalAllocUnicode(unmanagedPtr);
+            }
+        }
+
+        public static string Decrypt(string base64EncString)
+        {
+            byte[] encrypted = Convert.FromBase64String(base64EncString);
+            byte[] plainBytes = null;
+            try
+            {
+                plainBytes = ProtectedData.Unprotect(
+                    encrypted,
+                    null,
+                    DataProtectionScope.CurrentUser);
+                return Encoding.Unicode.GetString(plainBytes);
+            }
+            finally
+            {
+                if (plainBytes != null)
+                    Array.Clear(plainBytes, 0, plainBytes.Length);
             }
         }
     }

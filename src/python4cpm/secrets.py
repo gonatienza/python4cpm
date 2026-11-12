@@ -11,6 +11,10 @@ class Secret:
             return cls(secret)
         return None
 
+    @property
+    def value(self) -> str:
+        return self._value
+
     def __str__(self) -> str:
         if Crypto.ENABLED:
             return "[ENCRYPTED]"
@@ -28,3 +32,13 @@ class Password(Secret):
 
 class NewPassword(Secret):
     pass
+
+
+class ReturnedPassword(Secret):
+    @classmethod
+    def from_string(cls, value: str) -> object:
+        if not isinstance(value, str):
+            raise TypeError("value must be a str")
+        if Crypto.ENABLED:
+            return cls(Crypto.encrypt(value))
+        return cls(value)

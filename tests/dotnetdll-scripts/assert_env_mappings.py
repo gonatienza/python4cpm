@@ -1,5 +1,6 @@
 from python4cpm import Python4CPM
 from python4cpm.loggerhandler import LoggerHandler
+from python4cpm.returnhandler import ReturnHandler
 from configparser import ConfigParser
 import os
 
@@ -39,7 +40,8 @@ try:
         (p4cpm.reconcile_account.username, config["extrapass3"]["username"]),
         (p4cpm.target_account.password.get(), config["DEFAULT"]["password"]),
         (p4cpm.logon_account.password.get(), config["extrapass1"]["password"]),
-        (p4cpm.reconcile_account.password.get(), config["extrapass3"]["password"])
+        (p4cpm.reconcile_account.password.get(), config["extrapass3"]["password"]),
+        (ReturnHandler._is_available(), True)
     ]
     for a, b in assertions:
         if a != b:

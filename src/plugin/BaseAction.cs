@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
+using CyberArk.Extensions.Infra.Common;
 using CyberArk.Extensions.Plugins.Models;
+using CyberArk.Extensions.Utilties;
 using CyberArk.Extensions.Utilties.Logger;
 
 namespace CyberArk.Extensions.Plugin.Python4CPM
@@ -24,6 +27,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string UsernameProperty = "username";
         private const string AddressProperty = "address";
         private const string PortProperty = "port";
+        private const string KeyIdProperty = "keyid";
         private string _pythonExePath;
         private string _pythonScriptPath;
         private string _pythonLoggingLevel;
@@ -33,12 +37,14 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private string _targetUsername;
         private string _targetAddress;
         private string _targetPort;
+        private string _targetKeyId;
         private string _logonUsername;
         private string _reconcileUsername;
         private Password _targetCurrentPassword;
         private Password _logonCurrentPassword;
         private Password _reconcileCurrentPassword;
         private NewPassword _targetNewPassword;
+        private ReturnedPassword _targetReturnedPassword;
 
         public BaseAction(List<IAccount> accountList, ILogger logger)
             : base(accountList, logger)
@@ -46,6 +52,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         }
 
         protected abstract bool RequiresNewPassword { get; }
+
+        protected abstract bool WritesTargetReturnedPassword { get; }
 
         protected int RunAction(string action, ref PlatformOutput platformOutput)
         {
@@ -62,6 +70,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             try
             {
                 RunScript(action);
+                if (WritesTargetReturnedPassword)
+                    WriteTargetReturnedPassword();
                 Logger.WriteLine("Closing with success", LogLevel.INFO);
                 return CloseSuccess;
             }
@@ -129,6 +139,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 _targetAddress = TargetAccount.AccountProp[AddressProperty];
             if (TargetAccount?.AccountProp?.ContainsKey(PortProperty) == true)
                 _targetPort = TargetAccount.AccountProp[PortProperty];
+            if (TargetAccount?.AccountProp?.ContainsKey(KeyIdProperty) == true)
+                _targetKeyId = TargetAccount.AccountProp[KeyIdProperty];
             if (LogOnAccount?.AccountProp?.ContainsKey(UsernameProperty) == true)
                 _logonUsername = LogOnAccount.AccountProp[UsernameProperty];
             if (ReconcileAccount?.AccountProp?.ContainsKey(UsernameProperty) == true)
@@ -147,6 +159,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             LogField(nameof(_targetUsername), _targetUsername);
             LogField(nameof(_targetAddress), _targetAddress);
             LogField(nameof(_targetPort), _targetPort);
+            LogField(nameof(_targetKeyId), _targetKeyId);
             LogField(nameof(_logonUsername), _logonUsername);
             LogField(nameof(_reconcileUsername), _reconcileUsername);
             LogField(nameof(_targetCurrentPassword), _targetCurrentPassword);
@@ -155,8 +168,16 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             LogField(nameof(_targetNewPassword), _targetNewPassword);
         }
 
+        private void SetTargetReturnedPassword(string returnedPassword)
+        {
+            _targetReturnedPassword = new ReturnedPassword(returnedPassword);
+            LogField(nameof(_targetReturnedPassword), _targetReturnedPassword);
+        }
+
         private void RunScript(string action)
         {
+            var returnPipe = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable);
+            string returnHandle = returnPipe.GetClientHandleAsString();
             var args = EnvHandler.GetArgs(
                 action,
                 _targetPolicyId,
@@ -167,7 +188,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 _targetPort,
                 _logonUsername,
                 _reconcileUsername,
-                _pythonLoggingLevel);
+                _pythonLoggingLevel,
+                returnHandle);
             var secrets = EnvHandler.GetSecrets(
                 _targetCurrentPassword,
                 _logonCurrentPassword,
@@ -198,8 +220,11 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             }
             Logger.WriteLine($"Executing: {_pythonExePath} {_pythonScriptPath}", LogLevel.INFO);
             process.Start();
+            returnPipe.DisposeLocalCopyOfClientHandle();
+            var returnedPasswordTask = new StreamReader(returnPipe).ReadToEndAsync();
             string stderr = process.StandardError.ReadToEnd();
             process.WaitForExit();
+            string returnedPassword = returnedPasswordTask.Result.Trim();
             string message = $"Python closed with exit code: {process.ExitCode}";
             if (process.ExitCode != PythonCloseSuccess)
             {
@@ -209,6 +234,26 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 throw new PythonExecutionException(process.ExitCode);
             }
             Logger.WriteLine(message, LogLevel.INFO);
+            if (returnedPassword.Length > 0)
+                SetTargetReturnedPassword(returnedPassword);
+        }
+
+        private void WriteTargetReturnedPassword()
+        {
+            if (_targetReturnedPassword == null)
+            {
+                Logger.WriteLine("No target returned password to write", LogLevel.INFO);
+                return;
+            }
+            if (string.IsNullOrEmpty(_targetKeyId))
+                throw new MissingAccountPropertyException(KeyIdProperty);
+            var encryptor = new CASOSEncryptor();
+            var encryptedDataList = new List<string>();
+            encryptedDataList.Add(encryptor.Encrypt(_targetKeyId));
+            encryptedDataList.Add(encryptor.Encrypt(_targetReturnedPassword.Get()));
+            var cpmEncryptedFileWriter = new CPMEncryptedFileWriter();
+            cpmEncryptedFileWriter.Write(encryptedDataList);
+            Logger.WriteLine("Wrote encrypted returned password", LogLevel.INFO);
         }
 
         private int HandleException(Exception ex, bool unrecoverable, ref PlatformOutput platformOutput)

@@ -9,6 +9,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string TargetAccountObjPrefix = "target_";
         private const string LogonAccountObjPrefix = "logon_";
         private const string ReconcileAccountObjPrefix = "reconcile_";
+        private const string ReturnedObjPrefix = "returned_";
         private const string ActionKey = "action";
         private const string LoggingLevelKey = "logging_level";
         private const string PolicyIdKey = "policy_id";
@@ -19,6 +20,7 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private const string PortKey = "port";
         private const string PasswordKey = "password";
         private const string NewPasswordKey = "new_password";
+        private const string ReturnedPasswordHandleKey = "password_handle";
 
         public static Dictionary<string, string> GetArgs(
             string action,
@@ -30,7 +32,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
             string targetPort,
             string logonUsername,
             string reconcileUsername,
-            string pythonLoggingLevel)
+            string pythonLoggingLevel,
+            string returnedPasswordHandle)
         {
             var args = new Dictionary<string, string>();
             args[GetArgsKey(ActionKey)] = action;
@@ -52,6 +55,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
                 args[GetReconcileAccountKey(UsernameKey)] = reconcileUsername;
             if (pythonLoggingLevel != null)
                 args[GetArgsKey(LoggingLevelKey)] = pythonLoggingLevel;
+            if (returnedPasswordHandle != null)
+                args[GetReturnedKey(ReturnedPasswordHandleKey)] = returnedPasswordHandle;
             return args;
         }
 
@@ -97,6 +102,11 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
         private static string GetReconcileAccountKey(string key)
         {
             return GetEnvKey(ReconcileAccountObjPrefix, key);
+        }
+
+        private static string GetReturnedKey(string key)
+        {
+            return GetEnvKey(ReturnedObjPrefix, key);
         }
     }
 }

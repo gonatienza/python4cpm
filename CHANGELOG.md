@@ -4,6 +4,16 @@ Python4CPM Changelog
 
 ## [Unreleased]
 
+## [1.1.10] - 2026-XX-XX
+
+### Added
+- `ReturnedPassword`, with `ReturnedPassword.from_string()`, in python module, exported from `python4cpm`.
+- `target_account.set_password()` in python module, to return a password to the plugin on `close_success()`.
+- Return channel from python to .NET: an anonymous pipe whose handle is passed in `PYTHON4CPM_RETURNED_PASSWORD_HANDLE`.
+- `Crypto.Decrypt()`, `Secret.Get()` and `ReturnedPassword` in .NET.
+- On `changepass` and `reconcilepass`, a returned password is written for CPM with `CASOSEncryptor` and `CPMEncryptedFileWriter`, together with the target account's `KeyID` property, for platforms with `ManagementType=AccessKeys`.
+- Reference to `CyberArk.Extensions.Infra.Common` in .NET.
+
 ## [1.1.9] - 2026-11-07
 
 ### Added
@@ -123,7 +133,8 @@ Python4CPM Changelog
 ### Added
 - Added Python4CPM class and plugin platform to work with [CyberArk Terminal Plugin Controller](https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/pasimp/plug-in-terminal-plugin-controller.htm).
 
-[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.9...HEAD
+[Unreleased]: https://github.com/gonatienza/python4cpm/compare/v1.1.10...HEAD
+[1.1.10]: https://github.com/gonatienza/python4cpm/compare/v1.1.9...HEAD
 [1.1.9]: https://github.com/gonatienza/python4cpm/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/gonatienza/python4cpm/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/gonatienza/python4cpm/compare/v1.1.6...v1.1.7

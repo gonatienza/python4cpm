@@ -22,6 +22,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path "src\plugin\lib"
           Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Utilties.dll" -Destination "src\plugin\lib"
           Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Plugins.Models.dll" -Destination "src\plugin\lib"
+          Copy-Item -Path "_python4cpm\framework\CyberArk.Extensions.Infra.Common.dll" -Destination "src\plugin\lib"
       - uses: microsoft/setup-msbuild@v3
       - name: Build .NET Release
         run: |

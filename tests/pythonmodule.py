@@ -1,15 +1,17 @@
 from python4cpm.python4cpm import Python4CPM
 from python4cpm.python4cpmhandler import Python4CPMHandler
 from python4cpm.accounts import TargetAccount, LogonAccount, ReconcileAccount
-from python4cpm.secrets import Secret
+from python4cpm.secrets import Secret, ReturnedPassword
 from python4cpm.args import Args
 from python4cpm.crypto import Crypto
 from python4cpm.devhelper import DevHelper
 from python4cpm.loggerhandler import LoggerHandler
 from python4cpm.exithandler import ExitHandler
+from python4cpm.returnhandler import ReturnHandler
 import json
 import pytest
 import os
+import sys
 
 
 def get_env():
@@ -276,3 +278,67 @@ def test_dev_helper_unset_secrets(unset_value):
     with pytest.raises(SystemExit) as e:
         p4cpm.close_success()
     assert e.value.code == CLOSE_CODES[0] # noqa: S101
+
+
+def test_returned_password_from_string():
+    value = ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"]
+    secret = ReturnedPassword.from_string(value)
+    assert isinstance(secret, ReturnedPassword) # noqa: S101
+    assert secret.get() == value # noqa: S101
+    if Crypto.ENABLED:
+        assert secret.value != value # noqa: S101
+    with pytest.raises(TypeError):
+        ReturnedPassword.from_string(None)
+
+
+def test_set_password(monkeypatch):
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
+    env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
+    encrypt_env_keys(env)
+    for k, v in env.items():
+        monkeypatch.setenv(k, v)
+    monkeypatch.delenv(
+        ReturnHandler.get_key(ReturnHandler.PROPS.password_handle),
+        raising=False
+    )
+    p4cpm = Python4CPM()
+    assert p4cpm.target_account.returned_password is None # noqa: S101
+    with pytest.raises(TypeError):
+        p4cpm.target_account.set_password("not a secret")
+    value = ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"]
+    p4cpm.target_account.set_password(ReturnedPassword.from_string(value))
+    assert p4cpm.target_account.returned_password.get() == value # noqa: S101
+    assert ReturnHandler._is_available() is False # noqa: S101
+    with pytest.raises(OSError):
+        ReturnHandler.return_and_close(p4cpm.target_account.returned_password)
+    with pytest.raises(OSError):
+        p4cpm.close_success() # no return channel: fails instead of closing
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows pipe handles only")
+def test_return_channel_round_trip(monkeypatch):
+    import _winapi
+    import msvcrt
+    monkeypatch.setattr(ReturnHandler, "_closed", False)
+    read_handle, write_handle = _winapi.CreatePipe(None, 0)
+    env = ENV.copy()
+    env[Args.get_key(Args.PROPS.action)] = Python4CPM.ACTION_CHANGE
+    env[Args.get_key(Args.PROPS.logging_level)] = LOGGING_LEVELS[1]
+    env[ReturnHandler.get_key(ReturnHandler.PROPS.password_handle)] = str(write_handle) # noqa: E501
+    encrypt_env_keys(env)
+    for k, v in env.items():
+        monkeypatch.setenv(k, v)
+    p4cpm = Python4CPM()
+    value = ENV["PYTHON4CPM_TARGET_NEW_PASSWORD"]
+    p4cpm.target_account.set_password(ReturnedPassword.from_string(value))
+    with pytest.raises(SystemExit) as e:
+        p4cpm.close_success() # writes to the pipe and closes the write end
+    assert e.value.code == CLOSE_CODES[0] # noqa: S101
+    fd = msvcrt.open_osfhandle(read_handle, os.O_RDONLY)
+    with os.fdopen(fd, "r", encoding="ascii") as pipe:
+        blob = pipe.read()
+    assert Crypto.decrypt(blob) == value # noqa: S101
+    assert ReturnHandler._is_available() is False # noqa: S101
+    with pytest.raises(OSError):
+        ReturnHandler.return_and_close(p4cpm.target_account.returned_password)

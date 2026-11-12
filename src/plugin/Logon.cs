@@ -17,6 +17,8 @@ namespace CyberArk.Extensions.Plugin.Python4CPM
 
         protected override bool RequiresNewPassword => false;
 
+        protected override bool WritesTargetReturnedPassword => false;
+
         public override int run(ref PlatformOutput platformOutput)
         {
             Logger.MethodStart();
