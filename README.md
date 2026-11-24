@@ -42,7 +42,7 @@ This platform allows you to duplicate it multiple times, simply changing its set
 1. Download the `python4cpm-platform-*.zip` asset from the latest  [release](https://github.com/gonatienza/python4cpm/releases).
 2. Import the platform zip file into Privilege Cloud `(Administration -> Platform Management -> Import platform)`.
 3. Craft your python script and place it within a folder in the Cloud Connector (where the SRS Management Agent runs) (e.g., `C:\python4cpm-scripts`).
-4. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Application -> Python for CPM)` and name it after your application (e.g., My App).
+4. Duplicate the imported platform in Privilege Cloud/PVWA `(Administration -> Platform Management -> Python Extensibility -> Python for CPM)` and name it after your application (e.g., My App).
 5. Edit the duplicated platform and specify the path of your script, under `Plugin Settings -> Additional Parameters -> PythonScriptPath` (e.g., `C:\python4cpm-scripts\myapp.py`).
 6. Also update `Plugin Settings -> Additional Parameters -> PythonExePath` with the custom path for the venv's `python.exe` file (e.g., `c:\venv\Scripts\python.exe`).
 7. If you want to change the logging level, update `Plugin Settings -> Additional Parameters -> PythonLoggingLevel -> Value` to `critical`, `error`, `warning`, `info` or `debug`.
